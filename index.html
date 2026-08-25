@@ -1,0 +1,106 @@
+<!--版本: beta_8.5.1 (UA检测入口)-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>悦动工作室官方网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-icon {
+            width: 255px;
+            height: 240px;
+            border-radius: 0px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-text {
+            font-size: 22px;
+            opacity: 0.8;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-container">
+        <img src="./Picture/icon.webp" alt="悦动工作室" class="loading-icon">
+        <p class="loading-text">正在加载中，请稍候</p>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+        // UA检测 - 判断访问设备类型并重定向
+        (function () {
+            var ua = navigator.userAgent.toLowerCase();
+            var isMobile = /mobile|iphone|ipad|ipod|android|blackberry|windows phone|opera mini|iemobile|webos|playbook|silk|kindle|nintendo|psp|symbian|fennec|maemo|meego|palm|bolt|miranda|thunderbird|bb10|rim|tablet|touch/i.test(ua);
+
+            // 检测是否为平板设备（iPad或大屏Android平板）
+            var isTablet = /ipad|playbook|silk|tablet|kindle/i.test(ua) ||
+                (window.innerWidth >= 768 && window.innerWidth <= 1024 && /android/i.test(ua));
+
+            // 平板设备使用手机版
+            if (isTablet) {
+                window.location.href = './mobile/index.html';
+            }
+            // 手机设备使用手机版
+            else if (isMobile) {
+                window.location.href = './mobile/index.html';
+            }
+            // PC设备使用PC版
+            else {
+                window.location.href = './PC/index.html';
+            }
+        })();
+    </script>
+</body>
+
+</html>

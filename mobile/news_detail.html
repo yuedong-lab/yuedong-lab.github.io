@@ -1,0 +1,248 @@
+    <!--版本: Pre_7.29.4 (手机端新闻详情页)-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="悦动工作室官方网站 - 新闻详情">
+    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,新闻">
+    <meta name="author" content="悦动工作室">
+    <link rel="icon" href="../Picture/icon.webp" type="image/webp">
+    <title>新闻详情 - 悦动工作室官方网站</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 300ms ease, color 300ms ease;
+        }
+
+        .news-detail-container {
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 70px;
+        }
+
+        .news-detail-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px 20px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .news-detail-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .news-detail-meta {
+            font-size: 13px;
+            color: var(--text-color);
+            opacity: 0.6;
+            margin-bottom: 20px;
+        }
+
+        .news-detail-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-color);
+            opacity: 0.85;
+        }
+
+        .news-detail-content p {
+            margin-bottom: 8px;
+        }
+
+        .news-detail-footer {
+            text-align: center;
+            margin-top: 28px;
+        }
+
+        .news-back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #1385ff, #49a1ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .news-back-btn:active {
+            opacity: 0.8;
+        }
+
+        #newsDetail {
+            display: block;
+        }
+
+        .news-detail-loading {
+            text-align: center;
+            padding: 80px 20px;
+            font-size: 16px;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        #backButton {
+            color: white;
+            text-decoration: none;
+            text-align:center;
+            font-size: 15px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            height:35px;
+            transition: background-color 0.3s;
+        }
+
+        #backButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #versionInfo {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            color: rgba(0, 0, 0, 0.45);
+            font-size: 11px;
+            z-index: 100;
+            user-select: none;
+        }
+
+        body.dark-mode #versionInfo { color: rgba(255, 255, 255, 0.45); }
+    </style>
+</head>
+<body>
+    <nav id="topNav">
+        <div class="nav-header">
+            <span class="nav-title" onclick="location.href='./index.html'" style="cursor:pointer;">悦动工作室</span>
+            <div class="nav-actions">
+                <button id="themeToggle" aria-label="切换主题">
+                    <svg class="theme-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path class="sun-icon" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.95 16.95l1.42 1.42M5.64 18.36l1.42-1.42M16.95 7.05l1.42-1.42M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" style="display:none"></path>
+                        <path class="moon-icon" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+                    </svg>
+                </button>
+                <button id="menuToggle" aria-label="菜单">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path class="menu-icon" d="M3 12h18M3 6h18M3 18h18"></path>
+                        <path class="close-icon" d="M18 6L6 18M6 6l12 12" style="display:none"></path>
+                    </svg>
+                </button>
+                <a href="./index.html" id="backButton">&#8592; 返回</a>
+            </div>
+        </div>
+        <!-- 侧滑菜单 -->
+        <div id="sideMenu" class="side-menu">
+            <div class="side-menu-header">
+                <span class="nav-title">导航菜单</span>
+                <button id="closeMenu" aria-label="关闭菜单">&times;</button>
+            </div>
+            <ul class="side-menu-list">
+                <li><button class="menu-item" data-page="home" onclick="location.href='./index.html'">主页</button></li>
+                <li><button class="menu-item" data-page="project" onclick="location.href='./index.html#project'">项目</button></li>
+                <li><button class="menu-item" data-page="news" onclick="location.href='./index.html#news'">官方新闻</button></li>
+                <li><button class="menu-item" data-page="about" onclick="location.href='./index.html#about'">关于</button></li>
+            </ul>
+        </div>
+        <div id="menuOverlay" class="menu-overlay"></div>
+    </nav>
+
+    <div id="mainContent">
+        <div class="news-detail-container">
+            <div class="news-detail-card" id="newsDetail">
+                <div class="news-detail-loading">正在加载新闻...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="versionInfo"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="../shared/devMode.js"></script>
+    <script src="../shared/newsData.js"></script>
+    <script src="../version.js"></script>
+    <script>
+        // 版本: Pre_7.29.4 - 手机端新闻详情页脚本
+        $("#versionInfo").text(currentVersion);
+        function getUrlParam(name) {
+            var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        function renderNews(id) {
+            var data = newsData[newsData.length-id];
+            var container = document.getElementById('newsDetail');
+
+            if (!data) {
+                container.innerHTML = '<div style="text-align:center;padding:60px 20px;"><h2 style="color:var(--text-color);margin-bottom:16px;font-size:20px;">新闻不存在</h2><p style="color:var(--text-color);opacity:0.6;margin-bottom:24px;font-size:14px;">抱歉，未找到该新闻内容。</p><a href="./index.html" class="news-back-btn">&#8592; 返回新闻列表</a></div>';
+                document.title = '新闻未找到 - 悦动工作室官方网站';
+                return;
+            }
+
+            document.title = data.title + ' - 悦动工作室官方网站';
+
+            var contentHtml = '';
+            data.content.forEach(function(item) {
+                contentHtml += '<p>' + item + '</p>';
+            });
+
+            container.innerHTML = 
+                '<h1 class="news-detail-title">' + data.title + '</h1>' +
+                '<div class="news-detail-meta">' + data.author + ' 编辑于 ' + data.date + '</div>' +
+                '<div class="news-detail-content">' + contentHtml + '</div>' +
+                '<div class="news-detail-footer">' +
+                    '<a href="./index.html" class="news-back-btn">&#8592; 返回新闻列表</a>' +
+                '</div>';
+        }
+
+        // 侧滑菜单逻辑
+        var sideMenu = document.getElementById('sideMenu');
+        var menuOverlay = document.getElementById('menuOverlay');
+        var menuToggle = document.getElementById('menuToggle');
+        var closeMenu = document.getElementById('closeMenu');
+
+        function openMenu() {
+            sideMenu.classList.add('open');
+            menuOverlay.classList.add('show');
+        }
+
+        function closeMenuFn() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('show');
+        }
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', openMenu);
+        }
+        if (closeMenu) {
+            closeMenu.addEventListener('click', closeMenuFn);
+        }
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenuFn);
+        }
+
+        var newsId = getUrlParam('id');
+        if (!newsId) {
+            window.location.href = '../404.html';
+        } else {
+            renderNews(newsId);
+        }
+    </script>
+</body>
+</html>

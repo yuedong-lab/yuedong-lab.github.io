@@ -1,0 +1,347 @@
+    <!--版本: Pre_7.29.4 (PC项目详情页)-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="悦动工作室官方网站 - 项目详情">
+    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,项目">
+    <meta name="author" content="悦动工作室">
+    <link rel="icon" href="../Picture/icon.webp" type="image/webp">
+    <title>项目详情 - 悦动工作室官方网站</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        body {
+            display: block !important;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 300ms ease, color 300ms ease;
+        }
+
+        .project-detail-container {
+            --border-color: #e0e0e0;
+        }
+
+        body.dark-mode .project-detail-container {
+            --border-color: #4a5568;
+        }
+
+        .project-detail-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .project-detail-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.684),
+                        inset 0px -5px 10px rgba(128, 128, 128, 0.527);
+            margin-bottom: 30px;
+            transition: all 0.5s;
+        }
+
+        body.dark-mode .project-detail-card {
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4),
+                        inset 0px -5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-detail-title {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .project-detail-desc {
+            font-size: 18px;
+            line-height: 2;
+            color: var(--text-color);
+            opacity: 0.85;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .project-detail-features {
+            margin: 30px 0;
+            padding: 0 20px;
+        }
+
+        .project-detail-features h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .project-detail-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .project-detail-features li {
+            position: relative;
+            padding: 10px 0 10px 30px;
+            font-size: 16px;
+            color: var(--text-color);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .project-detail-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 4px;
+            color: #1385ff;
+            font-weight: bold;
+        }
+
+        .project-detail-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .project-detail-btn {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #1385ff, #49a1ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .project-detail-btn:hover {
+            opacity: 0.85;
+        }
+
+        .project-detail-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #adb5bd);
+        }
+
+        .project-detail-footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #projectDetail {
+            display: block;
+        }
+
+        .project-detail-loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 20px;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        #backButton {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-left: auto;
+            margin-right: 20px;
+        }
+
+        #backButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .project-detail-card {
+                padding: 30px 20px;
+            }
+            .project-detail-title {
+                font-size: 26px;
+            }
+            .project-detail-desc {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav id="mainNav">
+        <span id="navTitle" onclick="location.href='./index.html'" style="cursor:pointer;user-select:none;">悦动工作室</span>
+        <button id="navLockToggle" aria-label="锁定导航栏">
+            <svg class="lock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <svg class="unlock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+            </svg>
+        </button>
+        <button id="themeToggle" aria-label="切换主题">
+            <svg class="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path class="sun-icon" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.95 16.95l1.42 1.42M5.64 18.36l1.42-1.42M16.95 7.05l1.42-1.42M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" style="display:none"></path>
+                <path class="moon-icon" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+            </svg>
+        </button>
+        <a href="./index.html" id="backButton">&#8592; 返回项目列表</a>
+    </nav>
+
+    <div class="project-detail-container">
+        <div id="projectDetail">
+            <div class="project-detail-loading">正在加载项目...</div>
+        </div>
+    </div>
+
+    <div id="versionInfo"></div>
+
+    <script src="../shared/devMode.js"></script>
+    <script src="../shared/projectData.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="../version.js"></script>
+    <script>
+        // 版本: Pre_7.29.4 - 项目详情页脚本（PC端）
+        $("#versionInfo").text(currentVersion);
+        function getUrlParam(name) {
+            var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        function renderProject(id) {
+            var data = projectData[id];
+            var container = document.getElementById('projectDetail');
+
+            if (!data) {
+                container.innerHTML = '<div class="project-detail-card" style="text-align:center;padding:80px 40px;"><h2 style="color:var(--text-color);margin-bottom:20px;">项目不存在</h2><p style="color:var(--text-color);opacity:0.6;margin-bottom:30px;">抱歉，未找到该项目内容。</p><a href="./index.html" class="project-detail-btn">&#8592; 返回项目列表</a></div>';
+                document.title = '项目未找到 - 悦动工作室官方网站';
+                return;
+            }
+
+            document.title = data.title + ' - 悦动工作室官方网站';
+
+            var featuresHtml = '';
+            if (data.features && data.features.length > 0) {
+                featuresHtml = '<div class="project-detail-features"><h3>功能介绍</h3><ul>';
+                data.features.forEach(function(item) {
+                    featuresHtml += '<li>' + item + '</li>';
+                });
+                featuresHtml += '</ul></div>';
+            }
+
+            var actionsHtml = '<div class="project-detail-actions">';
+            if (data.online) {
+                actionsHtml += '<a class="project-detail-btn" href="' + data.online + '" target="_blank">打开网页</a>';
+            }
+            if (data.download) {
+                actionsHtml += '<a class="project-detail-btn" href="' + data.download + '" download="' + data.downloadName + '">点击下载</a>';
+            }
+            actionsHtml += '</div>';
+
+            container.innerHTML = 
+                '<div class="project-detail-card">' +
+                    '<h1 class="project-detail-title">' + data.title + '</h1>' +
+                    '<p class="project-detail-desc">' + data.desc + '</p>' +
+                    featuresHtml +
+                    actionsHtml +
+                '</div>' +
+                '<div class="project-detail-footer">' +
+                    '<a href="./index.html" class="project-detail-btn">&#8592; 返回项目列表</a>' +
+                '</div>';
+        }
+
+        // 导航栏逻辑
+        var nav = document.getElementById('mainNav');
+        var timer;
+        var navLocked = localStorage.getItem('navLocked') === 'true';
+
+        function updateLockButton() {
+            var lockBtn = document.getElementById('navLockToggle');
+            if (lockBtn) {
+                if (navLocked) {
+                    lockBtn.classList.add('locked');
+                    lockBtn.title = '解锁导航栏';
+                } else {
+                    lockBtn.classList.remove('locked');
+                    lockBtn.title = '锁定导航栏';
+                }
+            }
+        }
+
+        function applyNavLock() {
+            if (navLocked) {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+                clearTimeout(timer);
+            }
+        }
+
+        function toggleNavLock() {
+            navLocked = !navLocked;
+            localStorage.setItem('navLocked', navLocked);
+            updateLockButton();
+            applyNavLock();
+        }
+
+        nav.addEventListener('mouseenter', function() {
+            if (navLocked) return;
+            clearTimeout(timer);
+            nav.style.transform = 'translateY(0)';
+            nav.style.opacity = '1';
+            nav.style.visibility = 'visible';
+        });
+
+        nav.addEventListener('mouseleave', function() {
+            if (navLocked) return;
+            timer = setTimeout(function() {
+                nav.style.transform = 'translateY(-50px)';
+                nav.style.opacity = '0';
+            }, 1000);
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            updateLockButton();
+            var lockBtn = document.getElementById('navLockToggle');
+            if (lockBtn) {
+                lockBtn.addEventListener('click', toggleNavLock);
+            }
+
+            if (navLocked) {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+            } else {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+                setTimeout(function() {
+                    nav.style.transform = 'translateY(-50px)';
+                    nav.style.opacity = '0';
+                }, 5000);
+            }
+
+            var projectId = getUrlParam('id');
+            if (!projectId) {
+                window.location.href = '../404.html';
+                return;
+            }
+            renderProject(projectId);
+        });
+    </script>
+</body>
+</html>
