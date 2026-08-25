@@ -78,6 +78,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
+        //触摸屏检查
+        function isTouching(){
+            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches;
+        }
         // UA检测 - 判断访问设备类型并重定向
         (function () {
             var ua = navigator.userAgent.toLowerCase();
@@ -87,6 +91,7 @@
             var isTablet = /ipad|playbook|silk|tablet|kindle/i.test(ua) ||
                 (window.innerWidth >= 768 && window.innerWidth <= 1024 && /android/i.test(ua));
 
+            var touchScr = isTouching();
             // 平板设备使用手机版
             if (isTablet) {
                 window.location.href = './mobile/index.html';
@@ -94,6 +99,10 @@
             // 手机设备使用手机版
             else if (isMobile) {
                 window.location.href = './mobile/index.html';
+            }
+            //触摸屏使用手机版
+            else if(touchScr){
+                window.location.href = './mobile/index.html'
             }
             // PC设备使用PC版
             else {
