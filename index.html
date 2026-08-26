@@ -1,115 +1,155 @@
 <!--版本: beta_8.5.1 (UA检测入口)-->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-cn">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>悦动工作室官方网站</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      .loading-container {
+        text-align: center;
+        padding: 40px;
+      }
+
+      .loading-icon {
+        width: 255px;
+        height: 240px;
+        border-radius: 0px;
+        margin-bottom: 20px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      .loading-text {
+        font-size: 22px;
+        opacity: 0.8;
+        animation: fadeInOut 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.7;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInOut {
+        0%,
+        100% {
+          opacity: 0.5;
         }
 
-        .loading-container {
-            text-align: center;
-            padding: 40px;
+        50% {
+          opacity: 1;
         }
-
-        .loading-icon {
-            width: 255px;
-            height: 240px;
-            border-radius: 0px;
-            margin-bottom: 20px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        .loading-text {
-            font-size: 22px;
-            opacity: 0.8;
-            animation: fadeInOut 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.7;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeInOut {
-
-            0%,
-            100% {
-                opacity: 0.5;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="loading-container">
-        <img src="./Picture/icon.webp" alt="悦动工作室" class="loading-icon">
-        <p class="loading-text">正在加载中，请稍候</p>
+      <img src="./Picture/icon.webp" alt="悦动工作室" class="loading-icon" />
+      <p class="loading-text">正在加载中，请稍候</p>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
-        //触摸屏检查
-        function isTouching(){
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || matchMedia('(pointer: coarse)').matches;
+      /**
+       * 综合 UA、分辨率、触摸屏 三大维度检测设备类型
+       * @returns {Promise<Object>} { type: '手机' | '平板' | '笔电' | '电脑', isTouch: 1 | 0 }
+       */
+      async function detectDevice() {
+        // ----- 1. 分辨率维度 -----
+        const width = window.innerWidth;
+
+        // ----- 2. 触屏维度 (核心指针检测) -----
+        const isTouch = window.matchMedia("(any-pointer: coarse)").matches
+          ? 1
+          : 0;
+
+        // ----- 3. UA 维度 (辅助修正) -----
+        const ua = navigator.userAgent;
+        // 识别 iPad（含 iPad Pro 新 UA 特征）
+        const isIpad =
+          /iPad/.test(ua) ||
+          (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+        // 识别常规移动设备
+        const isMobileUA = /Mobi|Android|iPhone|iPad/i.test(ua);
+
+        // ----- 分类逻辑 (分辨率优先) -----
+        let type = "电脑"; // 默认
+
+        // A. 小屏 (< 768px) -> 手机
+        if (width < 768) {
+          type = "手机";
         }
-        // UA检测 - 判断访问设备类型并重定向
-        (function () {
-            var ua = navigator.userAgent.toLowerCase();
-            var isMobile = /mobile|iphone|ipad|ipod|android|blackberry|windows phone|opera mini|iemobile|webos|playbook|silk|kindle|nintendo|psp|symbian|fennec|maemo|meego|palm|bolt|miranda|thunderbird|bb10|rim|tablet|touch/i.test(ua);
+        // B. 中屏 (768px ~ 1024px) -> 平板 或 小屏笔电
+        else if (width >= 768 && width < 1024) {
+          if (isMobileUA || isTouch) {
+            type = "平板";
+          } else {
+            type = "笔电"; // 如无触摸的小尺寸笔记本
+          }
+        }
+        // C. 大屏 (>= 1024px)
+        else {
+          if (isTouch) {
+            // 带触摸的大屏 -> 认定为触屏笔记本（笔电）
+            type = "笔电";
+          } else {
+            // 无触摸大屏 -> 先暂定为电脑（台式/传统笔电）
+            type = "电脑";
 
-            // 检测是否为平板设备（iPad或大屏Android平板）
-            var isTablet = /ipad|playbook|silk|tablet|kindle/i.test(ua) ||
-                (window.innerWidth >= 768 && window.innerWidth <= 1024 && /android/i.test(ua));
+            // 【辅助维度】用电池 API 进一步区分：有电池且未充电 => 大概率是笔记本
+            if (navigator.getBattery) {
+              try {
+                const battery = await navigator.getBattery();
+                // 不处于充电状态（且电池存在）时，更倾向于笔电
+                if (!battery.charging) {
+                  type = "笔电";
+                }
+                // 注意：若插着电源，仍保留为 '电脑'（可能是插电笔电或台式机，难以绝对区分）
+              } catch (_) {}
+            }
+          }
+        }
 
-            var touchScr = isTouching();
-            // 平板设备使用手机版
-            if (isTablet) {
-                window.location.href = './mobile/index.html';
-            }
-            // 手机设备使用手机版
-            else if (isMobile) {
-                window.location.href = './mobile/index.html';
-            }
-            //触摸屏使用手机版
-            else if(touchScr){
-                window.location.href = './mobile/index.html'
-            }
-            // PC设备使用PC版
-            else {
-                window.location.href = './PC/index.html';
-            }
-        })();
+        // UA 强修正：iPad Pro（大屏 + 触屏）强制归为平板
+        if (isIpad && width >= 1024) {
+          type = "平板";
+        }
+
+        return { type, isTouch };
+      }
+
+      // 使用示例
+      detectDevice().then((res) => {
+        console.log(`设备类型：${res.type}，是否触屏：${res.isTouch}`);
+        // 输出示例：{ type: '笔电', isTouch: 1 }
+      });
     </script>
-</body>
-
+  </body>
 </html>
