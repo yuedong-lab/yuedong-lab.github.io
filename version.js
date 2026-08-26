@@ -1,1 +1,1 @@
-const currentVersion = "RC-26.08.21-2";
+const currentVersion = "RC-26.08.26-1";
