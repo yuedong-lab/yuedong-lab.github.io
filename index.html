@@ -149,6 +149,11 @@
       detectDevice().then((res) => {
         console.log(`设备类型：${res.type}，是否触屏：${res.isTouch}`);
         // 输出示例：{ type: '笔电', isTouch: 1 }
+        if(res.type === "平板" || res.type === "手机"){
+            window.location.href = "./mobile/index.html";
+        }else{
+            window.location.href = "./PC/index.html";
+        }
       });
     </script>
   </body>
