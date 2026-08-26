@@ -142,7 +142,11 @@
       }
 
       // 测试
-      console.log(classifyDevice()); // 现在你的电脑应该稳定输出 2 了
+      if(classifyDevice()===1){
+        window.location.href="mobile/index.html";
+      }else{
+        window.location.href="PC/index.html";
+      }
     </script>
   </body>
 </html>
