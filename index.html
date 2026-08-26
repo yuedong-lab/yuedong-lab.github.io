@@ -76,85 +76,78 @@
       <p class="loading-text">正在加载中，请稍候</p>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script>
-      /**
-       * 综合 UA、分辨率、触摸屏 三大维度检测设备类型
-       * @returns {Promise<Object>} { type: '手机' | '平板' | '笔电' | '电脑', isTouch: 1 | 0 }
+    <script>/**
+       * 判断设备类别：手机/平板 或 电脑（含触摸屏）
+       * 结合 UA、分辨率、触摸屏三重判断
+       * @returns {1 | 2} 1=手机/平板，2=电脑（含触摸屏）
        */
-      async function detectDevice() {
-        // ----- 1. 分辨率维度 -----
-        const width = window.innerWidth;
-
-        // ----- 2. 触屏维度 (核心指针检测) -----
-        const isTouch = window.matchMedia("(any-pointer: coarse)").matches
-          ? 1
-          : 0;
-
-        // ----- 3. UA 维度 (辅助修正) -----
+      function classifyDevice() {
         const ua = navigator.userAgent;
-        // 识别 iPad（含 iPad Pro 新 UA 特征）
-        const isIpad =
-          /iPad/.test(ua) ||
-          (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-        // 识别常规移动设备
-        const isMobileUA = /Mobi|Android|iPhone|iPad/i.test(ua);
+        const w = screen.width;
+        const h = screen.height;
+        const maxTouch = navigator.maxTouchPoints || 0;
 
-        // ----- 分类逻辑 (分辨率优先) -----
-        let type = "电脑"; // 默认
+        // 触摸综合判断（兼顾旧API和新标准）
+        const hasTouch =
+          maxTouch > 0 ||
+          "ontouchstart" in window ||
+          (window.matchMedia &&
+            window.matchMedia("(any-pointer: coarse)").matches);
 
-        // A. 小屏 (< 768px) -> 手机
-        if (width < 768) {
-          type = "手机";
+        // ----- 1. UA 明确指向手机 -----
+        if (
+          /iPhone|iPod|Android(?!.*Tablet)|Windows Phone|BlackBerry|webOS|Opera Mini/i.test(
+            ua,
+          )
+        ) {
+          return 1;
         }
-        // B. 中屏 (768px ~ 1024px) -> 平板 或 小屏笔电
-        else if (width >= 768 && width < 1024) {
-          if (isMobileUA || isTouch) {
-            type = "平板";
-          } else {
-            type = "笔电"; // 如无触摸的小尺寸笔记本
+
+        // ----- 2. UA 明确指向平板 -----
+        if (
+          /iPad|Tablet|Kindle|Silk|PlayBook|Nexus 7|Nexus 9|SM-T|KFAPWI/i.test(
+            ua,
+          )
+        ) {
+          return 1;
+        }
+
+        // ----- 3. 桌面操作系统（Windows / Chrome OS / Linux）-----
+        if (/Windows NT|CrOS|Linux/i.test(ua)) {
+          // 极小尺寸（<600px）且有触摸的 Linux，归为移动端（防嵌入式设备误判）
+          if (/Linux/i.test(ua) && (w < 600 || h < 600) && hasTouch) {
+            return 1;
           }
+          // 其他所有：Windows 触摸本（如 Surface）、ChromeBook 等均视为电脑
+          return 2;
         }
-        // C. 大屏 (>= 1024px)
-        else {
-          if (isTouch) {
-            // 带触摸的大屏 -> 认定为触屏笔记本（笔电）
-            type = "笔电";
-          } else {
-            // 无触摸大屏 -> 先暂定为电脑（台式/传统笔电）
-            type = "电脑";
 
-            // 【辅助维度】用电池 API 进一步区分：有电池且未充电 => 大概率是笔记本
-            if (navigator.getBattery) {
-              try {
-                const battery = await navigator.getBattery();
-                // 不处于充电状态（且电池存在）时，更倾向于笔电
-                if (!battery.charging) {
-                  type = "笔电";
-                }
-                // 注意：若插着电源，仍保留为 '电脑'（可能是插电笔电或台式机，难以绝对区分）
-              } catch (_) {}
-            }
+        // ----- 4. Macintosh 特殊处理（iPadOS 13+ 伪装成 Mac）-----
+        if (/Macintosh/.test(ua)) {
+          // 具备多点触控且屏幕≥768px，实质是 iPad
+          if (maxTouch > 0 && w >= 768 && h >= 768) {
+            return 1;
           }
+          return 2; // 真实 Mac 电脑
         }
 
-        // UA 强修正：iPad Pro（大屏 + 触屏）强制归为平板
-        if (isIpad && width >= 1024) {
-          type = "平板";
+        // ----- 5. 兜底：UA 无法识别时，结合分辨率和触摸推测 -----
+        if (hasTouch) {
+          // 有触摸且尺寸较小（<1024px）→ 移动/平板；大屏 → 触摸电脑
+          return w < 1024 && h < 1024 ? 1 : 2;
+        } else {
+          // 无触摸，极窄屏（<600px）→ 手机，其余 → 电脑
+          return w < 600 || h < 600 ? 1 : 2;
         }
-
-        return { type, isTouch };
       }
 
-      // 使用示例
-      detectDevice().then((res) => {
-        console.log(`设备类型：${res.type}，是否触屏：${res.isTouch}`);
-        // 输出示例：{ type: '笔电', isTouch: 1 }
-        if(res.type === "平板" || res.type === "手机"){
-            window.location.href = "./mobile/index.html";
-        }else{
-            window.location.href = "./PC/index.html";
-        }
-      });
+      // ----- 使用示例 -----
+      const result = classifyDevice();
+      if (result === 1) {
+        window.location.href = "mobile/index.html";
+      } else {
+        window.location.href = "PC/index.html";
+      }
     </script>
   </body>
 </html>
