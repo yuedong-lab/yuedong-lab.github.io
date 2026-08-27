@@ -123,7 +123,6 @@
                 <!---  <img src="./Picture/ChannelQRCode.png" id="QRCode">  --->
                 <hr class="line" style="margin-top: 20px;" />
                 <a id="chatRoomID_a" href="../mobile/index.html" style="font-size:16px;font-weight:normal;">前往手机版</a>
-                <p style="font-size:13px;color:var(--text-color);margin:15px 0 5px;">版权所有 © 悦动工作室 2026</p>
             </div>
         </div>
         <div id="versionInfo"></div>
@@ -137,8 +136,8 @@
         <script>window.jQuery || document.write('<script src="./jquery-3.7.1.min.js"><\/script>');</script>
         <script>
             syncTimeBase();
-            grayMode(getDate());
-            setInterval(grayMode,10000,getDate());
+            timeCheck(getDate());
+            setInterval(timeCheck,10000,getDate());
 
             $("#versionInfo").text(currentVersion);
             writeNews();
