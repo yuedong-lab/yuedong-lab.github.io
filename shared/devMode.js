@@ -299,9 +299,10 @@ var gray = [
     }
 ];
 
-function grayMode(date){
+function timeCheck(date){
     var month = date.getMonth() +1;
     var day = date.getDate();
+    var year = date.getFullYear();
     for(var i=0; i<gray.length; i++){
         if(month === gray[i].month && day === gray[i].day){
             $("html").css("filter","grayscale(100%)");
@@ -319,5 +320,8 @@ function grayMode(date){
                 },1000);
             }
         }
+    }
+    if(!document.getElementById("copyright")){
+        $("#findour").append(`<p id="copyright" style="font-size:13px;color:var(--text-color);margin:15px 0 5px;">版权所有 © 悦动工作室 ${year}</p>`)
     }
 }
