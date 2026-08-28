@@ -1,0 +1,298 @@
+    <!--版本: Pre_7.29.4 (PC新闻详情页)-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="悦动工作室官方网站 - 新闻详情">
+    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,新闻">
+    <meta name="author" content="悦动工作室">
+    <link rel="icon" href="../Picture/icon.webp" type="image/webp">
+    <title>新闻详情 - 悦动工作室官方网站</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        /* 覆盖 styles.css 中的 body 隐藏 */
+        body {
+            display: block !important;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 300ms ease, color 300ms ease;
+        }
+
+        /* 补充 PC styles.css 中未定义的变量 */
+        .news-detail-container {
+            --border-color: #e0e0e0;
+        }
+
+        body.dark-mode .news-detail-container {
+            --border-color: #4a5568;
+        }
+
+        .news-detail-container {
+            margin-top: 100px;
+            padding: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .news-detail-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.684),
+                        inset 0px -5px 10px rgba(128, 128, 128, 0.527);
+            margin-bottom: 30px;
+            transition: all 0.5s;
+        }
+
+        body.dark-mode .news-detail-card {
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4),
+                        inset 0px -5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-detail-title {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .news-detail-meta {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-color);
+            opacity: 0.6;
+            margin-bottom: 30px;
+        }
+
+        .news-detail-content {
+            font-size: 18px;
+            line-height: 2;
+            color: var(--text-color);
+            opacity: 0.85;
+        }
+
+        .news-detail-content p {
+            margin-bottom: 8px;
+        }
+
+        .news-back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #1385ff, #49a1ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            text-align: center;
+        }
+
+        .news-back-btn:hover {
+            opacity: 0.85;
+        }
+
+        .news-detail-footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        #newsDetail {
+            display: block;
+        }
+
+        .news-detail-loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 20px;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        #backButton {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-left: auto;
+            margin-right:20px;
+        }
+
+        #backButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .news-detail-card {
+                padding: 30px 20px;
+            }
+            .news-detail-title {
+                font-size: 26px;
+            }
+            .news-detail-content {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav id="mainNav">
+        <span id="navTitle" onclick="location.href='./index.html'" style="cursor:pointer;user-select:none;">悦动工作室</span>
+        <button id="navLockToggle" aria-label="锁定导航栏">
+            <svg class="lock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <svg class="unlock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+            </svg>
+        </button>
+        <button id="themeToggle" aria-label="切换主题">
+            <svg class="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path class="sun-icon" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.95 16.95l1.42 1.42M5.64 18.36l1.42-1.42M16.95 7.05l1.42-1.42M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" style="display:none"></path>
+                <path class="moon-icon" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+            </svg>
+        </button>
+        <a href="./index.html" id="backButton">&#8592; 返回新闻列表</a>
+    </nav>
+
+    <div class="news-detail-container">
+        <div id="newsDetail">
+            <div class="news-detail-loading">正在加载新闻...</div>
+        </div>
+    </div>
+
+    <div id="versionInfo"></div>
+
+    <script src="../shared/devMode.js"></script>
+    <script src="../version.js"></script>
+    <script src="../shared/newsData.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+        // 版本: Pre_7.29.4 - 新闻详情页脚本（PC端）
+        $("#versionInfo").text(currentVersion);
+        function getUrlParam(name) {
+            var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        function renderNews(id) {
+            var data = newsData[newsData.length-id];
+            var container = document.getElementById('newsDetail');
+
+            if (!data) {
+                container.innerHTML = '<div class="news-detail-card" style="text-align:center;padding:80px 40px;"><h2 style="color:var(--text-color);margin-bottom:20px;">新闻不存在</h2><p style="color:var(--text-color);opacity:0.6;margin-bottom:30px;">抱歉，未找到该新闻内容。</p><a href="./index.html" class="news-back-btn">&#8592; 返回新闻列表</a></div>';
+                document.title = '新闻未找到 - 悦动工作室官方网站';
+                return;
+            }
+
+            document.title = data.title + ' - 悦动工作室官方网站';
+
+            var contentHtml = '';
+            data.content.forEach(function(item) {
+                contentHtml += '<p>' + item + '</p>';
+            });
+
+            container.innerHTML = 
+                '<div class="news-detail-card">' +
+                    '<h1 class="news-detail-title">' + data.title + '</h1>' +
+                    '<div class="news-detail-meta">' + data.author + ' 编辑于 ' + data.date + '</div>' +
+                    '<div class="news-detail-content">' + contentHtml + '</div>' +
+                    '<div class="news-detail-footer">' +
+                        '<a href="./index.html" class="news-back-btn">&#8592; 返回新闻列表</a>' +
+                    '</div>' +
+                '</div>';
+        }
+
+        // 导航栏逻辑
+        var nav = document.getElementById('mainNav');
+        var timer;
+        var navLocked = localStorage.getItem('navLocked') === 'true';
+
+        function updateLockButton() {
+            var lockBtn = document.getElementById('navLockToggle');
+            if (lockBtn) {
+                if (navLocked) {
+                    lockBtn.classList.add('locked');
+                    lockBtn.title = '解锁导航栏';
+                } else {
+                    lockBtn.classList.remove('locked');
+                    lockBtn.title = '锁定导航栏';
+                }
+            }
+        }
+
+        function applyNavLock() {
+            if (navLocked) {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+                clearTimeout(timer);
+            }
+        }
+
+        function toggleNavLock() {
+            navLocked = !navLocked;
+            localStorage.setItem('navLocked', navLocked);
+            updateLockButton();
+            applyNavLock();
+        }
+
+        nav.addEventListener('mouseenter', function() {
+            if (navLocked) return;
+            clearTimeout(timer);
+            nav.style.transform = 'translateY(0)';
+            nav.style.opacity = '1';
+            nav.style.visibility = 'visible';
+        });
+
+        nav.addEventListener('mouseleave', function() {
+            if (navLocked) return;
+            timer = setTimeout(function() {
+                nav.style.transform = 'translateY(-50px)';
+                nav.style.opacity = '0';
+            }, 1000);
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            updateLockButton();
+            var lockBtn = document.getElementById('navLockToggle');
+            if (lockBtn) {
+                lockBtn.addEventListener('click', toggleNavLock);
+            }
+
+            if (navLocked) {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+            } else {
+                nav.style.transform = 'translateY(0)';
+                nav.style.opacity = '1';
+                nav.style.visibility = 'visible';
+                setTimeout(function() {
+                    nav.style.transform = 'translateY(-50px)';
+                    nav.style.opacity = '0';
+                }, 5000);
+            }
+
+            var newsId = getUrlParam('id');
+            if (!newsId) {
+                window.location.href = '../404.html';
+                return;
+            }
+            renderNews(newsId);
+        });
+    </script>
+</body>
+</html>
