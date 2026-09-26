@@ -8,7 +8,7 @@ var newsData = [
         author:"网站管理员",
         date:"2026年9月26日",
         content:[
-            "庆祝一下网站成功绑定新的域名' https://ydlab.top '!"
+            "庆祝一下网站成功绑定新的域名 'https://ydlab.top'!"
         ]
     },
     {
