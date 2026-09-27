@@ -9,19 +9,19 @@ body {
 }
 
 :root {
-    --bg-color: #ffffff;
+    --bg-color: #e5e5e5;
     --text-color: #000000;
     --nav-bg: linear-gradient(to bottom, #1385ff, #49a1ff);
     --card-bg: #ffffff;
-    --findour-bg: #e5e5e5db;
+    --findour-bg: #d3d3d3db;
 }
 
 body.dark-mode {
-    --bg-color: #1a1a1a;
+    --bg-color: #2a2a2a;
     --text-color: #e0e0e0;
     --nav-bg: linear-gradient(to bottom, #2d3748, #4a5568);
     --card-bg: #2d3748;
-    --findour-bg: #1c1c1cdb;
+    --findour-bg: #3e3e3edb;
 }
 
 body {
