@@ -1,14 +1,14 @@
-    <!--版本: Pre_7.29.4 (PC项目详情页)-->
+    <!--版本: Pre_7.29.4 (PC成员详情页)-->
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="悦动工作室官方网站 - 项目详情">
-    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,项目">
+    <meta name="description" content="悦动工作室官方网站 - 个人主页">
+    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,成员">
     <meta name="author" content="悦动工作室">
     <link rel="icon" href="../Picture/icon.webp" type="image/webp">
-    <title>项目详情 - 悦动工作室官方网站</title>
+    <title>个人主页 - 悦动工作室官方网站</title>
     <link rel="stylesheet" href="./styles.css">
     <style>
         body {
@@ -18,15 +18,99 @@
             transition: background-color 300ms ease, color 300ms ease;
         }
 
-        .project-detail-container {
-            --border-color: #e0e0e0;
+        #mainNav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        body.dark-mode .project-detail-container {
-            --border-color: #4a5568;
+        #navTitle {
+            color: rgb(252, 203, 68);
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 120px;
+            margin-left: 10px;
+            margin-right:10px;
+            cursor: pointer;
+            user-select: none;
+            line-height: 50px;
         }
 
-        .project-detail-container {
+        #navTitle:hover {
+            color: rgb(255, 215, 80);
+        }
+
+        #navLockToggle {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            margin-right:10px;
+        }
+
+        #navLockToggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #navLockToggle .lock-icon { display: none; }
+        #navLockToggle .unlock-icon { display: block; }
+        #navLockToggle.locked .lock-icon { display: block; }
+        #navLockToggle.locked .unlock-icon { display: none; }
+
+        #themeToggle {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            margin-left: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        #themeToggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-icon { transition: transform 0.3s ease; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+        body.dark-mode .sun-icon { display: block !important; }
+        body.dark-mode .moon-icon { display: none !important; }
+
+        #backButton {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            height:25px;
+            transition: background-color 0.3s;
+            margin-left:auto;
+            margin-right:20px;
+        }
+
+        #backButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #versionInfo {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            color: rgba(0, 0, 0, 0.65);
+            font-size: 12px;
+            z-index: 998;
+        }
+
+        body.dark-mode #versionInfo {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .content {
             margin-top: 100px;
             padding: 20px;
             max-width: 900px;
@@ -34,155 +118,157 @@
             margin-right: auto;
         }
 
-        .project-detail-card {
+        h1, p { cursor: default; }
+
+        .header {
+            text-align: center;
+            margin-top: 40px;
             background: var(--card-bg);
             border-radius: 20px;
             padding: 50px 40px;
             box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.684),
                         inset 0px -5px 10px rgba(128, 128, 128, 0.527);
             margin-bottom: 30px;
-            transition: all 0.5s;
+            transition: all 0.3s;
         }
 
-        body.dark-mode .project-detail-card {
-            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4),
-                        inset 0px -5px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .project-detail-title {
-            font-size: 32px;
-            font-weight: 600;
-            text-align: center;
+        .header #name {
+            text-shadow: 2px 2px 6px rgba(0, 0, 70, 0.5), 4px 4px 12px rgba(0, 0, 70, 0.25);
+            font-size: 40px;
+            font-weight: 300;
             color: var(--text-color);
-            margin-bottom: 20px;
-            line-height: 1.3;
+            margin-top: 10px;
         }
 
-        .project-detail-desc {
-            font-size: 18px;
-            line-height: 2;
-            color: var(--text-color);
-            opacity: 0.85;
-            text-align: center;
-            margin-bottom: 30px;
+        body.dark-mode .header #name {
+            text-shadow: 2px 2px 6px rgba(100, 100, 200, 0.5), 4px 4px 12px rgba(100, 100, 200, 0.25);
         }
 
-        .project-detail-features {
-            margin: 30px 0;
-            padding: 0 20px;
+        .header #introduce {
+            text-align: left;
+            font-size: 25px;
+            font-weight: 350;
+            margin-top: 0px;
         }
 
-        .project-detail-features h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 16px;
-            text-align: center;
+        .header #sign {
+            text-align: left;
+            margin-left: 75px;
+            padding-left: 75px;
+            font-size: 25px;
+            font-weight: 350;
+            margin-top: -25px;
         }
 
-        .project-detail-features ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .project-detail-features li {
-            position: relative;
-            padding: 10px 0 10px 30px;
-            font-size: 16px;
-            color: var(--text-color);
-            opacity: 0.8;
-            line-height: 1.6;
-        }
-
-        .project-detail-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 4px;
-            color: #1385ff;
-            font-weight: bold;
-        }
-
-        .project-detail-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .project-detail-btn {
-            display: inline-block;
-            padding: 14px 36px;
-            background: linear-gradient(135deg, #1385ff, #49a1ff);
-            color: white;
+        a {
             text-decoration: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-
-        .project-detail-btn:hover {
-            opacity: 0.85;
-        }
-
-        .project-detail-btn.secondary {
-            background: linear-gradient(135deg, #6c757d, #adb5bd);
-        }
-
-        .project-detail-footer {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        #projectDetail {
-            display: block;
-        }
-
-        .project-detail-loading {
-            text-align: center;
-            padding: 100px 20px;
-            font-size: 20px;
             color: var(--text-color);
-            opacity: 0.6;
-        }
-
-        #backButton {
-            background: transparent;
-            border: none;
-            color: white;
             cursor: pointer;
-            padding: 8px 16px;
-            font-size: 16px;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            margin-left: auto;
-            margin-right: 20px;
         }
 
-        #backButton:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        #contact {
+            margin-top: 30px;
+            font-size: 25px;
+            font-weight: 350;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 10px 10px 20px rgba(128, 128, 128, 0.684),
+                        inset 0px -5px 10px rgba(128, 128, 128, 0.527);
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        #contact-way2 { margin-top: -30px; }
+
+        #job_program {
+            font-size: 15px;
+            font-weight: 500;
+            background-color: #006eff55;
+            color: #006eff;
+            border-radius: 10px;
+            width: 80px;
+            margin-left: auto;
+            margin-top: -30px;
+            text-align: center;
+        }
+
+        .header #image_program {
+            width: 180px;
+            height: 180px;
+            border-radius: 200px;
+            border: 5px solid #006eff;
+        }
+
+        #job_program_master {
+            font-size: 15px;
+            font-weight: 500;
+            background-color: #00aaa255;
+            color: #00aaa2;
+            border-radius: 10px;
+            width: 100px;
+            margin-left: auto;
+            margin-top: -30px;
+            text-align: center;
+        }
+
+        .header #image_program_master {
+            width: 180px;
+            height: 180px;
+            border-radius: 200px;
+            border: 5px solid #00aaa2;
+        }
+
+        #job_master {
+            font-size: 15px;
+            font-weight: 550;
+            background-color: #ffa60055;
+            color: #cf8700;
+            border-radius: 10px;
+            width: 80px;
+            margin-left: auto;
+            margin-top: -30px;
+            text-align: center;
+        }
+
+        .header #image_master {
+            width: 180px;
+            height: 180px;
+            border-radius: 200px;
+            border: 5px solid #e99f00;
         }
 
         @media (max-width: 768px) {
-            .project-detail-card {
-                padding: 30px 20px;
-            }
-            .project-detail-title {
-                font-size: 26px;
-            }
-            .project-detail-desc {
-                font-size: 16px;
-            }
+            #mainNav::before { font-size: 16px; min-width: 80px; }
+            #backButton { font-size: 14px; padding: 6px 15px; }
+            #themeToggle { margin-right: 10px; }
+            .header #introduce,
+            .header #sign { margin-left: 20px; padding-left: 20px; font-size: 18px; }
+            #contact { margin-left: 40px; font-size: 18px; }
+            #contact-way2 { margin-top: -20px; }
+            #job_program, #job_master { margin-left: 44%; }
+            #job_program_master { margin-left: 44%; }
+            .header #name { font-size: 30px; }
         }
+
+        @media (max-width: 400px) {
+            .header #introduce,
+            .header #sign { font-size: 15px; }
+            #contact { font-size: 15px; margin-left: 20px; }
+        }
+
+        img {
+            -webkit-user-drag: none;
+            -moz-user-drag: none;
+            -ms-user-drag: none;
+            user-drag: none;
+        }
+
     </style>
 </head>
 <body>
     <nav id="mainNav">
-        <span id="navTitle" onclick="location.href='./index.html'" style="cursor:pointer;user-select:none;">悦动工作室</span>
+        <a id="navTitle" href="./index.html" style="cursor:pointer;user-select:none;">悦动工作室</a>
         <button id="navLockToggle" aria-label="锁定导航栏">
             <svg class="lock-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -199,68 +285,132 @@
                 <path class="moon-icon" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
             </svg>
         </button>
+        <a href="./index.html" id="backButton">&#8592; 返回主页</a>
     </nav>
-
-    <div class="project-detail-container">
-        <div id="projectDetail">
-            <div class="project-detail-loading">正在加载项目...</div>
+    <div class="content">
+        <div class="header" id="memberHeader">
+            <img src="" id="memberImage" draggable="false">
+            <h1 id="name"></h1>
+            <p id="memberJob"></p>
+            <p id="introduce"></p>
+            <p id="sign" style="display:none;"></p>
+        </div>
+        <div id="contact">
+            <div id="contactContent"></div>
         </div>
     </div>
+        <div id="versionInfo"></div>
 
-    <div id="versionInfo"></div>
-
-    <script src="../shared/devMode.js"></script>
-    <script src="../shared/projectData.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="../shared/devMode.js"></script>
     <script src="../version.js"></script>
     <script>
-        // 版本: Pre_7.29.4 - 项目详情页脚本（PC端）
-        $("#versionInfo").text(currentVersion);
+        // 版本: Pre_7.29.4 - 成员页面脚本（PC端）
+        var members = {
+            1: {
+                name: '小郑',
+                title: '室长',
+                role: 'master',
+                avatar: '../Picture/member_1.webp',
+                intro: '介绍：悦动工作室室长',
+                sign: '',
+                contact: [
+                    'QQ号：2236933051',
+                    '邮箱：2236933051@qq.com'
+                ]
+            },
+            2: {
+                name: '反性能老魔',
+                title: '副室长',
+                role: 'master',
+                avatar: '../Picture/member_5.webp',
+                intro: '介绍：会Python，javascript和一点点css。据说他的电脑用的是3代i5……',
+                sign: '键盘总得敲到废，代码写到人疲累',
+                contact: [
+                    'QQ号：3171244185',
+                    '邮箱：3171244185@qq.com'
+                ]
+            },
+            3: {
+                name: '超级苦力怕1324',
+                title: '程序组长',
+                role: 'program_master',
+                avatar: '../Picture/member_2.webp',
+                intro: '介绍：会python和html,css,JavaScript，懂得安卓，windows软件和网站开发',
+                sign: '',
+                contact: [
+                    'QQ号：2672066839',
+                    '邮箱：2672066839@qq.com'
+                ]
+            },
+            4: {
+                name: '普通的编程萌新',
+                title: '程序组',
+                role: 'program',
+                avatar: '../Picture/member_4.webp',
+                intro: '介绍：一个普通到不能再普通的编程萌新会Python，还会一点JavaScript、和C语言',
+                sign: '',
+                contact: [
+                    'QQ号：2100400850',
+                    '邮箱：2100400850@qq.com'
+                ]
+            }
+        };
+
         function getUrlParam(name) {
             var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
             return match ? decodeURIComponent(match[1]) : null;
         }
 
-        function renderProject(id) {
-            var data = projectData[id];
-            var container = document.getElementById('projectDetail');
-
+        function renderMember(id) {
+            var data = members[id];
             if (!data) {
-                container.innerHTML = '<div class="project-detail-card" style="text-align:center;padding:80px 40px;"><h2 style="color:var(--text-color);margin-bottom:20px;">项目不存在</h2><p style="color:var(--text-color);opacity:0.6;margin-bottom:30px;">抱歉，未找到该项目内容。</p><a href="./index.html" class="project-detail-btn">&#8592; 返回项目列表</a></div>';
-                document.title = '项目未找到 - 悦动工作室官方网站';
+                window.location.href = '../404.html';
                 return;
             }
+            document.title = data.name + ' - 个人主页';
 
-            document.title = data.title + ' - 悦动工作室官方网站';
+            var img = document.getElementById('memberImage');
+            img.src = data.avatar;
+            img.alt = data.name;
+            img.id = 'image_' + data.role;
 
-            var featuresHtml = '';
-            if (data.features && data.features.length > 0) {
-                featuresHtml = '<div class="project-detail-features"><h3>功能介绍</h3><ul>';
-                data.features.forEach(function(item) {
-                    featuresHtml += '<li>' + item + '</li>';
+            document.getElementById('name').textContent = data.name;
+
+            var job = document.getElementById('memberJob');
+            job.textContent = data.title;
+            job.id = 'job_' + data.role;
+            job.style.display = 'block';
+
+            document.getElementById('introduce').textContent = data.intro;
+
+            var sign = document.getElementById('sign');
+            if (data.sign) {
+                sign.textContent = data.sign;
+                sign.style.display = 'block';
+            } else {
+                sign.style.display = 'none';
+            }
+
+            var contactContent = document.getElementById('contactContent');
+            contactContent.innerHTML = '';
+            if (data.contact && data.contact.length > 0) {
+                data.contact.forEach(function(item) {
+                    var p = document.createElement('p');
+                    if (contactContent.children.length === 0) {
+                        p.id = 'contact-way1';
+                    } else {
+                        p.id = 'contact-way2';
+                    }
+                    p.textContent = item;
+                    contactContent.appendChild(p);
                 });
-                featuresHtml += '</ul></div>';
+            } else {
+                var p = document.createElement('p');
+                p.style.cssText = 'font-size:18px;opacity:0.5;margin-top:10px;';
+                p.textContent = '暂无联系方式';
+                contactContent.appendChild(p);
             }
-
-            var actionsHtml = '<div class="project-detail-actions">';
-            if (data.online) {
-                actionsHtml += '<a class="project-detail-btn" href="' + data.online + '" target="_blank">打开网页</a>';
-            }
-            if (data.download) {
-                actionsHtml += '<a class="project-detail-btn" href="' + data.download + '" download="' + data.downloadName + '">点击下载</a>';
-            }
-            actionsHtml += '</div>';
-
-            container.innerHTML = 
-                '<div class="project-detail-card">' +
-                    '<h1 class="project-detail-title">' + data.title + '</h1>' +
-                    '<p class="project-detail-desc">' + data.desc + '</p>' +
-                    featuresHtml +
-                    actionsHtml +
-                '</div>' +
-                '<div class="project-detail-footer">' +
-                    '<a href="./index.html" class="project-detail-btn">&#8592; 返回项目列表</a>' +
-                '</div>';
         }
 
         // 导航栏逻辑
@@ -334,12 +484,14 @@
                 }, 5000);
             }
 
-            var projectId = getUrlParam('id');
-            if (!projectId) {
+            var memberId = getUrlParam('id');
+            if (!memberId) {
                 window.location.href = '../404.html';
                 return;
             }
-            renderProject(projectId);
+            renderMember(memberId);
+
+            $("#versionInfo").text(currentVersion);
         });
     </script>
 </body>
