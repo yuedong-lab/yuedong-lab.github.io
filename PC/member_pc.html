@@ -111,9 +111,9 @@
         }
 
         .content {
-            margin-top: 100px;
+            margin-top: 30px;
             padding: 20px;
-            max-width: 900px;
+            max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -153,8 +153,6 @@
 
         .header #sign {
             text-align: left;
-            margin-left: 75px;
-            padding-left: 75px;
             font-size: 25px;
             font-weight: 350;
             margin-top: -25px;
@@ -166,7 +164,22 @@
             cursor: pointer;
         }
 
+        .about-back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #1385ff, #49a1ff);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            text-align: center;
+        }
+
         #contact {
+            text-align:left;
             margin-top: 30px;
             font-size: 25px;
             font-weight: 350;
@@ -177,6 +190,11 @@
                         inset 0px -5px 10px rgba(128, 128, 128, 0.527);
             margin-bottom: 30px;
             transition: all 0.3s;
+            max-height: 30px;
+        }
+
+        #contactContent{
+            margin-top:-40px;
         }
 
         #contact-way2 { margin-top: -30px; }
@@ -194,8 +212,8 @@
         }
 
         .header #image_program {
-            width: 180px;
-            height: 180px;
+            width: 90px;
+            height: 90px;
             border-radius: 200px;
             border: 5px solid #006eff;
         }
@@ -213,8 +231,8 @@
         }
 
         .header #image_program_master {
-            width: 180px;
-            height: 180px;
+            width: 90px;
+            height: 90px;
             border-radius: 200px;
             border: 5px solid #00aaa2;
         }
@@ -232,8 +250,8 @@
         }
 
         .header #image_master {
-            width: 180px;
-            height: 180px;
+            width: 90px;
+            height: 90px;
             border-radius: 200px;
             border: 5px solid #e99f00;
         }
@@ -298,6 +316,9 @@
         <div id="contact">
             <div id="contactContent"></div>
         </div>
+        <center>
+            <a href="./index.html" class="about-back-btn">&#8592; 返回成员列表</a>
+        </center>
     </div>
         <div id="versionInfo"></div>
 
