@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>二次函数工具</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f2f5f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 12px;
+      }
+      .box {
+        max-width: 720px;
+        width: 100%;
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px 20px 22px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e6ecf3;
+      }
+      h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0b1e33;
+        margin-bottom: 12px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 8px 12px;
+        background: #f8faff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e6ecf3;
+        margin-bottom: 10px;
+      }
+      .grp {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 50px;
+        min-width: 44px;
+      }
+      .grp label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #2a4a6a;
+      }
+      .grp input {
+        padding: 5px 7px;
+        border: 2px solid #d5dee8;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 500;
+        background: #fff;
+        outline: none;
+        width: 100%;
+      }
+      .grp input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.12);
+      }
+      .btn {
+        background: #1f4e7a;
+        color: #fff;
+        border: none;
+        padding: 5px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        height: 34px;
+        flex: 0 0 auto;
+      }
+      .btn:hover {
+        background: #143a5c;
+      }
+      .err {
+        color: #d14545;
+        font-size: 12px;
+        font-weight: 500;
+        min-height: 18px;
+        margin: -2px 0 6px 6px;
+      }
+      .res {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 14px;
+        background: #fafcff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e6ecf3;
+        margin-bottom: 12px;
+      }
+      .res .it {
+        display: flex;
+        flex-direction: column;
+      }
+      .res .it .lbl {
+        font-size: 10px;
+        font-weight: 600;
+        color: #7a94ae;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+      }
+      .res .it .val {
+        font-size: 17px;
+        font-weight: 600;
+        color: #0b1e33;
+        font-family: "Times New Roman", serif;
+        word-break: break-word;
+      }
+      .res .it .sub {
+        font-size: 13px;
+        color: #1f3a57;
+      }
+      .calc {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .calc .cb {
+        background: #f8faff;
+        border-radius: 8px;
+        padding: 8px 10px 10px;
+        border: 1px solid #e6ecf3;
+      }
+      .calc .cb .ct {
+        font-size: 11px;
+        font-weight: 600;
+        color: #4d637d;
+        margin-bottom: 3px;
+      }
+      .calc .cb .cr {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .calc .cb .cr input {
+        flex: 1;
+        min-width: 40px;
+        padding: 3px 6px;
+        border: 2px solid #d5dee8;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 500;
+        background: #fff;
+        outline: none;
+      }
+      .calc .cb .cr input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.1);
+      }
+      .calc .cb .cr .bs {
+        background: #eaf1fa;
+        color: #1f4e7a;
+        border: none;
+        padding: 3px 10px;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .calc .cb .cr .bs:hover {
+        background: #d4e2f0;
+      }
+      .calc .cb .cr .sym {
+        background: #fff;
+        border: 1px solid #d5dee8;
+        border-radius: 4px;
+        padding: 0 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        height: 26px;
+        min-width: 30px;
+        text-align: center;
+        line-height: 24px;
+        color: #1f4e7a;
+        user-select: none;
+      }
+      .calc .cb .cr .sym:hover {
+        background: #eaf1fa;
+      }
+      .calc .cb .cr .fix {
+        font-weight: 700;
+        color: #0b1e33;
+        padding: 0 2px;
+        font-size: 14px;
+      }
+      .calc .cb .o {
+        margin-top: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0b1e33;
+        padding: 3px 6px;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px dashed #d5dee8;
+        min-height: 22px;
+      }
+      .calc .cb .dir {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 3px;
+      }
+      .calc .cb .dir span {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        background: #eef2f6;
+        color: #4d637d;
+      }
+      .calc .cb .dir span.on {
+        background: #1f4e7a;
+        color: #fff;
+      }
+      .calc .cb .dir span:hover {
+        background: #d5dee8;
+      }
+      .chart {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e6ecf3;
+        background: #fff;
+        position: relative;
+      }
+      .chart canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        cursor: default;
+      }
+      .hint {
+        font-size: 11px;
+        color: #8aa0b8;
+        padding: 4px 0 0 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>二次函数工具</h2>
+      <div class="row">
+        <div class="grp">
+          <label>a</label><input type="text" id="ia" value="1" />
+        </div>
+        <div class="grp">
+          <label>b</label><input type="text" id="ib" value="-2" />
+        </div>
+        <div class="grp">
+          <label>c</label><input type="text" id="ic" value="-3" />
+        </div>
+        <button class="btn" id="bu">转换</button>
+      </div>
+      <div class="err" id="er"></div>
+
+      <div class="res">
+        <div class="it">
+          <span class="lbl">一般式</span
+          ><span class="val" id="dg">y = x² − 2x − 3</span>
+        </div>
+        <div class="it">
+          <span class="lbl">顶点式</span
+          ><span class="val" id="dv">y = (x − 1)² − 4</span>
+        </div>
+        <div class="it">
+          <span class="lbl">顶点</span><span class="val" id="dc">(1, −4)</span>
+        </div>
+        <div class="it">
+          <span class="lbl">开口/对称轴</span
+          ><span class="sub" id="de">向上 · x = 1</span>
+        </div>
+      </div>
+
+      <div class="calc">
+        <div class="cb">
+          <div class="ct">
+            单值求值
+            <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+              >(拖动图上红点联动)</span
+            >
+          </div>
+          <div class="dir">
+            <span class="on" id="dir1">X → Y</span>
+            <span id="dir1r">Y → X</span>
+          </div>
+          <div class="cr">
+            <input type="text" id="sv" placeholder="输入数值" value="0" />
+            <button class="bs" id="bsv">计算</button>
+          </div>
+          <div class="o" id="osv">y = -3</div>
+        </div>
+
+        <div class="cb">
+          <div class="ct">范围转换</div>
+          <div class="dir">
+            <span class="on" id="dir2">X → Y</span>
+            <span id="dir2r">Y → X</span>
+          </div>
+          <div class="cr">
+            <input type="text" id="rl" placeholder="左" value="0" />
+            <span class="sym" id="op1l">&lt;</span>
+            <span class="fix" id="varLabel">X</span>
+            <span class="sym" id="op1r">≤</span>
+            <input type="text" id="rr" placeholder="右" value="3" />
+            <button class="bs" id="brng">转换</button>
+          </div>
+          <div class="o" id="orng">-4 ≤ y ≤ 0</div>
+        </div>
+      </div>
+
+      <div class="chart">
+        <canvas id="cv" width="800" height="340"></canvas>
+      </div>
+      <div class="hint">🟠 拖动红点沿抛物线滑动 · 坐标自动同步到单值求值</div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (s) {
+          return document.querySelector(s);
+        };
+        var ia = $("#ia"),
+          ib = $("#ib"),
+          ic = $("#ic");
+        var dg = $("#dg"),
+          dv = $("#dv"),
+          dc = $("#dc"),
+          de = $("#de"),
+          er = $("#er");
+        var sv = $("#sv"),
+          osv = $("#osv");
+        var rl = $("#rl"),
+          rr = $("#rr"),
+          orng = $("#orng");
+        var cv = $("#cv"),
+          ctx = cv.getContext("2d");
+
+        var dir1 = "xy",
+          dir2 = "xy";
+        var dragX = 0; // 当前红点的数学 x 坐标
+        var isDragging = false;
+        var dragValid = false;
+
+        // ---- 表达式求值 ----
+        function evalExpr(s) {
+          s = s.trim();
+          if (!s) return NaN;
+          try {
+            var fn = new Function("return (" + s + ")");
+            var v = fn();
+            if (typeof v === "number" && isFinite(v)) return v;
+            return NaN;
+          } catch (e) {
+            return NaN;
+          }
+        }
+
+        // ---- 格式化 ----
+        function f(v) {
+          if (typeof v !== "number" || !isFinite(v)) return "0";
+          if (Number.isInteger(v)) return String(v);
+          return parseFloat(v.toFixed(4)).toString();
+        }
+
+        // ---- 获取系数（支持表达式） ----
+        function getCoef() {
+          var a = evalExpr(ia.value),
+            b = evalExpr(ib.value),
+            c = evalExpr(ic.value);
+          if (isNaN(a) || isNaN(b) || isNaN(c))
+            return {
+              ok: false,
+              msg: "请输入有效数字或表达式 (如 2, -3, 1/2, 3+1)",
+            };
+          if (a === 0) return { ok: false, msg: "a 不能为 0" };
+          return { ok: true, a: a, b: b, c: c };
+        }
+
+        function fmtGeneral(a, b, c) {
+          var p = [];
+          if (a === 1) p.push("x²");
+          else if (a === -1) p.push("−x²");
+          else p.push(f(a) + "x²");
+          if (b === 1) p.push("+ x");
+          else if (b === -1) p.push("− x");
+          else if (b > 0) p.push("+ " + f(b) + "x");
+          else if (b < 0) p.push("− " + f(-b) + "x");
+          if (c > 0) p.push("+ " + f(c));
+          else if (c < 0) p.push("− " + f(-c));
+          return "y = " + (p.length ? p.join(" ") : "0");
+        }
+        function fmtVertex(a, h, k) {
+          var ap = "";
+          if (a === 1) ap = "";
+          else if (a === -1) ap = "−";
+          else ap = f(a);
+          var hp = "";
+          if (h === 0) hp = "x²";
+          else if (h > 0) hp = "(x − " + f(h) + ")²";
+          else hp = "(x + " + f(-h) + ")²";
+          var mid = ap + hp;
+          if (ap === "−") mid = "−" + hp;
+          var kp = "";
+          if (k > 0) kp = " + " + f(k);
+          else if (k < 0) kp = " − " + f(-k);
+          return "y = " + mid + kp;
+        }
+
+        // ---- 核心更新 ----
+        function update() {
+          var r = getCoef();
+          if (!r.ok) {
+            er.textContent = r.msg;
+            dg.textContent =
+              dv.textContent =
+              dc.textContent =
+              de.textContent =
+                "—";
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            ph();
+            return;
+          }
+          er.textContent = "";
+          var a = r.a,
+            b = r.b,
+            c = r.c;
+          var h = -b / (2 * a),
+            k = a * h * h + b * h + c;
+          dg.textContent = fmtGeneral(a, b, c);
+          dv.textContent = fmtVertex(a, h, k);
+          dc.textContent = "(" + f(h) + ", " + f(k) + ")";
+          de.textContent = (a > 0 ? "向上" : "向下") + " · x = " + f(h);
+          // 如果当前红点不在有效范围内，重置到顶点
+          var r2 = getCoef();
+          if (r2.ok) {
+            var ah = r2.a,
+              bh = r2.b,
+              ch = r2.c;
+            var hh = -bh / (2 * ah);
+            if (!dragValid || isNaN(dragX)) {
+              dragX = hh;
+              dragValid = true;
+            }
+          }
+          calcSingle();
+          calcRange();
+          drawChart(a, b, c, h, k);
+        }
+
+        // ---- 单值求值 ----
+        function calcSingle() {
+          var r = getCoef();
+          if (!r.ok) {
+            osv.textContent = "系数无效";
+            return;
+          }
+          var v = parseFloat(sv.value.trim());
+          if (isNaN(v)) {
+            osv.textContent = "请输入数值";
+            return;
+          }
+          if (dir1 === "xy") {
+            var yv = r.a * v * v + r.b * v + r.c;
+            osv.textContent = "y = " + f(yv);
+            dragX = v;
+            dragValid = true;
+            drawChart(
+              r.a,
+              r.b,
+              r.c,
+              -r.b / (2 * r.a),
+              r.a * (-r.b / (2 * r.a)) * (-r.b / (2 * r.a)) +
+                r.b * (-r.b / (2 * r.a)) +
+                r.c,
+            );
+          } else {
+            var A = r.a,
+              B = r.b,
+              C = r.c - v,
+              D = B * B - 4 * A * C;
+            if (D < 0) {
+              osv.textContent = "无实数解";
+              return;
+            }
+            if (Math.abs(D) < 1e-12) {
+              osv.textContent = "x = " + f(-B / (2 * A)) + " (重根)";
+              return;
+            }
+            var s = Math.sqrt(D),
+              x1 = (-B + s) / (2 * A),
+              x2 = (-B - s) / (2 * A);
+            osv.textContent =
+              Math.abs(x1 - x2) < 1e-12
+                ? "x = " + f(x1)
+                : "x = " + f(x1) + " 或 " + f(x2);
+          }
+        }
+
+        // ---- 范围转换 ----
+        function symToOp(sym) {
+          return { "<": 0, "≤": 1, ">": 2, "≥": 3 }[sym] || 0;
+        }
+        function opToSym(op) {
+          return ["<", "≤", ">", "≥"][op] || "<";
+        }
+        function cycleSym(el) {
+          var syms = ["<", "≤", ">", "≥"];
+          var cur = el.textContent;
+          var idx = syms.indexOf(cur);
+          idx = (idx + 1) % 4;
+          el.textContent = syms[idx];
+        }
+
+        function calcRange() {
+          var r = getCoef();
+          if (!r.ok) {
+            orng.textContent = "系数无效";
+            return;
+          }
+          var a = r.a,
+            b = r.b,
+            c = r.c;
+          var lo = parseFloat(rl.value.trim()),
+            hi = parseFloat(rr.value.trim());
+          if (isNaN(lo) && isNaN(hi)) {
+            orng.textContent = "请输入范围";
+            return;
+          }
+          var op1 = symToOp($("#op1l").textContent),
+            op2 = symToOp($("#op1r").textContent);
+
+          if (dir2 === "xy") {
+            var h = -b / (2 * a),
+              dir = a > 0;
+            var candidates = [];
+            if (lo <= h && h <= hi)
+              candidates.push({ val: a * h * h + b * h + c, inc: true });
+            if (isFinite(lo)) {
+              var ylo = a * lo * lo + b * lo + c;
+              var inc1 = op1 === 1 || op1 === 3;
+              candidates.push({ val: ylo, inc: inc1 });
+            }
+            if (isFinite(hi)) {
+              var yhi = a * hi * hi + b * hi + c;
+              var inc2 = op2 === 1 || op2 === 3;
+              candidates.push({ val: yhi, inc: inc2 });
+            }
+            if (candidates.length === 0) {
+              orng.textContent = "y ∈ (−∞, +∞)";
+              return;
+            }
+            var ylo = Infinity,
+              yhi = -Infinity,
+              incLo = false,
+              incHi = false;
+            candidates.forEach(function (item) {
+              if (item.val < ylo) {
+                ylo = item.val;
+                incLo = item.inc;
+              } else if (item.val === ylo) {
+                incLo = incLo || item.inc;
+              }
+              if (item.val > yhi) {
+                yhi = item.val;
+                incHi = item.inc;
+              } else if (item.val === yhi) {
+                incHi = incHi || item.inc;
+              }
+            });
+            if (ylo > yhi) {
+              orng.textContent = "无解";
+              return;
+            }
+            if (!isFinite(ylo) || !isFinite(yhi)) {
+              orng.textContent = "y ∈ (−∞, +∞)";
+              return;
+            }
+            if (ylo === yhi) {
+              orng.textContent = "y = " + f(ylo);
+              return;
+            }
+            orng.textContent =
+              f(ylo) +
+              (incLo ? " ≤ " : " < ") +
+              "y" +
+              (incHi ? " ≤ " : " < ") +
+              f(yhi);
+          } else {
+            function solve(y0) {
+              var D = b * b - 4 * a * (c - y0);
+              if (D < 0) return null;
+              var s = Math.sqrt(D);
+              return { lo: (-b - s) / (2 * a), hi: (-b + s) / (2 * a) };
+            }
+            var intervals = [];
+            if (isFinite(lo)) {
+              var res = solve(lo);
+              if (!res) {
+                orng.textContent = "无解";
+                return;
+              }
+              var l = res.lo,
+                rr2 = res.hi;
+              if (op1 === 0 || op1 === 1) {
+                intervals.push({
+                  lo: l,
+                  hi: rr2,
+                  incLo: op1 === 1,
+                  incHi: op1 === 1,
+                });
+              } else {
+                intervals.push({
+                  lo: -Infinity,
+                  hi: l,
+                  incLo: false,
+                  incHi: op1 === 3,
+                });
+                intervals.push({
+                  lo: rr2,
+                  hi: Infinity,
+                  incLo: op1 === 3,
+                  incHi: false,
+                });
+              }
+            }
+            if (isFinite(hi)) {
+              var res2 = solve(hi);
+              if (!res2) {
+                orng.textContent = "无解";
+                return;
+              }
+              var l2 = res2.lo,
+                rr3 = res2.hi;
+              if (op2 === 0 || op2 === 1) {
+                intervals.push({
+                  lo: l2,
+                  hi: rr3,
+                  incLo: op2 === 1,
+                  incHi: op2 === 1,
+                });
+              } else {
+                intervals.push({
+                  lo: -Infinity,
+                  hi: l2,
+                  incLo: false,
+                  incHi: op2 === 3,
+                });
+                intervals.push({
+                  lo: rr3,
+                  hi: Infinity,
+                  incLo: op2 === 3,
+                  incHi: false,
+                });
+              }
+            }
+            if (intervals.length === 0) {
+              orng.textContent = "x ∈ (−∞, +∞)";
+              return;
+            }
+            var merged = [
+              { lo: -Infinity, hi: Infinity, incLo: false, incHi: false },
+            ];
+            intervals.forEach(function (seg) {
+              var nm = [];
+              merged.forEach(function (m) {
+                var lo2 = m.lo > seg.lo ? m.lo : seg.lo,
+                  hi2 = m.hi < seg.hi ? m.hi : seg.hi;
+                if (lo2 <= hi2) {
+                  var incLo2 =
+                    (lo2 === m.lo ? m.incLo : false) &&
+                    (lo2 === seg.lo ? seg.incLo : false);
+                  var incHi2 =
+                    (hi2 === m.hi ? m.incHi : false) &&
+                    (hi2 === seg.hi ? seg.incHi : false);
+                  nm.push({ lo: lo2, hi: hi2, incLo: incLo2, incHi: incHi2 });
+                }
+              });
+              merged = nm;
+            });
+            if (merged.length === 0) {
+              orng.textContent = "无解";
+              return;
+            }
+            var parts = [];
+            merged.forEach(function (seg) {
+              var lo2 = seg.lo,
+                hi2 = seg.hi,
+                incLo2 = seg.incLo,
+                incHi2 = seg.incHi;
+              if (!isFinite(lo2) && !isFinite(hi2)) {
+                parts.push("x ∈ (−∞, +∞)");
+              } else if (isFinite(lo2) && !isFinite(hi2)) {
+                parts.push(f(lo2) + (incLo2 ? " ≤ " : " < ") + "x");
+              } else if (!isFinite(lo2) && isFinite(hi2)) {
+                parts.push("x" + (incHi2 ? " ≤ " : " < ") + f(hi2));
+              } else {
+                parts.push(
+                  f(lo2) +
+                    (incLo2 ? " ≤ " : " < ") +
+                    "x" +
+                    (incHi2 ? " ≤ " : " < ") +
+                    f(hi2),
+                );
+              }
+            });
+            orng.textContent = parts.join(" 或 ");
+          }
+        }
+
+        // ---- 绘图 + 红点 ----
+        function drawChart(a, b, c, h, k) {
+          var W = cv.width,
+            H = cv.height,
+            pad = { t: 20, b: 20, l: 32, r: 20 };
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, W, H);
+
+          var xMin = h - 5,
+            xMax = h + 5;
+          if (xMin > -4) xMin = -4;
+          if (xMax < 4) xMax = 4;
+          if (xMax - xMin < 3) {
+            var m = (xMin + xMax) / 2;
+            xMin = m - 3;
+            xMax = m + 3;
+          }
+          var yMin = Infinity,
+            yMax = -Infinity,
+            st = (xMax - xMin) / 200;
+          for (var x = xMin; x <= xMax; x += st) {
+            var y = a * x * x + b * x + c;
+            if (isFinite(y)) {
+              if (y < yMin) yMin = y;
+              if (y > yMax) yMax = y;
+            }
+          }
+          if (!isFinite(yMin) || !isFinite(yMax)) {
+            yMin = -2;
+            yMax = 2;
+          }
+          var yp = Math.max((yMax - yMin) * 0.12, 0.5);
+          yMin -= yp;
+          yMax += yp;
+          if (yMin > 0) yMin = -0.5;
+          if (yMax < 0) yMax = 0.5;
+
+          function tx(xx) {
+            return pad.l + ((xx - xMin) / (xMax - xMin)) * (W - pad.l - pad.r);
+          }
+          function ty(yy) {
+            return pad.t + ((yMax - yy) / (yMax - yMin)) * (H - pad.t - pad.b);
+          }
+
+          var xs = niceStep(xMax - xMin),
+            ys = niceStep(yMax - yMin);
+          ctx.strokeStyle = "#eef2f8";
+          ctx.lineWidth = 1;
+          for (var xg = Math.ceil(xMin / xs) * xs; xg <= xMax; xg += xs) {
+            var cxg = tx(xg);
+            ctx.beginPath();
+            ctx.moveTo(cxg, pad.t);
+            ctx.lineTo(cxg, H - pad.b);
+            ctx.stroke();
+          }
+          for (var yg = Math.ceil(yMin / ys) * ys; yg <= yMax; yg += ys) {
+            var cyg = ty(yg);
+            ctx.beginPath();
+            ctx.moveTo(pad.l, cyg);
+            ctx.lineTo(W - pad.r, cyg);
+            ctx.stroke();
+          }
+
+          ctx.strokeStyle = "#3a4d66";
+          ctx.lineWidth = 2;
+          if (yMin <= 0 && yMax >= 0) {
+            var cy0 = ty(0);
+            ctx.beginPath();
+            ctx.moveTo(pad.l, cy0);
+            ctx.lineTo(W - pad.r, cy0);
+            ctx.stroke();
+            ctx.fillStyle = "#3a4d66";
+            ctx.font = "11px sans-serif";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText("x", W - pad.r - 14, cy0 + 2);
+          }
+          if (xMin <= 0 && xMax >= 0) {
+            var cx0 = tx(0);
+            ctx.beginPath();
+            ctx.moveTo(cx0, pad.t);
+            ctx.lineTo(cx0, H - pad.b);
+            ctx.stroke();
+            ctx.fillStyle = "#3a4d66";
+            ctx.font = "11px sans-serif";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "bottom";
+            ctx.fillText("y", cx0 + 4, pad.t + 2);
+          }
+
+          ctx.fillStyle = "#4d637d";
+          ctx.font = "10px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          for (var xl = Math.ceil(xMin / xs) * xs; xl <= xMax; xl += xs) {
+            var cxl = tx(xl);
+            var yp0 = yMin <= 0 && yMax >= 0 ? ty(0) : H - pad.b;
+            ctx.fillText(f(xl), cxl, yp0 + 3);
+          }
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          for (var yl = Math.ceil(yMin / ys) * ys; yl <= yMax; yl += ys) {
+            var cyl = ty(yl);
+            var xp0 = xMin <= 0 && xMax >= 0 ? tx(0) : pad.l;
+            ctx.fillText(f(yl), xp0 - 4, cyl);
+          }
+
+          // 曲线
+          ctx.strokeStyle = "#1f6eaf";
+          ctx.lineWidth = 3.5;
+          ctx.shadowColor = "rgba(31,110,175,.15)";
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          var first = true,
+            ds = (xMax - xMin) / 400;
+          for (var i = 0; i <= 400; i++) {
+            var xi = xMin + i * ds,
+              yi = a * xi * xi + b * xi + c;
+            if (!isFinite(yi)) continue;
+            var cxi = tx(xi),
+              cyi = ty(yi);
+            if (cyi < pad.t - 30 || cyi > H - pad.b + 30) {
+              first = true;
+              continue;
+            }
+            if (first) {
+              ctx.moveTo(cxi, cyi);
+              first = false;
+            } else {
+              ctx.lineTo(cxi, cyi);
+            }
+          }
+          ctx.shadowBlur = 0;
+          ctx.stroke();
+
+          // 顶点
+          var vx = tx(h),
+            vy = ty(k);
+          ctx.fillStyle = "#c0392b";
+          ctx.shadowColor = "rgba(192,57,43,.3)";
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(vx, vy, 6, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.arc(vx, vy, 2.5, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.fillStyle = "#0b1e33";
+          ctx.font = "bold 12px sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          var lbl = "V(" + f(h) + "," + f(k) + ")";
+          var tw = ctx.measureText(lbl).width;
+          var lx = vx + 10,
+            ly = vy - 8;
+          ctx.fillStyle = "rgba(255,255,255,.8)";
+          ctx.fillRect(lx - 2, ly - 16, tw + 6, 20);
+          ctx.strokeStyle = "#dce4ed";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(lx - 2, ly - 16, tw + 6, 20);
+          ctx.fillStyle = "#0b1e33";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(lbl, lx, ly + 1);
+
+          // 对称轴虚线
+          if (yMin <= 0 && yMax >= 0) {
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = "rgba(192,57,43,.2)";
+            ctx.lineWidth = 1.5;
+            var ax = tx(h);
+            ctx.beginPath();
+            ctx.moveTo(ax, pad.t);
+            ctx.lineTo(ax, H - pad.b);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+
+          // ---- 红点（可拖动） ----
+          if (!dragValid || isNaN(dragX)) {
+            dragX = h;
+            dragValid = true;
+          }
+          var rx = dragX;
+          var ry = a * rx * rx + b * rx + c;
+          // 限制红点在可视范围内
+          if (rx < xMin) rx = xMin;
+          if (rx > xMax) rx = xMax;
+          dragX = rx;
+          ry = a * rx * rx + b * rx + c;
+          var crx = tx(rx),
+            cry = ty(ry);
+          // 红点阴影
+          var grad = ctx.createRadialGradient(crx, cry, 2, crx, cry, 22);
+          grad.addColorStop(0, "rgba(230,120,30,0.3)");
+          grad.addColorStop(1, "rgba(230,120,30,0)");
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(crx, cry, 22, 0, 2 * Math.PI);
+          ctx.fill();
+          // 红点主圆
+          ctx.shadowColor = "rgba(230,120,30,0.5)";
+          ctx.shadowBlur = 12;
+          ctx.fillStyle = "#e67e22";
+          ctx.beginPath();
+          ctx.arc(crx, cry, 7, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.arc(crx, cry, 3, 0, 2 * Math.PI);
+          ctx.fill();
+          // 坐标标签
+          ctx.fillStyle = "#0b1e33";
+          ctx.font = "bold 12px sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          var clbl = "(" + f(rx) + ", " + f(ry) + ")";
+          var ctw = ctx.measureText(clbl).width;
+          var clx = crx + 12,
+            cly = cry - 10;
+          ctx.fillStyle = "rgba(255,255,255,.85)";
+          ctx.fillRect(clx - 2, cly - 16, ctw + 6, 20);
+          ctx.strokeStyle = "#dce4ed";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(clx - 2, cly - 16, ctw + 6, 20);
+          ctx.fillStyle = "#e67e22";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(clbl, clx, cly + 1);
+          // 存储红点canvas坐标用于拖拽检测
+          window._redDot = { x: crx, y: cry, rx: rx, ry: ry };
+        }
+
+        function niceStep(range) {
+          if (range <= 0) return 1;
+          var rough = range / 6,
+            power = Math.pow(10, Math.floor(Math.log10(rough))),
+            ratio = rough / power;
+          var nice = 1;
+          if (ratio >= 1.5) nice = 2;
+          if (ratio >= 3.5) nice = 5;
+          if (ratio >= 7.5) nice = 10;
+          return nice * power;
+        }
+        function ph() {
+          ctx.fillStyle = "#fafcff";
+          ctx.fillRect(0, 0, cv.width, cv.height);
+          ctx.fillStyle = "#b2c8dd";
+          ctx.font = "16px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("请输入有效的二次函数", cv.width / 2, cv.height / 2);
+        }
+
+        // ---- 红点拖动事件 ----
+        function getMousePos(e) {
+          var rect = cv.getBoundingClientRect();
+          var scaleX = cv.width / rect.width,
+            scaleY = cv.height / rect.height;
+          var clientX = e.clientX || e.touches[0].clientX;
+          var clientY = e.clientY || e.touches[0].clientY;
+          return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY,
+          };
+        }
+
+        function onPointerDown(e) {
+          e.preventDefault();
+          var pos = getMousePos(e);
+          var dot = window._redDot;
+          if (!dot) return;
+          var dx = pos.x - dot.x,
+            dy = pos.y - dot.y;
+          if (dx * dx + dy * dy < 300) {
+            // 半径约17px
+            isDragging = true;
+            cv.style.cursor = "grabbing";
+          }
+        }
+
+        function onPointerMove(e) {
+          e.preventDefault();
+          if (!isDragging) return;
+          var pos = getMousePos(e);
+          var r = getCoef();
+          if (!r.ok) return;
+          var a = r.a,
+            b = r.b,
+            c = r.c;
+          var xMin = -5,
+            xMax = 5; // 粗略范围，实际由drawChart计算，但这里用固定范围防止超出
+          var h = -b / (2 * a);
+          var xMin2 = h - 5,
+            xMax2 = h + 5;
+          if (xMin2 > -4) xMin2 = -4;
+          if (xMax2 < 4) xMax2 = 4;
+          if (xMax2 - xMin2 < 3) {
+            var m2 = (xMin2 + xMax2) / 2;
+            xMin2 = m2 - 3;
+            xMax2 = m2 + 3;
+          }
+          // 将canvas x转为数学x
+          var pad = { t: 20, b: 20, l: 32, r: 20 };
+          var W = cv.width,
+            H = cv.height;
+          function txInv(cx) {
+            return (
+              xMin2 + ((cx - pad.l) / (W - pad.l - pad.r)) * (xMax2 - xMin2)
+            );
+          }
+          var newX = txInv(pos.x);
+          if (newX < xMin2) newX = xMin2;
+          if (newX > xMax2) newX = xMax2;
+          dragX = newX;
+          dragValid = true;
+          // 更新单值求值输入框
+          sv.value = f(newX);
+          calcSingle();
+          // 重新绘制
+          var rr2 = getCoef();
+          if (rr2.ok) {
+            var hh = -rr2.b / (2 * rr2.a),
+              kk = rr2.a * hh * hh + rr2.b * hh + rr2.c;
+            drawChart(rr2.a, rr2.b, rr2.c, hh, kk);
+          }
+        }
+
+        function onPointerUp(e) {
+          if (isDragging) {
+            isDragging = false;
+            cv.style.cursor = "default";
+          }
+        }
+
+        cv.addEventListener("mousedown", onPointerDown);
+        window.addEventListener("mousemove", onPointerMove);
+        window.addEventListener("mouseup", onPointerUp);
+        cv.addEventListener("touchstart", onPointerDown, { passive: false });
+        window.addEventListener("touchmove", onPointerMove, { passive: false });
+        window.addEventListener("touchend", onPointerUp, { passive: false });
+
+        // ---- 方向切换 ----
+        document.getElementById("dir1").addEventListener("click", function () {
+          this.className = "on";
+          document.getElementById("dir1r").className = "";
+          dir1 = "xy";
+        });
+        document.getElementById("dir1r").addEventListener("click", function () {
+          this.className = "on";
+          document.getElementById("dir1").className = "";
+          dir1 = "yx";
+        });
+        document.getElementById("dir2").addEventListener("click", function () {
+          this.className = "on";
+          document.getElementById("dir2r").className = "";
+          dir2 = "xy";
+          document.getElementById("varLabel").textContent = "X";
+        });
+        document.getElementById("dir2r").addEventListener("click", function () {
+          this.className = "on";
+          document.getElementById("dir2").className = "";
+          dir2 = "yx";
+          document.getElementById("varLabel").textContent = "Y";
+        });
+
+        // ---- 按钮事件 ----
+        document.getElementById("bu").addEventListener("click", update);
+        document.getElementById("bsv").addEventListener("click", calcSingle);
+        document.getElementById("brng").addEventListener("click", calcRange);
+
+        // ---- Enter键 ----
+        [ia, ib, ic].forEach(function (el) {
+          el.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              update();
+            }
+          });
+        });
+        sv.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            calcSingle();
+          }
+        });
+        rl.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            calcRange();
+          }
+        });
+        rr.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            calcRange();
+          }
+        });
+
+        // ---- 符号点击 ----
+        document.querySelectorAll(".sym").forEach(function (el) {
+          el.addEventListener("click", function () {
+            cycleSym(el);
+          });
+        });
+
+        // ---- resize ----
+        var timer;
+        window.addEventListener("resize", function () {
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            var r = getCoef();
+            if (r.ok) {
+              var h = -r.b / (2 * r.a),
+                k = r.a * h * h + r.b * h + r.c;
+              drawChart(r.a, r.b, r.c, h, k);
+            } else {
+              ph();
+            }
+          }, 150);
+        });
+
+        update();
+      })();
+    </script>
+  </body>
+</html>
