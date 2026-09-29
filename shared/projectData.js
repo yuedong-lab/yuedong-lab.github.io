@@ -27,5 +27,16 @@ var projectData = {
         ],
         download: '../Projects/刷屏器.zip',
         downloadName: '刷屏器.zip'
+    },
+    3: {
+        title: '二次函数图像',
+        desc: '一款简单实用的软件，专门用于解决二次函数问题',
+        icon: '../Picture/icon.webp',
+        features: [
+            '轻量高效，操作便捷',
+            '适合在特定场景下快速发送消息',
+            '简单易用的界面设计'
+        ],
+        online: '../Projects/二次函数图像.html'
     }
 };
