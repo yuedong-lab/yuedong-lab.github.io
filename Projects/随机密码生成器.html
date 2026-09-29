@@ -34,7 +34,7 @@
         }
 
         #ztl {
-            background-color: #0033FF;
+            background: linear-gradient(to bottom, #1385ff, #49a1ff);
             width: 100%;
             height: 80px;
             display: flex;
@@ -229,7 +229,7 @@
             <input class="input" type="number" id="numPasswords" required />
             <label class="text" id="symbol" for="symbolSwitch">
                 <input type="checkbox" id="symbolSwitch" name="symbol">
-                启用特殊符号（可能导致网站崩溃）
+                <label data-lang="symbolSwitch">启用特殊符号（可能导致网站崩溃）</label>
             </label>
             <button id="makeButton" data-lang="generateBtn">开始生成</button>
             <div id="resultRow">
@@ -250,6 +250,7 @@
                 'header': '随机密码生成器',
                 'lengthLabel': '请输入密码的长度',
                 'numLabel': '请输入生成的密码数量',
+                'symbolSwitch': '启用特殊符号（可能导致网站崩溃）',
                 'generateBtn': '开始生成',
                 'resultLabel': '生成结果',
                 'copyBtn': '复制',
@@ -266,6 +267,7 @@
                 'header': 'Random Password Generator',
                 'lengthLabel': 'Enter password length',
                 'numLabel': 'Enter number of passwords',
+                'symbolSwitch': 'Enable Special Symbols (May cause website failure)',
                 'generateBtn': 'Generate',
                 'resultLabel': 'Results',
                 'copyBtn': 'Copy',
