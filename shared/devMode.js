@@ -1,5 +1,5 @@
 /* 版本:beta_8.5.1 - 共享开发者模式脚本 */
-/* 包含：开发者模式水印、Y+D快捷键、F12禁用、右键禁用、console禁用、暗黑模式切换、新闻自动写入*/
+/* 包含：开发者模式水印、Y+D快捷键、F12禁用、右键禁用、console禁用、暗黑模式切换，新闻、成员、项目自动写入*/
 
 // 开发者模式状态
 var devMode = localStorage.getItem('devMode') === 'true';
@@ -286,6 +286,36 @@ function writeMember(device){
         }
 
         $("#big_person_box").append("<a href='./member_"+device+".html?id="+id+"' class='person_box'><img class='head_picture' src='"+picture+"' alt='"+name+"' onerror=\"this.alt='加载失败'\"/><div><label class='name'>"+name+"</label><p id='"+jobStyle+"'>"+job+"</p><p class='introduce'>"+introStr+"</p></div></a>");
+    }
+}
+
+function writeProjects(){
+    for(var i=0; i<projectData.length; i++){
+        var title = projectData[i].title;
+        var desc = projectData[i].desc;
+        var features = projectData[i].features;
+        var featureStr;
+
+        for(var j=0; j<features.length; j++){
+            if(j!=0){
+                featureStr += "<br>";
+            }
+            featureStr += features[j];
+        }
+
+        var download;
+        var downloadName;
+        var online;
+
+        if(projectData[i].download){
+            download = projectData[i].download;
+            downloadName = projectData[i].downloadName;
+        }
+        if(projectData[i].download){
+            online = projectData[i].online;
+        }
+
+        $("#project_container").append(`<a href="./project_detail.html?id=${i+1}" class="project_card_link" style="text-decoration:none;color:inherit;display:block;"><div class="project_card"><h2 class="project_title">${title}</h2><p class="project_desc">${desc}</p><div class="project_actions">${online?`<a class="project_btn" href="${online}" target="_blank" onclick="event.stopPropagation();">打开网页</a>`:""}${download?`<a class="project_btn" href="${download}" download="${downloadName}" onclick="event.stopPropagation();">立即下载</a>`:""}<a class="project_btn" href="./project_detail.html?id=${i+1}" onclick="event.stopPropagation()">查看详情</a></div></div></a>`)
     }
 }
 
