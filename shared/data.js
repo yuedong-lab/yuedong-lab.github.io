@@ -6,6 +6,16 @@
 var newsData = [
     //<-- new news data here...
     {
+        title:"【网站更新日志】v1.2.1",
+        author:"网站管理员",
+        date:"2026年9月30日",
+        content:[
+            "1.对联机查找时间的功能做了修理",
+            "2.将shared里的数据文件进行整合",
+            "3.修复了项目卡片按钮的bug"
+        ]
+    },
+    {
         title:"【网站更新日志】v1.2.0",
         author:"网站管理员",
         date:"2026年9月29日",
