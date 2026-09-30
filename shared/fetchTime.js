@@ -5,7 +5,7 @@ let perfStart = 0;
 
 async function fetchTime(){
     try {
-        const resp = await fetch("https://worldtimeapi.org/api/timezone/Asia/Shanghai", {
+        const resp = await fetch("https://worldtimeapi.org/api/timezone/Asia/Taipei", {
             cache:"no-store"
         });
         const json = await resp.json();
