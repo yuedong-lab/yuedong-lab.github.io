@@ -311,7 +311,7 @@ function writeProjects(){
             download = projectData[i].download;
             downloadName = projectData[i].downloadName;
         }
-        if(projectData[i].download){
+        if(projectData[i].online){
             online = projectData[i].online;
         }
 
