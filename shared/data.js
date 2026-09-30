@@ -1,6 +1,8 @@
-/* 版本:Pre_7.29.4 - 共享新闻数据 */
+/* 版本:v1.2.1 - 共享数据 */
 /* PC端和移动端共用，减少重复 */
 
+
+//新闻
 var newsData = [
     //<-- new news data here...
     {
@@ -161,5 +163,111 @@ var newsData = [
             '2.添加了各人物的人物主页',
             '3.添加了人物的职位标签'
         ]
+    }
+];
+
+
+//成员
+var members = [
+    {
+        name:"小郑",
+        job:"室长",
+        introduction:[
+            "悦动工作室室长"
+        ],
+        sign:"",
+        id:1,
+        picture:"../Picture/member_1.webp",
+        contact: [
+            'QQ号：2236933051',
+            '邮箱：2236933051@qq.com'
+        ]
+    },
+    {
+        name:"反性能老魔",
+        job:"副室长",
+        introduction:[
+            "会Python，javascript和一点点css",
+            "据说他的电脑用的是3代i5……"
+        ],
+        sign:"键盘总得敲到废，代码写到人疲累！",
+        id:2,
+        picture:"../Picture/member_5.webp",
+        contact: [
+            'QQ号：3171244185',
+            '邮箱：3171244185@qq.com'
+        ]
+    },
+    {
+        name:"超级苦力怕1324",
+        job:"程序组长",
+        introduction:[
+            "会python和html,css,JavaScript",
+            "懂得安卓，windows软件和网站开发"
+        ],
+        sign:"",
+        id:3,
+        picture:"../Picture/member_2.webp",
+        contact: [
+            'QQ号：2672066839',
+            '邮箱：2672066839@qq.com'
+        ]
+    },
+    {
+        name:"普通的编程萌新",
+        job:"程序组",
+        introduction:[
+            "一个普通到不能再普通的编程萌新",
+            "会Python，还会一点JavaScript、和C语言"
+        ],
+        sign:"",
+        id:4,
+        picture:"../Picture/member_4.webp",
+        contact: [
+            'QQ号：2100400850',
+            '邮箱：2100400850@qq.com'
+        ]
+    }
+];
+
+
+//项目
+var projectData = [
+    {
+        title: '随机密码生成器',
+        desc: '一款高效实用的随机密码生成工具，支持自定义密码长度和字符组合，帮助您快速生成安全可靠的强密码，保护账户安全。',
+        icon: '../Picture/icon.webp',
+        features: [
+            '支持自定义密码长度',
+            '支持自定义字符组合',
+            '快速生成安全可靠的强密码',
+            '保护账户安全'
+        ],
+        online: '../Projects/随机密码生成器.html',
+        download: '../Projects/随机密码生成器.zip',
+        downloadName: '随机密码生成器.zip'
+    },
+    {
+        title: '刷屏器',
+        desc: '一款简单实用的刷屏工具，适合在特定场景下快速发送消息，轻量高效，操作便捷。',
+        icon: '../Picture/icon.webp',
+        features: [
+            '轻量高效，操作便捷',
+            '适合在特定场景下快速发送消息',
+            '简单易用的界面设计'
+        ],
+        download: '../Projects/刷屏器.zip',
+        downloadName: '刷屏器.zip'
+    },
+    {
+        title: '二次函数图像',
+        desc: '一款简单实用的软件，专门用于解决二次函数问题',
+        icon: '../Picture/icon.webp',
+        features: [
+            '轻量高效，操作便捷',
+            '能快速解决大部分二次函数图像问题',
+            '简单易用的界面设计'
+        ],
+        online: '../Projects/二次函数图像.html'
     }
 ];
