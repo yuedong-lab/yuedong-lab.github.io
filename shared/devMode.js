@@ -293,19 +293,9 @@ function writeProjects(){
     for(var i=0; i<projectData.length; i++){
         var title = projectData[i].title;
         var desc = projectData[i].desc;
-        var features = projectData[i].features;
-        var featureStr;
-
-        for(var j=0; j<features.length; j++){
-            if(j!=0){
-                featureStr += "<br>";
-            }
-            featureStr += features[j];
-        }
-
-        var download;
-        var downloadName;
-        var online;
+        var download = 0;
+        var downloadName = 0;
+        var online = 0;
 
         if(projectData[i].download){
             download = projectData[i].download;
