@@ -6,6 +6,16 @@
 var newsData = [
     //<-- new news data here...
     {
+        title:"【网站更新日志】v1.2.2",
+        author:"网站管理员",
+        date:"2026年10月1日",
+        content:[
+            "1.修改了电脑端窄屏模式的缩略导航栏",
+            "2.对项目进行了更新",
+            "3.预告：设置栏和全新主题即将上线，敬请期待！"
+        ]
+    },
+    {
         title:"【网站更新日志】v1.2.1",
         author:"网站管理员",
         date:"2026年9月30日",
@@ -278,6 +288,11 @@ var projectData = [
             '能快速解决大部分二次函数图像问题',
             '简单易用的界面设计'
         ],
-        online: '../Projects/二次函数图像.html'
+        online: [
+            '../Projects/函数工具.html',
+            '../Projects/函数工具Plus.html',
+            '../Projects/函数工具Pro.html',
+            '../Projects/函数工具Pro_Max.html'
+        ]
     }
 ];
