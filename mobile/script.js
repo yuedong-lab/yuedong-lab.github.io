@@ -70,7 +70,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.menu-item').forEach(function(item) {
         item.addEventListener('click', function() {
             var page = this.getAttribute('data-page');
-            switchPage(page);
+            if(page){
+                switchPage(page);
+            }
         });
     });
 });
