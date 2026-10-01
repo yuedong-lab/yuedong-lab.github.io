@@ -234,8 +234,13 @@
 
             var actionsHtml = '<div class="project-detail-actions">';
             if (data.online) {
-                actionsHtml += '<a class="project-detail-btn" href="' + data.online + '" target="_blank">打开网页</a>';
-            }
+                if(typeof(data.online) === "string"){
+                    actionsHtml += '<a class="project-detail-btn" href="' + data.online + '" target="_blank">打开网页</a>';
+                }else{
+                    for(var i=0;i<data.online.length;i++){
+                        actionsHtml += '<a class="project-detail-btn" href="' + data.online[i] + '" target="_blank">打开网页</a>';
+                    }
+                }            }
             if (data.download) {
                 actionsHtml += '<a class="project-detail-btn" href="' + data.download + '" download="' + data.downloadName + '">点击下载</a>';
             }
