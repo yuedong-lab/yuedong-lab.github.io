@@ -1,0 +1,3029 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>函数工具 Pro</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0b1e33;
+        --ink2: #31536f;
+        --muted: #8aa0b8;
+        --line: #e6ecf3;
+        --brand: #2f6fb0;
+        --bd: #1f4e7a;
+        --bl: #eaf2fb;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        background:
+          radial-gradient(
+            900px 520px at 8% -12%,
+            #dbe9fb 0%,
+            rgba(219, 233, 251, 0) 62%
+          ),
+          radial-gradient(
+            760px 480px at 102% -6%,
+            #e2f0ff 0%,
+            rgba(226, 240, 255, 0) 58%
+          ),
+          linear-gradient(180deg, #f7fafd, #eef3f9);
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 16px;
+      }
+      .box {
+        position: relative;
+        max-width: 780px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 24px;
+        padding: 22px 24px 26px;
+        overflow: hidden;
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.04),
+          0 14px 34px -12px rgba(16, 42, 74, 0.18),
+          0 46px 90px -50px rgba(16, 42, 74, 0.35);
+      }
+      .box::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2f6fb0, #66a7e2, #9fcdf3, #2f6fb0);
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 14px;
+      }
+      h2::before {
+        content: "ƒ";
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 17px;
+        color: #fff;
+        background: linear-gradient(135deg, #4a8fd0, #1f4e7a);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.38),
+          0 6px 14px -5px rgba(31, 78, 122, 0.65);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin: 0 0 16px;
+        padding: 4px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+        box-shadow: inset 0 1px 2px rgba(16, 42, 74, 0.06);
+      }
+      .tabs .tab {
+        flex: 1 1 0;
+        min-width: 70px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 8px 8px;
+        border-radius: 10px;
+        transition: all 0.18s;
+      }
+      .tabs .tab:hover {
+        color: var(--bd);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .tabs .tab.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 6px 16px -9px rgba(16, 42, 74, 0.5);
+      }
+      .pane {
+        animation: paneIn 0.2s ease;
+      }
+      @keyframes paneIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .mode-tabs {
+        display: flex;
+        gap: 4px;
+        margin: 0 0 10px;
+        padding: 4px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+      }
+      .mode-tabs .mbtn {
+        flex: 1 1 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 6px 10px;
+        border-radius: 8px;
+        transition: all 0.18s;
+      }
+      .mode-tabs .mbtn.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 4px 12px -8px rgba(16, 42, 74, 0.5);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 10px 12px;
+        background: linear-gradient(180deg, #fbfdff, #f5f9fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .grp {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 50px;
+        min-width: 44px;
+      }
+      .grp label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #4d637d;
+        margin-bottom: 4px;
+      }
+      .grp input {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+        transition: all 0.18s;
+      }
+      .grp input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 4px rgba(59, 130, 196, 0.13);
+      }
+      .btn {
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(180deg, #3a7cbb, #25609b);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 6px 14px -7px rgba(31, 78, 122, 0.8);
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        filter: brightness(1.07);
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0);
+        filter: brightness(0.97);
+      }
+      .err {
+        min-height: 18px;
+        margin: -4px 0 8px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d14949;
+      }
+      .res {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px 16px;
+        background: linear-gradient(180deg, #fbfdff, #f4f9fe);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .res .it {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding-left: 11px;
+      }
+      .res .it::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #8bc0ee, #2f6fb0);
+        opacity: 0.8;
+      }
+      .res .it .lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+      .res .it .val {
+        font-family: "Times New Roman", Cambria, serif;
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--ink);
+        word-break: break-word;
+      }
+      .res .it .val.small {
+        font-size: 12.5px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .res .it .sub {
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: var(--ink2);
+      }
+      .calc {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .calc .cb {
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 11px 13px 13px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .calc .cb .ct {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4d637d;
+        margin-bottom: 7px;
+      }
+      .calc .cb .cr {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .calc .cb .cr .prefix {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        padding: 0 2px;
+        white-space: nowrap;
+      }
+      .calc .cb .cr input {
+        flex: 1 1 0;
+        min-width: 44px;
+        padding: 6px 9px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+      }
+      .calc .cb .cr input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3.5px rgba(59, 130, 196, 0.13);
+      }
+      .calc .cb .cr .bs {
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--bd);
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+      }
+      .calc .cb .cr .bs:hover {
+        filter: brightness(1.05);
+      }
+      .calc .cb .o {
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px dashed #cfdcea;
+        border-radius: 9px;
+        background: #fff;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .chart {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 1px 3px rgba(16, 42, 74, 0.05);
+      }
+      .chart canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .zoombar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .zoombar .zb {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 9px;
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+        color: var(--bd);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .zoombar .zb:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .zoombar .zlab {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b8299;
+      }
+      .zoombar .zslider {
+        flex: 1 1 70px;
+        min-width: 50px;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(90deg, #cfe0f2, #dce9f7);
+        border-radius: 3px;
+        outline: none;
+        cursor: grab;
+      }
+      .zoombar .zslider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        box-shadow: 0 2px 6px rgba(31, 78, 122, 0.4);
+        cursor: grab;
+      }
+      .zoombar .zslider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        cursor: grab;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 6px;
+        border-top: 1px dashed #dbe6f1;
+        margin-top: 4px;
+      }
+      .toggle-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b8299;
+        white-space: nowrap;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex: 0 0 auto;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 20px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      input:checked + .slider {
+        background-color: #3b82c4;
+      }
+      input:checked + .slider:before {
+        transform: translateX(16px);
+      }
+      .hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 4px 0;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      @media (max-width: 620px) {
+        body {
+          padding: 10px;
+        }
+        .box {
+          padding: 18px 16px 20px;
+          border-radius: 20px;
+        }
+        h2 {
+          font-size: 17px;
+        }
+        .tabs .tab {
+          min-width: 0;
+          padding: 8px 6px;
+          font-size: 11px;
+        }
+        .res {
+          grid-template-columns: 1fr;
+        }
+        .toggle-row {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>函数工具 Pro</h2>
+      <div class="tabs">
+        <button class="tab on" data-pane="paneArc">反三角</button>
+        <button class="tab" data-pane="paneRat">一次分式</button>
+        <button class="tab" data-pane="paneHook">广义对勾</button>
+        <button class="tab" data-pane="paneQuart">四次多项式</button>
+        <button class="tab" data-pane="paneHyp">双曲函数</button>
+      </div>
+
+      <!-- ============ 反三角函数 ============ -->
+      <div class="pane" id="paneArc">
+        <div class="mode-tabs" id="arcmode">
+          <button class="mbtn on" data-mode="asin">y = a·arcsin(bx) + c</button>
+          <button class="mbtn" data-mode="acos">y = a·arccos(bx) + c</button>
+          <button class="mbtn" data-mode="atan">y = a·arctan(bx) + c</button>
+        </div>
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="rca" value="1" />
+          </div>
+          <div class="grp">
+            <label>b 内系数</label><input type="text" id="rcb" value="1" />
+          </div>
+          <div class="grp">
+            <label>c 平移</label><input type="text" id="rcc" value="0" />
+          </div>
+          <button class="btn" id="rcbu">绘制</button>
+        </div>
+        <div class="err" id="rcer"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="rcdg">y = arcsin x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="rcdom">[-1, 1]</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="rcrng">[−π/2, π/2]</span>
+          </div>
+          <div class="it">
+            <span class="lbl">奇偶性</span
+            ><span class="val small" id="rcpar">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="rcinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="rcpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="rcsv" value="0" /><button
+                class="bs"
+                id="rcbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="rcosv">y = 0</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="rccv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="rczin">＋</button
+          ><button class="zb" id="rczout">－</button
+          ><button class="zb" id="rczrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="rcpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="rcpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- ============ 一次分式 ============ -->
+      <div class="pane" id="paneRat" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a (分子 x)</label><input type="text" id="rna" value="1" />
+          </div>
+          <div class="grp">
+            <label>b (分子常数)</label><input type="text" id="rnb" value="1" />
+          </div>
+          <div class="grp">
+            <label>c (分母 x)</label><input type="text" id="rnc" value="1" />
+          </div>
+          <div class="grp">
+            <label>d (分母常数)</label><input type="text" id="rnd" value="-1" />
+          </div>
+          <button class="btn" id="rnbu">绘制</button>
+        </div>
+        <div class="err" id="rner"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="rndg">y = (x + 1) / (x − 1)</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="rndom">x ≠ 1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="rnrng">y ≠ 1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">垂直渐近线</span
+            ><span class="val small" id="rnasx">x = 1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">水平渐近线</span
+            ><span class="val small" id="rnehx">y = 1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="rninc">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="rnsv" value="0" /><button
+                class="bs"
+                id="rnbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="rnosv">y = -1</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="rncv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="rnzin">＋</button
+          ><button class="zb" id="rnzout">－</button
+          ><button class="zb" id="rnzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="rnpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="rnpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- ============ 广义对勾 ============ -->
+      <div class="pane" id="paneHook" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a (线性)</label><input type="text" id="gka" value="1" />
+          </div>
+          <div class="grp">
+            <label>b (倒数)</label><input type="text" id="gkb" value="4" />
+          </div>
+          <div class="grp">
+            <label>c (平移)</label><input type="text" id="gkc" value="0" />
+          </div>
+          <button class="btn" id="gkbu">绘制</button>
+        </div>
+        <div class="err" id="gker"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="gkdg">y = x + 4/x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="gkdom">x ≠ 0</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="gkrng">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">渐近线</span
+            ><span class="val small" id="gkas">x = 0 和 y = x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="gkinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">极值点</span
+            ><span class="val small" id="gkpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="gksv" value="1" /><button
+                class="bs"
+                id="gkbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="gkosv">y = 5</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="gkcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="gkzin">＋</button
+          ><button class="zb" id="gkzout">－</button
+          ><button class="zb" id="gkzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="gkpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="gkpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- ============ 四次多项式 ============ -->
+      <div class="pane" id="paneQuart" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a (x⁴)</label><input type="text" id="qta" value="1" />
+          </div>
+          <div class="grp">
+            <label>b (x³)</label><input type="text" id="qtb" value="0" />
+          </div>
+          <div class="grp">
+            <label>c (x²)</label><input type="text" id="qtc" value="-5" />
+          </div>
+          <div class="grp">
+            <label>d (x)</label><input type="text" id="qtd" value="0" />
+          </div>
+          <div class="grp">
+            <label>e 常数</label><input type="text" id="qte" value="4" />
+          </div>
+          <button class="btn" id="qtbu">绘制</button>
+        </div>
+        <div class="err" id="qter"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="qtdg">y = x⁴ − 5x² + 4</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域 / 值域</span
+            ><span class="val small">R / 见图像</span>
+          </div>
+          <div class="it">
+            <span class="lbl">奇偶性</span
+            ><span class="val small" id="qtpar">偶函数</span>
+          </div>
+          <div class="it">
+            <span class="lbl">极值点</span
+            ><span class="val small" id="qtext">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">拐点</span
+            ><span class="val small" id="qtinf">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="qtpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="qtsv" value="0" /><button
+                class="bs"
+                id="qtbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="qtosv">y = 4</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="qtcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="qtzin">＋</button
+          ><button class="zb" id="qtzout">－</button
+          ><button class="zb" id="qtzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="qtpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="qtpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- ============ 双曲函数 ============ -->
+      <div class="pane" id="paneHyp" style="display: none">
+        <div class="mode-tabs" id="hypmode">
+          <button class="mbtn on" data-mode="sinh">y = a·sinh(bx) + c</button>
+          <button class="mbtn" data-mode="cosh">y = a·cosh(bx) + c</button>
+          <button class="mbtn" data-mode="tanh">y = a·tanh(bx) + c</button>
+        </div>
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="hpa" value="1" />
+          </div>
+          <div class="grp">
+            <label>b 内系数</label><input type="text" id="hpb" value="1" />
+          </div>
+          <div class="grp">
+            <label>c 平移</label><input type="text" id="hpc" value="0" />
+          </div>
+          <button class="btn" id="hpbu">绘制</button>
+        </div>
+        <div class="err" id="hper"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="hpdg">y = sinh x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span><span class="val small">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="hprng">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">奇偶性</span
+            ><span class="val small" id="hppar">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="hpinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">渐近线</span
+            ><span class="val small" id="hpas">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="hpsv" value="0" /><button
+                class="bs"
+                id="hpbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="hposv">y = 0</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="hpcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="hpzin">＋</button
+          ><button class="zb" id="hpzout">－</button
+          ><button class="zb" id="hpzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="hppx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="hppy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) {
+          return document.getElementById(id);
+        };
+        var ROUND = false;
+        var MAX_ABS = 2e9;
+
+        /* ========== 通用工具 ========== */
+        function n2s(v) {
+          if (!isFinite(v)) return "—";
+          if (Math.abs(v) > 1e15) return v.toExponential(3);
+          var r = Math.round(v * 1e6) / 1e6;
+          if (Math.abs(r) < 1e-9) return "0";
+          var s = r.toFixed(4);
+          if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+          return s;
+        }
+        function c2s(x, y) {
+          return "(" + n2s(x) + ", " + n2s(y) + ")";
+        }
+        function pt2s(x, y) {
+          var f = function (v) {
+            if (!isFinite(v)) return "—";
+            return ROUND ? String(Math.round(v)) : n2s(v);
+          };
+          return "(" + f(x) + ", " + f(y) + ")";
+        }
+        function solveQ(A, B, C) {
+          var D = B * B - 4 * A * C;
+          if (D < -1e-9) return [];
+          if (Math.abs(D) <= 1e-9) return [-B / (2 * A)];
+          var s = Math.sqrt(D);
+          return [(-B - s) / (2 * A), (-B + s) / (2 * A)].sort(function (p, q) {
+            return p - q;
+          });
+        }
+        function solveCubic(A, B, C, D) {
+          if (Math.abs(A) < 1e-12) return solveQ(B, C, D);
+          var a = B / A,
+            b = C / A,
+            c = D / A;
+          var p = b - (a * a) / 3;
+          var q = (2 * a * a * a) / 27 - (a * b) / 3 + c;
+          var delta = (q * q) / 4 + (p * p * p) / 27;
+          var roots = [];
+          if (delta > 1e-12) {
+            var sq = Math.sqrt(delta);
+            var u = Math.cbrt(-q / 2 + sq);
+            var v = Math.cbrt(-q / 2 - sq);
+            roots.push(u + v - a / 3);
+          } else if (delta >= -1e-12) {
+            var u2 = Math.cbrt(-q / 2);
+            roots.push(2 * u2 - a / 3);
+            roots.push(-u2 - a / 3);
+          } else {
+            var r = Math.sqrt((-p * p * p) / 27);
+            var phi = Math.acos(Math.max(-1, Math.min(1, -q / 2 / r)));
+            var m = 2 * Math.sqrt(-p / 3);
+            roots.push(m * Math.cos(phi / 3) - a / 3);
+            roots.push(m * Math.cos((phi + 2 * Math.PI) / 3) - a / 3);
+            roots.push(m * Math.cos((phi + 4 * Math.PI) / 3) - a / 3);
+          }
+          roots.sort(function (x, y) {
+            return x - y;
+          });
+          var out = [];
+          for (var i = 0; i < roots.length; i++) {
+            if (!out.length || Math.abs(roots[i] - out[out.length - 1]) > 1e-6)
+              out.push(roots[i]);
+          }
+          return out;
+        }
+        function niceStep(range, target) {
+          if (!(range > 0) || !isFinite(range)) return 1;
+          var raw = range / target;
+          var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+          var n = raw / p;
+          var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+          return m * p;
+        }
+        function viewRect(v) {
+          return {
+            xmin: v.cx - v.hw,
+            xmax: v.cx + v.hw,
+            ymin: v.cy - v.hh,
+            ymax: v.cy + v.hh,
+          };
+        }
+        function clampHalf(v) {
+          if (!isFinite(v) || v < 1e-9) return 1e-9;
+          if (v > MAX_ABS) return MAX_ABS;
+          return v;
+        }
+        function zoomView(v, f) {
+          v.hw = clampHalf(v.hw * f);
+          v.hh = clampHalf(v.hh * f);
+        }
+
+        function smartView(view, fn, hw, includeZero) {
+          var N = 200;
+          var ys = [];
+          for (var i = 0; i <= N; i++) {
+            var x = -hw + (2 * hw * i) / N;
+            var y = null;
+            try {
+              y = fn(x);
+            } catch (e) {
+              y = null;
+            }
+            if (y === null || y === undefined) continue;
+            if (!isFinite(y) || Math.abs(y) > 1e8) continue;
+            ys.push(y);
+          }
+          if (ys.length < 5) {
+            view.cy = 0;
+            view.hh = Math.max(1, Math.min(MAX_ABS, hw * 0.5));
+            return;
+          }
+          ys.sort(function (a, b) {
+            return a - b;
+          });
+          var lo = ys[Math.floor(ys.length * 0.03)];
+          var hi = ys[Math.floor(ys.length * 0.97)];
+          if (includeZero !== false) {
+            lo = Math.min(lo, 0);
+            hi = Math.max(hi, 0);
+          }
+          var range = hi - lo;
+          if (!(range > 1e-9)) range = 2;
+          var pad = range * 0.12;
+          view.cy = (lo + hi) / 2;
+          view.hh = Math.max(0.5, Math.min(MAX_ABS, range / 2 + pad));
+        }
+
+        function rrect(ctx, x, y, w, h, r) {
+          if (w < 2 * r) r = w / 2;
+          if (h < 2 * r) r = h / 2;
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + w, y, x + w, y + h, r);
+          ctx.arcTo(x + w, y + h, x, y + h, r);
+          ctx.arcTo(x, y + h, x, y, r);
+          ctx.arcTo(x, y, x + w, y, r);
+          ctx.closePath();
+        }
+        function drawGrid(ctx, W, H, v) {
+          var xmin = v.xmin,
+            xmax = v.xmax,
+            ymin = v.ymin,
+            ymax = v.ymax;
+          var X = function (x) {
+            return ((x - xmin) / (xmax - xmin)) * W;
+          };
+          var Y = function (y) {
+            return H - ((y - ymin) / (ymax - ymin)) * H;
+          };
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, W, H);
+          var sx = niceStep(xmax - xmin, 9),
+            sy = niceStep(ymax - ymin, 6);
+          ctx.strokeStyle = "#eef2f7";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          var x, y, px, py;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, H);
+          }
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            py = Math.round(Y(y)) + 0.5;
+            ctx.moveTo(0, py);
+            ctx.lineTo(W, py);
+          }
+          ctx.stroke();
+          var y0 = null,
+            x0 = null;
+          ctx.strokeStyle = "#b9c7d6";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (ymin <= 0 && ymax >= 0) {
+            y0 = Math.round(Y(0)) + 0.5;
+            ctx.moveTo(0, y0);
+            ctx.lineTo(W, y0);
+          }
+          if (xmin <= 0 && xmax >= 0) {
+            x0 = Math.round(X(0)) + 0.5;
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, H);
+          }
+          ctx.stroke();
+          var onX = y0 !== null,
+            onY = x0 !== null;
+          ctx.font =
+            '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tick = function (txt, lx, ly) {
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText(txt, lx, ly);
+            ctx.fillStyle = "#6b8299";
+            ctx.fillText(txt, lx, ly);
+          };
+          var xLY = onX ? (y0 > H - 24 ? y0 - 19 : y0 + 5) : H - 17;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          var xTB = onX ? y0 : H - 5;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            if (px < 16 || px > W - 16) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(px, xTB - 3.5);
+            ctx.lineTo(px, xTB + 3.5);
+            ctx.stroke();
+            if (Math.abs(x) < sx * 0.001) {
+              if (!onY) tick("0", px, xLY);
+              continue;
+            }
+            tick(n2s(x), px, xLY);
+          }
+          var yLX, yA;
+          if (onY && x0 > 46) {
+            yLX = x0 - 7;
+            yA = "right";
+          } else {
+            yLX = onY ? x0 + 7 : 7;
+            yA = "left";
+          }
+          ctx.textAlign = yA;
+          ctx.textBaseline = "middle";
+          var yTB = onY ? x0 : 5;
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            if (Math.abs(y) < sy * 0.001) continue;
+            py = Math.round(Y(y)) + 0.5;
+            if (py < 14 || py > H - 14) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(yTB - 3.5, py);
+            ctx.lineTo(yTB + 3.5, py);
+            ctx.stroke();
+            tick(n2s(y), yLX, py);
+          }
+          if (onX && onY) {
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.font = 'italic 700 12.5px "Times New Roman", Georgia, serif';
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText("O", x0 - 3, y0 + 4);
+            ctx.fillStyle = "#5a7592";
+            ctx.fillText("O", x0 - 3, y0 + 4);
+          }
+          return { X: X, Y: Y };
+        }
+        function drawTag(ctx, px, py, text, color, dx, dy, taken) {
+          var W = ctx.canvas.width,
+            H = ctx.canvas.height;
+          ctx.save();
+          ctx.font =
+            '600 11.5px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tw = ctx.measureText(text).width;
+          var w = tw + 12,
+            hh = 18;
+          var x = px + dx - 6,
+            y = py + dy - hh / 2;
+          if (x < 3) x = 3;
+          if (x + w > W - 3) x = W - 3 - w;
+          if (y < 3) y = 3;
+          if (y + hh > H - 3) y = H - 3 - hh;
+          var rect = { x: x, y: y, w: w, h: hh };
+          if (taken) {
+            for (var i = 0; i < taken.length; i++) {
+              var r = taken[i];
+              if (
+                rect.x < r.x + r.w &&
+                rect.x + rect.w > r.x &&
+                rect.y < r.y + r.h &&
+                rect.y + rect.h > r.y
+              ) {
+                ctx.restore();
+                return false;
+              }
+            }
+            taken.push(rect);
+          }
+          ctx.shadowColor = "rgba(16,42,74,.16)";
+          ctx.shadowBlur = 7;
+          ctx.shadowOffsetY = 2;
+          ctx.fillStyle = "rgba(255,255,255,.97)";
+          rrect(ctx, x, y, w, hh, 6);
+          ctx.fill();
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.strokeStyle = "rgba(47,111,176,.22)";
+          ctx.lineWidth = 1;
+          rrect(ctx, x + 0.5, y + 0.5, w - 1, hh - 1, 6);
+          ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x + 6, y + hh / 2 + 0.5);
+          ctx.restore();
+          return true;
+        }
+        function drawRedDot(ctx, W, H, X, Y, p, taken, labelColor) {
+          if (!p || !isFinite(p.x) || !isFinite(p.y)) return;
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (px < -40 || px > W + 40 || py < -40 || py > H + 40) return;
+          ctx.beginPath();
+          ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,77,61,.18)";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff4d3d";
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            pt2s(p.x, p.y),
+            labelColor || "#c4321f",
+            12,
+            -16,
+            taken,
+          );
+        }
+        function drawKeyPoint(ctx, X, Y, p, taken, color) {
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (
+            px < -20 ||
+            px > ctx.canvas.width + 20 ||
+            py < -20 ||
+            py > ctx.canvas.height + 20
+          )
+            return;
+          ctx.beginPath();
+          ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = color || "#1f4e7a";
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            c2s(p.x, p.y),
+            color || "#31536f",
+            10,
+            -15,
+            taken,
+          );
+        }
+        function attachDrag(cv, onMove) {
+          var dragging = false;
+          var pos = function (e) {
+            var r = cv.getBoundingClientRect();
+            return {
+              px: ((e.clientX - r.left) / r.width) * cv.width,
+              py: ((e.clientY - r.top) / r.height) * cv.height,
+            };
+          };
+          cv.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            dragging = true;
+            onMove(pos(e));
+            e.preventDefault();
+          });
+          document.addEventListener("pointermove", function (e) {
+            if (!dragging) return;
+            onMove(pos(e));
+          });
+          document.addEventListener("pointerup", function () {
+            dragging = false;
+          });
+          document.addEventListener("pointercancel", function () {
+            dragging = false;
+          });
+        }
+        function attachRelSlider(id, view, axis, redraw) {
+          var el = $(id);
+          el.value = 0;
+          var lastVal = 0;
+          var active = false;
+          el.addEventListener("pointerdown", function () {
+            active = true;
+            lastVal = 0;
+            el.value = 0;
+          });
+          el.addEventListener("input", function () {
+            if (!active) return;
+            var v = parseFloat(el.value);
+            var delta = v - lastVal;
+            lastVal = v;
+            var range = axis === "y" ? view.hh : view.hw;
+            var step = delta * range * 0.01;
+            if (axis === "y") view.cy += step;
+            else view.cx += step;
+            redraw();
+          });
+          document.addEventListener("pointerup", function () {
+            if (active) {
+              active = false;
+              el.value = 0;
+              lastVal = 0;
+            }
+          });
+        }
+        function applyRound(v) {
+          return ROUND ? Math.round(v) : v;
+        }
+
+        /* ================================================================
+   一、反三角函数
+   ================================================================ */
+        var RC = { a: 1, b: 1, c: 0, mode: "asin", kp: [] };
+        var RCV = { cx: 0, cy: 0, hw: 2.5, hh: 2.5 };
+        var rcPoint = null;
+
+        function arcUpdate() {
+          var a = parseFloat($("rca").value),
+            b = parseFloat($("rcb").value),
+            c = parseFloat($("rcc").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("rcer").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(b) < 1e-12) {
+            $("rcer").textContent = "b 不能为 0";
+            return;
+          }
+          $("rcer").textContent = "";
+          RC.a = a;
+          RC.b = b;
+          RC.c = c;
+          var fn =
+            RC.mode === "asin"
+              ? "arcsin"
+              : RC.mode === "acos"
+                ? "arccos"
+                : "arctan";
+
+          var fs = "y = ";
+          if (a === 1) fs += "";
+          else if (a === -1) fs += "−";
+          else fs += n2s(a);
+          fs += fn + "(";
+          if (Math.abs(b - 1) < 1e-9) fs += "x";
+          else fs += n2s(b) + "x";
+          fs += ")";
+          if (Math.abs(c) > 1e-12)
+            fs += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          $("rcdg").textContent = fs;
+
+          var dom = "",
+            rng = "",
+            par = "",
+            inc = "";
+          if (RC.mode === "asin") {
+            var xr = 1 / Math.abs(b);
+            dom = "[" + n2s(-xr) + ", " + n2s(xr) + "]";
+            var ya = a * Math.asin(1) + c,
+              yb = a * Math.asin(-1) + c;
+            rng =
+              "[" + n2s(Math.min(ya, yb)) + ", " + n2s(Math.max(ya, yb)) + "]";
+            par = "奇函数（c = 0 时）";
+            inc = a * b > 0 ? "单调递增" : "单调递减";
+          } else if (RC.mode === "acos") {
+            var xr2 = 1 / Math.abs(b);
+            dom = "[" + n2s(-xr2) + ", " + n2s(xr2) + "]";
+            var ya2 = a * Math.acos(1) + c,
+              yb2 = a * Math.acos(-1) + c;
+            rng =
+              "[" +
+              n2s(Math.min(ya2, yb2)) +
+              ", " +
+              n2s(Math.max(ya2, yb2)) +
+              "]";
+            par = "非奇非偶";
+            inc = a * b < 0 ? "单调递增" : "单调递减";
+          } else {
+            dom = "R";
+            var y1 = c + (Math.abs(a) * Math.PI) / 2,
+              y2 = c - (Math.abs(a) * Math.PI) / 2;
+            rng =
+              "(" + n2s(Math.min(y1, y2)) + ", " + n2s(Math.max(y1, y2)) + ")";
+            par = "奇函数（c = 0 时）";
+            inc = a * b > 0 ? "单调递增" : "单调递减";
+          }
+          $("rcdom").textContent = dom;
+          $("rcrng").textContent = rng;
+          $("rcpar").textContent = par;
+          $("rcinc").textContent = inc;
+
+          var pts = [];
+          if (RC.mode === "asin") {
+            var xe = 1 / Math.abs(b);
+            pts.push({ x: 0, y: c, label: c2s(0, c) });
+            pts.push({
+              x: -xe,
+              y: a * Math.asin(-1) + c,
+              label: c2s(-xe, a * Math.asin(-1) + c),
+            });
+            pts.push({
+              x: xe,
+              y: a * Math.asin(1) + c,
+              label: c2s(xe, a * Math.asin(1) + c),
+            });
+            var xh = 0.5 / Math.abs(b);
+            pts.push({
+              x: xh,
+              y: a * Math.asin(b * xh) + c,
+              label: c2s(xh, a * Math.asin(b * xh) + c),
+            });
+          } else if (RC.mode === "acos") {
+            var xe2 = 1 / Math.abs(b);
+            pts.push({
+              x: 0,
+              y: a * Math.acos(0) + c,
+              label: c2s(0, a * Math.acos(0) + c),
+            });
+            pts.push({
+              x: -xe2,
+              y: a * Math.acos(-1) + c,
+              label: c2s(-xe2, a * Math.acos(-1) + c),
+            });
+            pts.push({
+              x: xe2,
+              y: a * Math.acos(1) + c,
+              label: c2s(xe2, a * Math.acos(1) + c),
+            });
+          } else {
+            pts.push({ x: 0, y: c, label: c2s(0, c) });
+            var x1 = (1 / Math.abs(b)) * (b > 0 ? 1 : -1);
+            pts.push({
+              x: x1,
+              y: a * Math.atan(b * x1) + c,
+              label: c2s(x1, a * Math.atan(b * x1) + c),
+            });
+            pts.push({
+              x: -x1,
+              y: a * Math.atan(-b * x1) + c,
+              label: c2s(-x1, a * Math.atan(-b * x1) + c),
+            });
+          }
+          RC.kp = pts;
+          $("rcpts").textContent = pts
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+
+          var hw;
+          if (RC.mode === "atan") hw = Math.max(3, 3 / Math.abs(b));
+          else hw = Math.max(1.8, 1.4 / Math.abs(b));
+          RCV.cx = 0;
+          smartView(
+            RCV,
+            function (x) {
+              var arg = RC.b * x;
+              if (RC.mode === "asin") {
+                if (arg < -1 || arg > 1) return null;
+                return RC.a * Math.asin(arg) + RC.c;
+              }
+              if (RC.mode === "acos") {
+                if (arg < -1 || arg > 1) return null;
+                return RC.a * Math.acos(arg) + RC.c;
+              }
+              return RC.a * Math.atan(arg) + RC.c;
+            },
+            hw,
+            true,
+          );
+          RCV.cy = c;
+
+          arcCalc();
+          drawArc();
+        }
+        function arcCalc() {
+          var v = parseFloat($("rcsv").value);
+          if (!isFinite(v)) {
+            $("rcosv").textContent = "请输入有效数字";
+            return;
+          }
+          var arg = RC.b * v;
+          var y = null;
+          if (RC.mode === "asin") {
+            if (arg < -1 - 1e-9 || arg > 1 + 1e-9) {
+              $("rcosv").textContent = "超出定义域";
+              rcPoint = null;
+              return;
+            }
+            arg = Math.max(-1, Math.min(1, arg));
+            y = RC.a * Math.asin(arg) + RC.c;
+          } else if (RC.mode === "acos") {
+            if (arg < -1 - 1e-9 || arg > 1 + 1e-9) {
+              $("rcosv").textContent = "超出定义域";
+              rcPoint = null;
+              return;
+            }
+            arg = Math.max(-1, Math.min(1, arg));
+            y = RC.a * Math.acos(arg) + RC.c;
+          } else {
+            y = RC.a * Math.atan(arg) + RC.c;
+          }
+          $("rcosv").textContent = "y = " + n2s(y);
+          rcPoint = { x: v, y: y };
+        }
+        function drawArc() {
+          var cv = $("rccv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(RCV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          if (RC.mode === "atan") {
+            [
+              RC.c + (Math.abs(RC.a) * Math.PI) / 2,
+              RC.c - (Math.abs(RC.a) * Math.PI) / 2,
+            ].forEach(function (ly) {
+              if (ly >= rect.ymin - 1e-9 && ly <= rect.ymax + 1e-9) {
+                var py = Math.round(Y(ly)) + 0.5;
+                ctx.save();
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = 1.2;
+                ctx.strokeStyle = "#cfe0f2";
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(W, py);
+                ctx.stroke();
+                ctx.restore();
+              }
+            });
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var arg = RC.b * xv;
+            var yv = null;
+            if (RC.mode === "asin") {
+              if (arg < -1 || arg > 1) {
+                started = false;
+                continue;
+              }
+              yv = RC.a * Math.asin(arg) + RC.c;
+            } else if (RC.mode === "acos") {
+              if (arg < -1 || arg > 1) {
+                started = false;
+                continue;
+              }
+              yv = RC.a * Math.acos(arg) + RC.c;
+            } else {
+              yv = RC.a * Math.atan(arg) + RC.c;
+            }
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          var taken = [];
+          RC.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, rcPoint, taken, "#c4321f");
+        }
+        $("rcbu").addEventListener("click", arcUpdate);
+        $("rcbsv").addEventListener("click", function () {
+          arcCalc();
+          drawArc();
+        });
+        ["rca", "rcb", "rcc"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") arcUpdate();
+          });
+        });
+        $("rcsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            arcCalc();
+            drawArc();
+          }
+        });
+        $("rczin").addEventListener("click", function () {
+          zoomView(RCV, 1 / 1.3);
+          drawArc();
+        });
+        $("rczout").addEventListener("click", function () {
+          zoomView(RCV, 1.3);
+          drawArc();
+        });
+        $("rczrst").addEventListener("click", arcUpdate);
+        attachRelSlider("rcpx", RCV, "x", drawArc);
+        attachRelSlider("rcpy", RCV, "y", drawArc);
+        attachDrag($("rccv"), function (p) {
+          var rect = viewRect(RCV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var arg = RC.b * x;
+          var y = null;
+          if (RC.mode === "asin") {
+            if (arg < -1 || arg > 1) return;
+            y = RC.a * Math.asin(arg) + RC.c;
+          } else if (RC.mode === "acos") {
+            if (arg < -1 || arg > 1) return;
+            y = RC.a * Math.acos(arg) + RC.c;
+          } else y = RC.a * Math.atan(arg) + RC.c;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("rcsv").value = n2s(x);
+          rcPoint = { x: x, y: y };
+          $("rcosv").textContent = "y = " + n2s(y);
+          drawArc();
+        });
+        document.querySelectorAll("#arcmode .mbtn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            RC.mode = b.dataset.mode;
+            document.querySelectorAll("#arcmode .mbtn").forEach(function (x) {
+              x.classList.toggle("on", x.dataset.mode === RC.mode);
+            });
+            arcUpdate();
+          });
+        });
+
+        /* ================================================================
+   二、一次分式
+   ================================================================ */
+        var RN = { a: 1, b: 1, c: 1, d: -1 };
+        var RNV = { cx: 0, cy: 0, hw: 5, hh: 5 };
+        var rnPoint = null;
+
+        function ratUpdate() {
+          var a = parseFloat($("rna").value),
+            b = parseFloat($("rnb").value),
+            c = parseFloat($("rnc").value),
+            d = parseFloat($("rnd").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c) || !isFinite(d)) {
+            $("rner").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(c) < 1e-12) {
+            $("rner").textContent = "c 不能为 0（否则不是分式函数）";
+            return;
+          }
+          $("rner").textContent = "";
+          RN.a = a;
+          RN.b = b;
+          RN.c = c;
+          RN.d = d;
+
+          /* 分子、分母分别拼接 */
+          var num = "",
+            den = "";
+          if (a === 1) num += "x";
+          else if (a === -1) num += "−x";
+          else num += n2s(a) + "x";
+          if (b > 0) num += " + " + n2s(b);
+          else if (b < 0) num += " − " + n2s(-b);
+          if (c === 1) den += "x";
+          else if (c === -1) den += "−x";
+          else den += n2s(c) + "x";
+          if (d > 0) den += " + " + n2s(d);
+          else if (d < 0) den += " − " + n2s(-d);
+
+          /* 一行显示：y = (分子) / (分母) */
+          $("rndg").textContent = "y = (" + num + ") / (" + den + ")";
+
+          var va = -d / c;
+          var ha = a / c;
+
+          $("rndom").textContent = "x ≠ " + n2s(va);
+          $("rnrng").textContent = "y ≠ " + n2s(ha);
+          $("rnasx").textContent = "x = " + n2s(va);
+          $("rnehx").textContent = "y = " + n2s(ha);
+
+          var ad_bc = a * d - b * c;
+          if (Math.abs(ad_bc) < 1e-9)
+            $("rninc").textContent = "常函数（分子分母成比例）";
+          else if (ad_bc > 0)
+            $("rninc").textContent =
+              "在 (−∞, " + n2s(va) + ") 和 (" + n2s(va) + ", +∞) 上单调递增";
+          else
+            $("rninc").textContent =
+              "在 (−∞, " + n2s(va) + ") 和 (" + n2s(va) + ", +∞) 上单调递减";
+
+          var hw = Math.max(
+            4,
+            Math.min(
+              20,
+              4 * Math.max(3, Math.abs(ad_bc) / Math.max(1, Math.abs(c * c))),
+            ),
+          );
+          RNV.hw = hw;
+          RNV.cx = va;
+          smartView(
+            RNV,
+            function (x) {
+              var den2 = RN.c * x + RN.d;
+              if (Math.abs(den2) < 1e-9) return null;
+              return (RN.a * x + RN.b) / den2;
+            },
+            hw,
+            false,
+          );
+          RNV.cy = ha;
+
+          ratCalc();
+          drawRat();
+        }
+        function ratCalc() {
+          var v = parseFloat($("rnsv").value);
+          if (!isFinite(v)) {
+            $("rnosv").textContent = "请输入有效数字";
+            return;
+          }
+          var den = RN.c * v + RN.d;
+          if (Math.abs(den) < 1e-12) {
+            $("rnosv").textContent = "分母为 0，无定义";
+            rnPoint = null;
+            return;
+          }
+          var y = (RN.a * v + RN.b) / den;
+          if (!isFinite(y)) {
+            $("rnosv").textContent = "无定义";
+            rnPoint = null;
+            return;
+          }
+          $("rnosv").textContent = "y = " + n2s(y);
+          rnPoint = { x: v, y: y };
+        }
+        function drawRat() {
+          var cv = $("rncv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(RNV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          var va = -RN.d / RN.c,
+            ha = RN.a / RN.c;
+
+          if (va >= rect.xmin - 1e-9 && va <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(va)) + 0.5;
+            if (isFinite(ax)) {
+              ctx.save();
+              ctx.setLineDash([7, 5]);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "#8fb3d6";
+              ctx.beginPath();
+              ctx.moveTo(ax, 0);
+              ctx.lineTo(ax, H);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+          if (ha >= rect.ymin - 1e-9 && ha <= rect.ymax + 1e-9) {
+            var ay = Math.round(Y(ha)) + 0.5;
+            if (isFinite(ay)) {
+              ctx.save();
+              ctx.setLineDash([7, 5]);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "#8fb3d6";
+              ctx.beginPath();
+              ctx.moveTo(0, ay);
+              ctx.lineTo(W, ay);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var eps = rect.hw / 500;
+          function branch(xa, xb) {
+            ctx.beginPath();
+            var N = 400,
+              started = false;
+            for (var i = 0; i <= N; i++) {
+              var xv = xa + ((xb - xa) * i) / N;
+              var den = RN.c * xv + RN.d;
+              if (Math.abs(den) < 1e-9) {
+                started = false;
+                continue;
+              }
+              var yv = (RN.a * xv + RN.b) / den;
+              if (!isFinite(yv)) {
+                started = false;
+                continue;
+              }
+              if (yv > 1e9) yv = 1e9;
+              if (yv < -1e9) yv = -1e9;
+              var py = Y(yv);
+              if (!isFinite(py)) {
+                started = false;
+                continue;
+              }
+              var px = X(xv);
+              if (!isFinite(px)) {
+                started = false;
+                continue;
+              }
+              if (!started) {
+                ctx.moveTo(px, py);
+                started = true;
+              } else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+          branch(rect.xmin, va - eps);
+          branch(va + eps, rect.xmax);
+          ctx.restore();
+
+          var taken = [];
+          if (Math.abs(RN.d) > 1e-9) {
+            var yInt = RN.b / RN.d;
+            if (yInt >= rect.ymin && yInt <= rect.ymax) {
+              drawKeyPoint(ctx, X, Y, { x: 0, y: yInt }, taken, "#1f4e7a");
+            }
+          }
+          if (Math.abs(RN.a) > 1e-9) {
+            var xInt = -RN.b / RN.a;
+            if (xInt >= rect.xmin && xInt <= rect.xmax) {
+              drawKeyPoint(ctx, X, Y, { x: xInt, y: 0 }, taken, "#1f4e7a");
+            }
+          }
+
+          drawRedDot(ctx, W, H, X, Y, rnPoint, taken, "#c4321f");
+        }
+        $("rnbu").addEventListener("click", ratUpdate);
+        $("rnbsv").addEventListener("click", function () {
+          ratCalc();
+          drawRat();
+        });
+        ["rna", "rnb", "rnc", "rnd"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") ratUpdate();
+          });
+        });
+        $("rnsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            ratCalc();
+            drawRat();
+          }
+        });
+        $("rnzin").addEventListener("click", function () {
+          zoomView(RNV, 1 / 1.3);
+          drawRat();
+        });
+        $("rnzout").addEventListener("click", function () {
+          zoomView(RNV, 1.3);
+          drawRat();
+        });
+        $("rnzrst").addEventListener("click", ratUpdate);
+        attachRelSlider("rnpx", RNV, "x", drawRat);
+        attachRelSlider("rnpy", RNV, "y", drawRat);
+        attachDrag($("rncv"), function (p) {
+          var rect = viewRect(RNV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var den = RN.c * x + RN.d;
+          if (Math.abs(den) < 1e-9) return;
+          var y = (RN.a * x + RN.b) / den;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("rnsv").value = n2s(x);
+          rnPoint = { x: x, y: y };
+          $("rnosv").textContent = "y = " + n2s(y);
+          drawRat();
+        });
+
+        /* ================================================================
+   三、广义对勾  y = a·x + b/x + c
+   ================================================================ */
+        var GK = { a: 1, b: 4, c: 0, kp: [] };
+        var GKV = { cx: 0, cy: 0, hw: 6, hh: 6 };
+        var gkPoint = null;
+
+        function genHookUpdate() {
+          var a = parseFloat($("gka").value),
+            b = parseFloat($("gkb").value),
+            c = parseFloat($("gkc").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("gker").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12 && Math.abs(b) < 1e-12) {
+            $("gker").textContent = "a、b 至少有一个不为 0";
+            return;
+          }
+          $("gker").textContent = "";
+          GK.a = a;
+          GK.b = b;
+          GK.c = c;
+
+          var fs = "y = ";
+          if (Math.abs(a) < 1e-12) {
+            if (b === 1) fs += "1/x";
+            else if (b === -1) fs += "−1/x";
+            else fs += n2s(b) + "/x";
+          } else {
+            if (a === 1) fs += "x";
+            else if (a === -1) fs += "−x";
+            else fs += n2s(a) + "x";
+            if (Math.abs(b) > 1e-12) {
+              if (b > 0) fs += " + ";
+              else fs += " − ";
+              if (Math.abs(b) !== 1) fs += n2s(Math.abs(b));
+              fs += "/x";
+            }
+          }
+          if (Math.abs(c) > 1e-12)
+            fs += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          $("gkdg").textContent = fs;
+
+          $("gkdom").textContent = "x ≠ 0";
+
+          var pts = [];
+          var ab = a * b;
+          var as = "x = 0";
+          if (Math.abs(a) > 1e-9)
+            as +=
+              " 和 y = " +
+              n2s(a) +
+              "x" +
+              (Math.abs(c) > 1e-9
+                ? c > 0
+                  ? " + " + n2s(c)
+                  : " − " + n2s(-c)
+                : "");
+          else as += " 和 y = " + n2s(c);
+
+          if (Math.abs(a) < 1e-12) {
+            $("gkrng").textContent = "y ≠ " + n2s(c);
+            $("gkinc").textContent =
+              b > 0
+                ? "在 (−∞,0) 和 (0,+∞) 上单调递减"
+                : "在 (−∞,0) 和 (0,+∞) 上单调递增";
+            $("gkpts").textContent = "无极值点";
+          } else if (Math.abs(b) < 1e-12) {
+            $("gkrng").textContent = "R";
+            $("gkinc").textContent =
+              a > 0 ? "在 R 上单调递增" : "在 R 上单调递减";
+            as = "无渐近线";
+            $("gkpts").textContent = "无极值点";
+          } else if (ab > 0) {
+            var x0 = Math.sqrt(b / a);
+            var y0 = c + 2 * Math.sqrt(ab);
+            var x0m = -Math.sqrt(b / a);
+            var y0m = c - 2 * Math.sqrt(ab);
+            if (a > 0) {
+              $("gkrng").textContent =
+                "(−∞, " + n2s(y0m) + "] ∪ [" + n2s(y0) + ", +∞)";
+              $("gkinc").textContent =
+                "(−∞, −√(b/a)] ↑，[−√(b/a), 0) ↓，(0, √(b/a)] ↓，[√(b/a), +∞) ↑";
+              pts.push({ x: x0m, y: y0m, label: c2s(x0m, y0m) });
+              pts.push({ x: x0, y: y0, label: c2s(x0, y0) });
+              $("gkpts").textContent = pts
+                .map(function (p) {
+                  return p.label;
+                })
+                .join(" ");
+            } else {
+              $("gkrng").textContent =
+                "[" + n2s(y0) + ", " + n2s(y0m) + "]（有界）";
+              $("gkinc").textContent = "(−∞, 0) ↑，(0, +∞) ↑";
+              $("gkpts").textContent = "无极值点";
+            }
+          } else {
+            $("gkrng").textContent = "R";
+            $("gkinc").textContent =
+              a > 0
+                ? "在 (−∞,0) 和 (0,+∞) 上单调递增"
+                : "在 (−∞,0) 和 (0,+∞) 上单调递减";
+            $("gkpts").textContent = "无极值点";
+          }
+          $("gkas").textContent = as;
+          GK.kp = pts;
+
+          var hw = Math.max(3, 3 * Math.max(1, Math.sqrt(Math.abs(ab))));
+          GKV.cx = 0;
+          GKV.hw = hw;
+          smartView(
+            GKV,
+            function (x) {
+              if (Math.abs(x) < 1e-9) return null;
+              return GK.a * x + GK.b / x + GK.c;
+            },
+            hw,
+            false,
+          );
+          GKV.cy = c;
+
+          genHookCalc();
+          drawGenHook();
+        }
+        function genHookCalc() {
+          var v = parseFloat($("gksv").value);
+          if (!isFinite(v)) {
+            $("gkosv").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(v) < 1e-12) {
+            $("gkosv").textContent = "x 不能为 0";
+            gkPoint = null;
+            return;
+          }
+          var y = GK.a * v + GK.b / v + GK.c;
+          if (!isFinite(y)) {
+            $("gkosv").textContent = "无定义";
+            gkPoint = null;
+            return;
+          }
+          $("gkosv").textContent = "y = " + n2s(y);
+          gkPoint = { x: v, y: y };
+        }
+        function drawGenHook() {
+          var cv = $("gkcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(GKV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          if (0 >= rect.xmin - 1e-9 && 0 <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(0)) + 0.5;
+            ctx.save();
+            ctx.setLineDash([7, 5]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "#8fb3d6";
+            ctx.beginPath();
+            ctx.moveTo(ax, 0);
+            ctx.lineTo(ax, H);
+            ctx.stroke();
+            ctx.restore();
+          }
+          if (Math.abs(GK.a) > 1e-9) {
+            var ya = GK.a * rect.xmin + GK.c,
+              yb = GK.a * rect.xmax + GK.c;
+            if (isFinite(ya) && isFinite(yb)) {
+              ctx.save();
+              ctx.setLineDash([5, 5]);
+              ctx.lineWidth = 1;
+              ctx.strokeStyle = "#cfe0f2";
+              ctx.beginPath();
+              ctx.moveTo(X(rect.xmin), Y(Math.max(-1e9, Math.min(1e9, ya))));
+              ctx.lineTo(X(rect.xmax), Y(Math.max(-1e9, Math.min(1e9, yb))));
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+          if (
+            Math.abs(GK.a) < 1e-12 &&
+            GK.c >= rect.ymin &&
+            GK.c <= rect.ymax
+          ) {
+            var ay = Math.round(Y(GK.c)) + 0.5;
+            ctx.save();
+            ctx.setLineDash([7, 5]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "#8fb3d6";
+            ctx.beginPath();
+            ctx.moveTo(0, ay);
+            ctx.lineTo(W, ay);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var eps = rect.hw / 500;
+          function branch(xa, xb) {
+            ctx.beginPath();
+            var N = 400,
+              started = false;
+            for (var i = 0; i <= N; i++) {
+              var xv = xa + ((xb - xa) * i) / N;
+              if (Math.abs(xv) < 1e-9) {
+                started = false;
+                continue;
+              }
+              var yv = GK.a * xv + GK.b / xv + GK.c;
+              if (!isFinite(yv)) {
+                started = false;
+                continue;
+              }
+              if (yv > 1e9) yv = 1e9;
+              if (yv < -1e9) yv = -1e9;
+              var py = Y(yv);
+              if (!isFinite(py)) {
+                started = false;
+                continue;
+              }
+              var px = X(xv);
+              if (!isFinite(px)) {
+                started = false;
+                continue;
+              }
+              if (!started) {
+                ctx.moveTo(px, py);
+                started = true;
+              } else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+          branch(Math.max(eps, rect.xmin), rect.xmax);
+          branch(rect.xmin, Math.min(-eps, rect.xmax));
+          ctx.restore();
+
+          var taken = [];
+          GK.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, gkPoint, taken, "#c4321f");
+        }
+        $("gkbu").addEventListener("click", genHookUpdate);
+        $("gkbsv").addEventListener("click", function () {
+          genHookCalc();
+          drawGenHook();
+        });
+        ["gka", "gkb", "gkc"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") genHookUpdate();
+          });
+        });
+        $("gksv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            genHookCalc();
+            drawGenHook();
+          }
+        });
+        $("gkzin").addEventListener("click", function () {
+          zoomView(GKV, 1 / 1.3);
+          drawGenHook();
+        });
+        $("gkzout").addEventListener("click", function () {
+          zoomView(GKV, 1.3);
+          drawGenHook();
+        });
+        $("gkzrst").addEventListener("click", genHookUpdate);
+        attachRelSlider("gkpx", GKV, "x", drawGenHook);
+        attachRelSlider("gkpy", GKV, "y", drawGenHook);
+        attachDrag($("gkcv"), function (p) {
+          var rect = viewRect(GKV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          if (Math.abs(x) < 1e-9) return;
+          var y = GK.a * x + GK.b / x + GK.c;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("gksv").value = n2s(x);
+          gkPoint = { x: x, y: y };
+          $("gkosv").textContent = "y = " + n2s(y);
+          drawGenHook();
+        });
+
+        /* ================================================================
+   四、四次多项式
+   ================================================================ */
+        var QT = { a: 1, b: 0, c: -5, d: 0, e: 4, kp: [], ext: [] };
+        var QTV = { cx: 0, cy: 0, hw: 5, hh: 5 };
+        var qtPoint = null;
+
+        function quartUpdate() {
+          var a = parseFloat($("qta").value),
+            b = parseFloat($("qtb").value),
+            c = parseFloat($("qtc").value),
+            d = parseFloat($("qtd").value),
+            e = parseFloat($("qte").value);
+          if (
+            !isFinite(a) ||
+            !isFinite(b) ||
+            !isFinite(c) ||
+            !isFinite(d) ||
+            !isFinite(e)
+          ) {
+            $("qter").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("qter").textContent = "a 不能为 0（否则不是四次多项式）";
+            return;
+          }
+          $("qter").textContent = "";
+          QT.a = a;
+          QT.b = b;
+          QT.c = c;
+          QT.d = d;
+          QT.e = e;
+
+          var fs = "y = ";
+          if (a === 1) fs += "x⁴";
+          else if (a === -1) fs += "−x⁴";
+          else fs += n2s(a) + "x⁴";
+          if (Math.abs(b) > 1e-12) {
+            fs += b > 0 ? " + " : " − ";
+            if (Math.abs(b) !== 1) fs += n2s(Math.abs(b));
+            fs += "x³";
+          }
+          if (Math.abs(c) > 1e-12) {
+            fs += c > 0 ? " + " : " − ";
+            if (Math.abs(c) !== 1) fs += n2s(Math.abs(c));
+            fs += "x²";
+          }
+          if (Math.abs(d) > 1e-12) {
+            fs += d > 0 ? " + " : " − ";
+            if (Math.abs(d) !== 1) fs += n2s(Math.abs(d));
+            fs += "x";
+          }
+          if (Math.abs(e) > 1e-12)
+            fs += (e > 0 ? " + " : " − ") + n2s(Math.abs(e));
+          $("qtdg").textContent = fs;
+
+          var par = "非奇非偶";
+          if (Math.abs(b) < 1e-9 && Math.abs(d) < 1e-9) par = "偶函数";
+          else if (
+            Math.abs(a) < 1e-9 &&
+            Math.abs(c) < 1e-9 &&
+            Math.abs(e) < 1e-9
+          )
+            par = "奇函数";
+          $("qtpar").textContent = par;
+
+          var crit = solveCubic(4 * a, 3 * b, 2 * c, d);
+          var ext = [];
+          crit.forEach(function (x) {
+            if (!isFinite(x)) return;
+            var y = a * x * x * x * x + b * x * x * x + c * x * x + d * x + e;
+            if (!isFinite(y)) return;
+            ext.push({ x: x, y: y });
+          });
+          QT.ext = ext;
+          if (ext.length) {
+            $("qtext").textContent = ext
+              .map(function (p) {
+                return c2s(p.x, p.y);
+              })
+              .join("  ");
+          } else {
+            $("qtext").textContent = "无极值点";
+          }
+
+          var infl = solveQ(12 * a, 6 * b, 2 * c);
+          var inflPts = [];
+          infl.forEach(function (x) {
+            if (!isFinite(x)) return;
+            var y = a * x * x * x * x + b * x * x * x + c * x * x + d * x + e;
+            inflPts.push({ x: x, y: y });
+          });
+          if (inflPts.length) {
+            $("qtinf").textContent = inflPts
+              .map(function (p) {
+                return c2s(p.x, p.y);
+              })
+              .join("  ");
+          } else {
+            $("qtinf").textContent = "无拐点";
+          }
+
+          var pts = [{ x: 0, y: e, label: c2s(0, e) }];
+          ext.forEach(function (p) {
+            pts.push({ x: p.x, y: p.y, label: c2s(p.x, p.y) });
+          });
+          inflPts.forEach(function (p) {
+            pts.push({ x: p.x, y: p.y, label: c2s(p.x, p.y) });
+          });
+          var uniq = [],
+            seen = {};
+          pts.forEach(function (p) {
+            var key = Math.round(p.x * 1e5) + "," + Math.round(p.y * 1e5);
+            if (!seen[key]) {
+              seen[key] = 1;
+              uniq.push(p);
+            }
+          });
+          QT.kp = uniq.slice(0, 6);
+          $("qtpts").textContent = QT.kp
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+
+          var xr = 2;
+          ext.forEach(function (p) {
+            if (Math.abs(p.x) > xr) xr = Math.abs(p.x);
+          });
+          var hw = Math.max(3, Math.min(15, xr * 1.6 + 1));
+          QTV.cx = 0;
+          QTV.hw = hw;
+          smartView(
+            QTV,
+            function (x) {
+              return (
+                QT.a * x * x * x * x +
+                QT.b * x * x * x +
+                QT.c * x * x +
+                QT.d * x +
+                QT.e
+              );
+            },
+            hw,
+            false,
+          );
+
+          quartCalc();
+          drawQuart();
+        }
+        function quartCalc() {
+          var v = parseFloat($("qtsv").value);
+          if (!isFinite(v)) {
+            $("qtosv").textContent = "请输入有效数字";
+            return;
+          }
+          var y =
+            QT.a * v * v * v * v +
+            QT.b * v * v * v +
+            QT.c * v * v +
+            QT.d * v +
+            QT.e;
+          if (!isFinite(y)) {
+            $("qtosv").textContent = "无定义";
+            qtPoint = null;
+            return;
+          }
+          $("qtosv").textContent = "y = " + n2s(y);
+          qtPoint = { x: v, y: y };
+        }
+        function drawQuart() {
+          var cv = $("qtcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(QTV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv =
+              QT.a * xv * xv * xv * xv +
+              QT.b * xv * xv * xv +
+              QT.c * xv * xv +
+              QT.d * xv +
+              QT.e;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          var taken = [];
+          QT.ext.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          if (QT.e >= rect.ymin && QT.e <= rect.ymax) {
+            drawKeyPoint(ctx, X, Y, { x: 0, y: QT.e }, taken, "#4a8fd0");
+          }
+
+          drawRedDot(ctx, W, H, X, Y, qtPoint, taken, "#c4321f");
+        }
+        $("qtbu").addEventListener("click", quartUpdate);
+        $("qtbsv").addEventListener("click", function () {
+          quartCalc();
+          drawQuart();
+        });
+        ["qta", "qtb", "qtc", "qtd", "qte"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") quartUpdate();
+          });
+        });
+        $("qtsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            quartCalc();
+            drawQuart();
+          }
+        });
+        $("qtzin").addEventListener("click", function () {
+          zoomView(QTV, 1 / 1.3);
+          drawQuart();
+        });
+        $("qtzout").addEventListener("click", function () {
+          zoomView(QTV, 1.3);
+          drawQuart();
+        });
+        $("qtzrst").addEventListener("click", quartUpdate);
+        attachRelSlider("qtpx", QTV, "x", drawQuart);
+        attachRelSlider("qtpy", QTV, "y", drawQuart);
+        attachDrag($("qtcv"), function (p) {
+          var rect = viewRect(QTV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var y =
+            QT.a * x * x * x * x +
+            QT.b * x * x * x +
+            QT.c * x * x +
+            QT.d * x +
+            QT.e;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("qtsv").value = n2s(x);
+          qtPoint = { x: x, y: y };
+          $("qtosv").textContent = "y = " + n2s(y);
+          drawQuart();
+        });
+
+        /* ================================================================
+   五、双曲函数
+   ================================================================ */
+        var HP = { a: 1, b: 1, c: 0, mode: "sinh", kp: [] };
+        var HPV = { cx: 0, cy: 0, hw: 3, hh: 3 };
+        var hpPoint = null;
+
+        function hypUpdate() {
+          var a = parseFloat($("hpa").value),
+            b = parseFloat($("hpb").value),
+            c = parseFloat($("hpc").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("hper").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(b) < 1e-12) {
+            $("hper").textContent = "b 不能为 0";
+            return;
+          }
+          $("hper").textContent = "";
+          HP.a = a;
+          HP.b = b;
+          HP.c = c;
+          var fn = HP.mode;
+
+          var fs = "y = ";
+          if (a === 1) fs += "";
+          else if (a === -1) fs += "−";
+          else fs += n2s(a);
+          fs += fn + "(";
+          if (Math.abs(b - 1) < 1e-9) fs += "x";
+          else fs += n2s(b) + "x";
+          fs += ")";
+          if (Math.abs(c) > 1e-12)
+            fs += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          $("hpdg").textContent = fs;
+
+          var rng = "",
+            par = "",
+            inc = "",
+            asm = "";
+          if (HP.mode === "sinh") {
+            rng = "R";
+            par = "奇函数（c = 0 时）";
+            inc = a * b > 0 ? "在 R 上单调递增" : "在 R 上单调递减";
+            asm = "—";
+          } else if (HP.mode === "cosh") {
+            rng =
+              a > 0 ? "[" + n2s(a + c) + ", +∞)" : "(−∞, " + n2s(a + c) + "]";
+            par = "偶函数";
+            inc = a > 0 ? "在 (−∞, 0] ↓，[0, +∞) ↑" : "在 (−∞, 0] ↑，[0, +∞) ↓";
+            asm = "—";
+          } else {
+            var lim = Math.abs(a);
+            rng = "(" + n2s(c - lim) + ", " + n2s(c + lim) + ")";
+            par = "奇函数（c = 0 时）";
+            inc = a * b > 0 ? "在 R 上单调递增" : "在 R 上单调递减";
+            asm = "y = " + n2s(c - lim) + " 和 y = " + n2s(c + lim);
+          }
+          $("hprng").textContent = rng;
+          $("hppar").textContent = par;
+          $("hpinc").textContent = inc;
+          $("hpas").textContent = asm;
+
+          var pts = [];
+          if (HP.mode === "sinh") {
+            pts.push({ x: 0, y: HP.c, label: c2s(0, HP.c) });
+            var x1 = (b > 0 ? 1 : -1) / Math.abs(b);
+            pts.push({
+              x: x1,
+              y: a * Math.sinh(b * x1) + c,
+              label: c2s(x1, a * Math.sinh(b * x1) + c),
+            });
+            pts.push({
+              x: -x1,
+              y: a * Math.sinh(-b * x1) + c,
+              label: c2s(-x1, a * Math.sinh(-b * x1) + c),
+            });
+          } else if (HP.mode === "cosh") {
+            pts.push({ x: 0, y: a + c, label: c2s(0, a + c) });
+            var x2 = (b > 0 ? 1 : -1) / Math.abs(b);
+            pts.push({
+              x: x2,
+              y: a * Math.cosh(b * x2) + c,
+              label: c2s(x2, a * Math.cosh(b * x2) + c),
+            });
+            pts.push({
+              x: -x2,
+              y: a * Math.cosh(-b * x2) + c,
+              label: c2s(-x2, a * Math.cosh(-b * x2) + c),
+            });
+          } else {
+            pts.push({ x: 0, y: HP.c, label: c2s(0, HP.c) });
+            var x3 = (b > 0 ? 1 : -1) / Math.abs(b);
+            pts.push({
+              x: x3,
+              y: a * Math.tanh(b * x3) + c,
+              label: c2s(x3, a * Math.tanh(b * x3) + c),
+            });
+            pts.push({
+              x: -x3,
+              y: a * Math.tanh(-b * x3) + c,
+              label: c2s(-x3, a * Math.tanh(-b * x3) + c),
+            });
+          }
+          HP.kp = pts;
+
+          var hw =
+            HP.mode === "tanh"
+              ? Math.max(2, 3 / Math.abs(b))
+              : Math.max(2, 2.5 / Math.abs(b));
+          HPV.cx = 0;
+          HPV.hw = hw;
+          smartView(
+            HPV,
+            function (x) {
+              var arg = HP.b * x;
+              if (HP.mode === "sinh") return HP.a * Math.sinh(arg) + HP.c;
+              if (HP.mode === "cosh") return HP.a * Math.cosh(arg) + HP.c;
+              return HP.a * Math.tanh(arg) + HP.c;
+            },
+            hw,
+            true,
+          );
+          HPV.cy = c;
+
+          hypCalc();
+          drawHyp();
+        }
+        function hypCalc() {
+          var v = parseFloat($("hpsv").value);
+          if (!isFinite(v)) {
+            $("hposv").textContent = "请输入有效数字";
+            return;
+          }
+          var arg = HP.b * v;
+          var y = null;
+          if (HP.mode === "sinh") y = HP.a * Math.sinh(arg) + HP.c;
+          else if (HP.mode === "cosh") y = HP.a * Math.cosh(arg) + HP.c;
+          else y = HP.a * Math.tanh(arg) + HP.c;
+          if (!isFinite(y)) {
+            $("hposv").textContent = "无定义";
+            hpPoint = null;
+            return;
+          }
+          $("hposv").textContent = "y = " + n2s(y);
+          hpPoint = { x: v, y: y };
+        }
+        function drawHyp() {
+          var cv = $("hpcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(HPV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          if (HP.mode === "tanh") {
+            var lim = Math.abs(HP.a);
+            [HP.c + lim, HP.c - lim].forEach(function (ly) {
+              if (ly >= rect.ymin - 1e-9 && ly <= rect.ymax + 1e-9) {
+                var py = Math.round(Y(ly)) + 0.5;
+                ctx.save();
+                ctx.setLineDash([6, 5]);
+                ctx.lineWidth = 1.2;
+                ctx.strokeStyle = "#cfe0f2";
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(W, py);
+                ctx.stroke();
+                ctx.restore();
+              }
+            });
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var arg = HP.b * xv;
+            var yv = null;
+            if (HP.mode === "sinh") yv = HP.a * Math.sinh(arg) + HP.c;
+            else if (HP.mode === "cosh") yv = HP.a * Math.cosh(arg) + HP.c;
+            else yv = HP.a * Math.tanh(arg) + HP.c;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          var taken = [];
+          HP.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, hpPoint, taken, "#c4321f");
+        }
+        $("hpbu").addEventListener("click", hypUpdate);
+        $("hpbsv").addEventListener("click", function () {
+          hypCalc();
+          drawHyp();
+        });
+        ["hpa", "hpb", "hpc"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") hypUpdate();
+          });
+        });
+        $("hpsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            hypCalc();
+            drawHyp();
+          }
+        });
+        $("hpzin").addEventListener("click", function () {
+          zoomView(HPV, 1 / 1.3);
+          drawHyp();
+        });
+        $("hpzout").addEventListener("click", function () {
+          zoomView(HPV, 1.3);
+          drawHyp();
+        });
+        $("hpzrst").addEventListener("click", hypUpdate);
+        attachRelSlider("hppx", HPV, "x", drawHyp);
+        attachRelSlider("hppy", HPV, "y", drawHyp);
+        attachDrag($("hpcv"), function (p) {
+          var rect = viewRect(HPV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var arg = HP.b * x;
+          var y = null;
+          if (HP.mode === "sinh") y = HP.a * Math.sinh(arg) + HP.c;
+          else if (HP.mode === "cosh") y = HP.a * Math.cosh(arg) + HP.c;
+          else y = HP.a * Math.tanh(arg) + HP.c;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("hpsv").value = n2s(x);
+          hpPoint = { x: x, y: y };
+          $("hposv").textContent = "y = " + n2s(y);
+          drawHyp();
+        });
+        document.querySelectorAll("#hypmode .mbtn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            HP.mode = b.dataset.mode;
+            document.querySelectorAll("#hypmode .mbtn").forEach(function (x) {
+              x.classList.toggle("on", x.dataset.mode === HP.mode);
+            });
+            hypUpdate();
+          });
+        });
+
+        /* ============ 四舍五入开关 ============ */
+        document.querySelectorAll(".rt").forEach(function (t) {
+          t.checked = ROUND;
+          t.addEventListener("change", function () {
+            ROUND = this.checked;
+            document.querySelectorAll(".rt").forEach(function (o) {
+              o.checked = ROUND;
+            });
+            if (rcPoint) {
+              $("rcsv").value = n2s(rcPoint.x);
+              $("rcosv").textContent = "y = " + n2s(rcPoint.y);
+            }
+            if (rnPoint) {
+              $("rnsv").value = n2s(rnPoint.x);
+              $("rnosv").textContent = "y = " + n2s(rnPoint.y);
+            }
+            if (gkPoint) {
+              $("gksv").value = n2s(gkPoint.x);
+              $("gkosv").textContent = "y = " + n2s(gkPoint.y);
+            }
+            if (qtPoint) {
+              $("qtsv").value = n2s(qtPoint.x);
+              $("qtosv").textContent = "y = " + n2s(qtPoint.y);
+            }
+            if (hpPoint) {
+              $("hpsv").value = n2s(hpPoint.x);
+              $("hposv").textContent = "y = " + n2s(hpPoint.y);
+            }
+            drawArc();
+            drawRat();
+            drawGenHook();
+            drawQuart();
+            drawHyp();
+          });
+        });
+
+        /* ============ 选项卡切换 ============ */
+        document.querySelectorAll(".tabs .tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            document.querySelectorAll(".tabs .tab").forEach(function (t) {
+              t.classList.remove("on");
+            });
+            tab.classList.add("on");
+            ["paneArc", "paneRat", "paneHook", "paneQuart", "paneHyp"].forEach(
+              function (pid) {
+                var el = $(pid);
+                if (!el) return;
+                el.style.display = pid === tab.dataset.pane ? "" : "none";
+              },
+            );
+            var map = {
+              paneArc: drawArc,
+              paneRat: drawRat,
+              paneHook: drawGenHook,
+              paneQuart: drawQuart,
+              paneHyp: drawHyp,
+            };
+            if (map[tab.dataset.pane]) map[tab.dataset.pane]();
+          });
+        });
+
+        /* ============ 初始化 ============ */
+        arcUpdate();
+        ratUpdate();
+        genHookUpdate();
+        quartUpdate();
+        hypUpdate();
+      })();
+    </script>
+  </body>
+</html>

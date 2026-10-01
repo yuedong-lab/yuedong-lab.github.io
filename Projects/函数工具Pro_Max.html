@@ -1,0 +1,1810 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>函数工具 Pro Max</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0b1e33;
+        --ink2: #31536f;
+        --muted: #8aa0b8;
+        --line: #e6ecf3;
+        --brand: #2f6fb0;
+        --bd: #1f4e7a;
+        --bl: #eaf2fb;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        background:
+          radial-gradient(
+            900px 520px at 8% -12%,
+            #dbe9fb 0%,
+            rgba(219, 233, 251, 0) 62%
+          ),
+          radial-gradient(
+            760px 480px at 102% -6%,
+            #e2f0ff 0%,
+            rgba(226, 240, 255, 0) 58%
+          ),
+          linear-gradient(180deg, #f7fafd, #eef3f9);
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 16px;
+      }
+      .box {
+        position: relative;
+        max-width: 780px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 24px;
+        padding: 22px 24px 26px;
+        overflow: hidden;
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.04),
+          0 14px 34px -12px rgba(16, 42, 74, 0.18),
+          0 46px 90px -50px rgba(16, 42, 74, 0.35);
+      }
+      .box::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2f6fb0, #66a7e2, #9fcdf3, #2f6fb0);
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 14px;
+      }
+      h2::before {
+        content: "ƒ";
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 17px;
+        color: #fff;
+        background: linear-gradient(135deg, #4a8fd0, #1f4e7a);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.38),
+          0 6px 14px -5px rgba(31, 78, 122, 0.65);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin: 0 0 16px;
+        padding: 4px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+        box-shadow: inset 0 1px 2px rgba(16, 42, 74, 0.06);
+      }
+      .tabs .tab {
+        flex: 1 1 0;
+        min-width: 70px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 8px 6px;
+        border-radius: 10px;
+        transition: all 0.18s;
+      }
+      .tabs .tab:hover {
+        color: var(--bd);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .tabs .tab.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 6px 16px -9px rgba(16, 42, 74, 0.5);
+      }
+      .pane {
+        animation: paneIn 0.2s ease;
+      }
+      @keyframes paneIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 10px 12px;
+        background: linear-gradient(180deg, #fbfdff, #f5f9fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .grp {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 50px;
+        min-width: 44px;
+      }
+      .grp label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #4d637d;
+        margin-bottom: 4px;
+      }
+      .grp input {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+        transition: all 0.18s;
+      }
+      .grp input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 4px rgba(59, 130, 196, 0.13);
+      }
+      .btn {
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(180deg, #3a7cbb, #25609b);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 6px 14px -7px rgba(31, 78, 122, 0.8);
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        filter: brightness(1.07);
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0);
+        filter: brightness(0.97);
+      }
+      .err {
+        min-height: 18px;
+        margin: -4px 0 8px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d14949;
+      }
+      .res {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px 16px;
+        background: linear-gradient(180deg, #fbfdff, #f4f9fe);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .res .it {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding-left: 11px;
+      }
+      .res .it::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #8bc0ee, #2f6fb0);
+        opacity: 0.8;
+      }
+      .res .it .lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+      .res .it .val {
+        font-family: "Times New Roman", Cambria, serif;
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--ink);
+        word-break: break-word;
+      }
+      .res .it .val.small {
+        font-size: 12.5px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .calc {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .calc .cb {
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 11px 13px 13px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .calc .cb .ct {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4d637d;
+        margin-bottom: 7px;
+      }
+      .calc .cb .cr {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .calc .cb .cr .prefix {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        padding: 0 2px;
+        white-space: nowrap;
+      }
+      .calc .cb .cr input {
+        flex: 1 1 0;
+        min-width: 44px;
+        padding: 6px 9px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+      }
+      .calc .cb .cr input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3.5px rgba(59, 130, 196, 0.13);
+      }
+      .calc .cb .cr .bs {
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--bd);
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+      }
+      .calc .cb .cr .bs:hover {
+        filter: brightness(1.05);
+      }
+      .calc .cb .o {
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px dashed #cfdcea;
+        border-radius: 9px;
+        background: #fff;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .chart {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 1px 3px rgba(16, 42, 74, 0.05);
+      }
+      .chart canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .zoombar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .zoombar .zb {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 9px;
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+        color: var(--bd);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .zoombar .zb:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .zoombar .zlab {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b8299;
+      }
+      .zoombar .zslider {
+        flex: 1 1 70px;
+        min-width: 50px;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(90deg, #cfe0f2, #dce9f7);
+        border-radius: 3px;
+        outline: none;
+        cursor: grab;
+      }
+      .zoombar .zslider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        box-shadow: 0 2px 6px rgba(31, 78, 122, 0.4);
+        cursor: grab;
+      }
+      .zoombar .zslider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        cursor: grab;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 6px;
+        border-top: 1px dashed #dbe6f1;
+        margin-top: 4px;
+      }
+      .toggle-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b8299;
+        white-space: nowrap;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex: 0 0 auto;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 20px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      input:checked + .slider {
+        background-color: #3b82c4;
+      }
+      input:checked + .slider:before {
+        transform: translateX(16px);
+      }
+      .hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 4px 0;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      @media (max-width: 620px) {
+        body {
+          padding: 10px;
+        }
+        .box {
+          padding: 18px 16px 20px;
+          border-radius: 20px;
+        }
+        h2 {
+          font-size: 17px;
+        }
+        .tabs .tab {
+          min-width: 0;
+          padding: 8px 4px;
+          font-size: 10.5px;
+        }
+        .res {
+          grid-template-columns: 1fr;
+        }
+        .toggle-row {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>函数工具 Pro Max</h2>
+      <div class="tabs" id="tabs"></div>
+      <div id="panes"></div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) {
+          return document.getElementById(id);
+        };
+        var isRound = false;
+        var MAX_ABS = 2e9;
+
+        /* ============================================================
+   数值函数
+   ============================================================ */
+        var _fc = [1];
+        function factorial(n) {
+          n = Math.round(n);
+          if (n < 0) return NaN;
+          while (_fc.length <= n) _fc.push(_fc[_fc.length - 1] * _fc.length);
+          return _fc[n];
+        }
+
+        /* 误差函数 erf(x) — Abramowitz & Stegun 7.1.26，精度 ~1.5e-7 */
+        function erf(x) {
+          if (x < 0) return -erf(-x);
+          if (x > 6) return 1;
+          var t = 1 / (1 + 0.3275911 * x);
+          return (
+            1 -
+            ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t -
+              0.284496736) *
+              t +
+              0.254829592) *
+              t *
+              Math.exp(-x * x)
+          );
+        }
+
+        /* 伽马函数 Γ(x) — Lanczos 近似，精度 ~15 位 */
+        function gammaFn(x) {
+          if (x <= 0 && Math.abs(x - Math.round(x)) < 1e-9) return NaN;
+          if (x < 0.5)
+            return Math.PI / (Math.sin(Math.PI * x) * gammaFn(1 - x));
+          x -= 1;
+          var g = 7;
+          var C = [
+            0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+            771.32342877765313, -176.61502916214059, 12.507343278686905,
+            -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+          ];
+          var sum = C[0];
+          for (var i = 1; i < g + 2; i++) sum += C[i] / (x + i);
+          var t = x + g + 0.5;
+          return (
+            Math.sqrt(2 * Math.PI) * Math.pow(t, x + 0.5) * Math.exp(-t) * sum
+          );
+        }
+
+        /* 黎曼 ζ 函数 */
+        function zetaFn(s) {
+          if (Math.abs(s - 1) < 1e-6) return NaN;
+          if (s < 0) {
+            return (
+              Math.pow(2, s) *
+              Math.pow(Math.PI, s - 1) *
+              Math.sin((Math.PI * s) / 2) *
+              gammaFn(1 - s) *
+              zetaFn(1 - s)
+            );
+          }
+          if (s === 0) return -0.5;
+          var N = s < 1 ? 400 : 60;
+          var eta = 0;
+          for (var n = 1; n <= N; n++) {
+            eta += (n % 2 === 1 ? 1 : -1) / Math.pow(n, s);
+          }
+          return eta / (1 - Math.pow(2, 1 - s));
+        }
+
+        /* 正弦积分 Si(x) = ∫₀ˣ sin(t)/t dt */
+        function Si(x) {
+          if (x === 0) return 0;
+          var sg = x > 0 ? 1 : -1;
+          var ax = Math.abs(x);
+          if (ax < 10) {
+            var sum = 0,
+              term = ax;
+            for (var k = 0; k < 80; k++) {
+              sum += term / (2 * k + 1);
+              term *= (-ax * ax) / ((2 * k + 2) * (2 * k + 3));
+              if (Math.abs(term) < 1e-15 && k > 8) break;
+            }
+            return sg * sum;
+          }
+          var x2 = ax * ax;
+          var f =
+            (1 / ax) * (1 - 2 / x2 + 24 / (x2 * x2) - 720 / (x2 * x2 * x2));
+          var g =
+            (1 / x2) * (1 - 6 / x2 + 120 / (x2 * x2) - 5040 / (x2 * x2 * x2));
+          return sg * (Math.PI / 2 - f * Math.cos(ax) - g * Math.sin(ax));
+        }
+
+        /* 余弦积分 Ci(x) = γ + ln|x| + ∫₀ˣ (cos t − 1)/t dt（偶函数） */
+        function Ci(x) {
+          var ax = Math.abs(x);
+          if (ax === 0) return -Infinity;
+          if (ax < 10) {
+            var sum = 0,
+              term = 1;
+            for (var k = 1; k < 80; k++) {
+              term *= (-ax * ax) / ((2 * k - 1) * (2 * k));
+              sum += term / (2 * k);
+              if (Math.abs(term) < 1e-15 && k > 8) break;
+            }
+            return 0.5772156649015329 + Math.log(ax) + sum;
+          }
+          var x2 = ax * ax;
+          var f =
+            (1 / ax) * (1 - 2 / x2 + 24 / (x2 * x2) - 720 / (x2 * x2 * x2));
+          var g =
+            (1 / x2) * (1 - 6 / x2 + 120 / (x2 * x2) - 5040 / (x2 * x2 * x2));
+          return f * Math.sin(ax) - g * Math.cos(ax);
+        }
+
+        /* 勒让德多项式 P_n(x) — Bonnet 递推 */
+        function legendre(n, x) {
+          n = Math.round(n);
+          if (n < 0) return NaN;
+          if (n === 0) return 1;
+          if (n === 1) return x;
+          var p0 = 1,
+            p1 = x;
+          for (var k = 2; k <= n; k++) {
+            var pk = ((2 * k - 1) * x * p1 - (k - 1) * p0) / k;
+            p0 = p1;
+            p1 = pk;
+          }
+          return p1;
+        }
+
+        function sgnFn(x) {
+          return x > 0 ? 1 : x < 0 ? -1 : 0;
+        }
+        function stepFn(x) {
+          return x >= 0 ? 1 : 0;
+        }
+
+        /* 菲涅尔 S(x) = ∫₀ˣ sin(πt²/2) dt */
+        function fresnelS(x) {
+          if (x === 0) return 0;
+          var sg = x > 0 ? 1 : -1;
+          var ax = Math.abs(x);
+          if (ax < 5) {
+            var a = Math.PI / 2;
+            var term = (a * ax * ax * ax) / 3;
+            var sum = term;
+            for (var k = 1; k < 60; k++) {
+              term *=
+                (-a * a * ax * ax * ax * ax * (4 * k - 1)) /
+                (2 * k * (2 * k + 1) * (4 * k + 3));
+              sum += term;
+              if (Math.abs(term) < 1e-15 && k > 5) break;
+            }
+            return sg * sum;
+          }
+          var px2 = (Math.PI * ax * ax) / 2;
+          return sg * (0.5 - Math.cos(px2) / (Math.PI * ax));
+        }
+
+        /* 菲涅尔 C(x) = ∫₀ˣ cos(πt²/2) dt */
+        function fresnelC(x) {
+          if (x === 0) return 0;
+          var sg = x > 0 ? 1 : -1;
+          var ax = Math.abs(x);
+          if (ax < 5) {
+            var a = Math.PI / 2;
+            var term = ax;
+            var sum = term;
+            for (var k = 1; k < 60; k++) {
+              term *=
+                (-a * a * ax * ax * ax * ax * (4 * k - 3)) /
+                ((2 * k - 1) * (2 * k) * (4 * k + 1));
+              sum += term;
+              if (Math.abs(term) < 1e-15 && k > 5) break;
+            }
+            return sg * sum;
+          }
+          var px2 = (Math.PI * ax * ax) / 2;
+          return sg * (0.5 + Math.sin(px2) / (Math.PI * ax));
+        }
+
+        /* 贝塞尔函数 J_n(x) = Σ (-1)^k / (k!(n+k)!) (x/2)^(2k+n) */
+        function besselJ(n, x) {
+          n = Math.round(n);
+          if (n < 0) return NaN;
+          var sg = 1;
+          if (x < 0 && n % 2 === 1) sg = -1;
+          var ax = Math.abs(x);
+          var half = ax / 2;
+          var term = Math.pow(half, n) / factorial(n);
+          var sum = term;
+          for (var k = 1; k < 60; k++) {
+            term *= (-half * half) / (k * (n + k));
+            sum += term;
+            if (Math.abs(term) < 1e-15 && k > 5) break;
+          }
+          return sg * sum;
+        }
+
+        /* ============================================================
+   规格定义
+   ============================================================ */
+        var SPECS = [
+          {
+            key: "erf",
+            tab: "误差函数",
+            formula: "y = erf(x)",
+            fn: function (x) {
+              return erf(x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "(−1, 1)"],
+              ["奇偶性", "奇函数"],
+              ["单调性", "在 R 上 ↑"],
+              ["渐近线", "y = ±1"],
+              ["过点", "(0, 0)"],
+            ],
+            hw: 3.2,
+            cy: 0,
+            includeZero: true,
+            keyPts: function () {
+              return [
+                { x: 0, y: 0 },
+                { x: 0.5, y: erf(0.5) },
+                { x: 1, y: erf(1) },
+                { x: -0.5, y: -erf(0.5) },
+                { x: -1, y: -erf(1) },
+              ];
+            },
+          },
+          {
+            key: "gam",
+            tab: "伽马函数",
+            formula: "y = Γ(x)",
+            fn: function (x) {
+              return gammaFn(x);
+            },
+            props: [
+              ["定义域", "x > 0 及负非整数"],
+              ["值域", "(−∞, +∞)"],
+              ["特殊值", "Γ(n+1) = n!"],
+              ["极点", "x = 0, −1, −2, …"],
+              ["极小值", "(1.4616, 0.8856)"],
+              ["递推", "Γ(x+1) = x·Γ(x)"],
+            ],
+            hw: 5,
+            cy: 3,
+            includeZero: false,
+            keyPts: function () {
+              return [
+                { x: 0.5, y: Math.sqrt(Math.PI) },
+                { x: 1, y: 1 },
+                { x: 2, y: 1 },
+                { x: 3, y: 2 },
+                { x: 4, y: 6 },
+                { x: 5, y: 24 },
+              ];
+            },
+          },
+          {
+            key: "zeta",
+            tab: "黎曼 ζ",
+            formula: "y = ζ(s)",
+            fn: function (s) {
+              return zetaFn(s);
+            },
+            props: [
+              ["定义域", "s ≠ 1"],
+              ["值域", "R"],
+              ["极点", "s = 1"],
+              ["特殊值", "ζ(2) = π²/6 ≈ 1.6449"],
+              ["特殊值", "ζ(0) = −0.5"],
+              ["零点", "s = −2, −4, −6, …"],
+            ],
+            hw: 12,
+            cy: 1,
+            includeZero: false,
+            keyPts: function () {
+              return [
+                { x: 2, y: (Math.PI * Math.PI) / 6 },
+                { x: 3, y: zetaFn(3) },
+                { x: 4, y: (Math.PI * Math.PI * Math.PI * Math.PI) / 90 },
+                { x: 0, y: -0.5 },
+                { x: -1, y: -1 / 12 },
+              ];
+            },
+          },
+          {
+            key: "si",
+            tab: "正弦积分",
+            formula: "y = Si(x)",
+            fn: function (x) {
+              return Si(x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "R"],
+              ["奇偶性", "奇函数"],
+              ["渐近", "Si(+∞) = π/2"],
+              ["过点", "(0, 0)"],
+              ["极大", "x ≈ 4.493，Si ≈ 1.8519"],
+            ],
+            hw: 15,
+            cy: 1,
+            includeZero: true,
+            keyPts: function () {
+              return [
+                { x: 0, y: 0 },
+                { x: Math.PI, y: Si(Math.PI) },
+                { x: 2 * Math.PI, y: Si(2 * Math.PI) },
+                { x: 4.493, y: Si(4.493) },
+                { x: 7.725, y: Si(7.725) },
+              ];
+            },
+          },
+          {
+            key: "ci",
+            tab: "余弦积分",
+            formula: "y = Ci(x)",
+            fn: function (x) {
+              if (x <= 0) return null;
+              return Ci(x);
+            },
+            props: [
+              ["定义域", "x > 0"],
+              ["值域", "R"],
+              ["渐近", "Ci(+∞) = 0"],
+              ["奇点", "Ci(0⁺) = −∞"],
+              ["零点", "x ≈ 0.6165"],
+              ["极值", "x ≈ 3.384，Ci ≈ 0.2597"],
+            ],
+            hw: 15,
+            cy: 0,
+            includeZero: true,
+            keyPts: function () {
+              return [
+                { x: 0.6165, y: Ci(0.6165) },
+                { x: 2, y: Ci(2) },
+                { x: 5, y: Ci(5) },
+                { x: 10, y: Ci(10) },
+              ];
+            },
+          },
+          {
+            key: "leg",
+            tab: "勒让德",
+            formula: "y = P_n(x)",
+            params: [{ id: "n", label: "n 阶", value: 3 }],
+            fn: function (x, pv) {
+              var n = Math.round(parseFloat(pv.n));
+              if (!isFinite(n) || n < 0 || n > 20) return null;
+              return legendre(n, x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "[−1, 1]（在 [−1,1] 上）"],
+              ["奇偶性", "P_n(−x) = (−1)ⁿ P_n(x)"],
+              ["递推", "(n+1)P_{n+1} = (2n+1)xP_n − nP_{n−1}"],
+              ["端点", "P_n(1) = 1"],
+              ["端点", "P_n(−1) = (−1)ⁿ"],
+            ],
+            hw: 1.4,
+            cy: 0,
+            includeZero: true,
+            keyPts: function (pv) {
+              var n = Math.round(parseFloat(pv.n)) || 0;
+              return [
+                { x: 1, y: 1 },
+                { x: -1, y: Math.pow(-1, n) },
+                { x: 0, y: legendre(n, 0) },
+                { x: 0.5, y: legendre(n, 0.5) },
+                { x: -0.5, y: legendre(n, -0.5) },
+              ];
+            },
+          },
+          {
+            key: "sgn",
+            tab: "符号函数",
+            formula: "y = sgn(x)",
+            fn: function (x) {
+              return sgnFn(x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "{−1, 0, 1}"],
+              ["奇偶性", "奇函数"],
+              ["分段", "x>0→1；x=0→0；x<0→−1"],
+              ["关系", "sgn(x) = x / |x| (x≠0)"],
+              ["性质", "单调不减"],
+            ],
+            hw: 3,
+            cy: 0,
+            includeZero: true,
+            keyPts: function () {
+              return [
+                { x: 1, y: 1 },
+                { x: -1, y: -1 },
+                { x: 0, y: 0 },
+                { x: 2, y: 1 },
+                { x: -2, y: -1 },
+              ];
+            },
+          },
+          {
+            key: "step",
+            tab: "阶跃函数",
+            formula: "y = H(x)",
+            fn: function (x) {
+              return stepFn(x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "{0, 1}"],
+              ["定义", "x ≥ 0 → 1；x < 0 → 0"],
+              ["关系", "H(x) = (1 + sgn(x))/2 (x≠0)"],
+              ["积分", "∫ H dx = x·H(x) + C"],
+              ["导数", "H′(x) = δ(x)（广义）"],
+            ],
+            hw: 3,
+            cy: 0.5,
+            includeZero: false,
+            keyPts: function () {
+              return [
+                { x: 0, y: 1 },
+                { x: 1, y: 1 },
+                { x: 2, y: 1 },
+                { x: -1, y: 0 },
+                { x: -2, y: 0 },
+              ];
+            },
+          },
+          {
+            key: "fres",
+            tab: "菲涅尔积分",
+            formula: "y = S(x) / C(x)",
+            fn: function (x) {
+              return fresnelS(x);
+            },
+            double: true,
+            props: [
+              ["S 定义", "S(x) = ∫₀ˣ sin(πt²/2) dt"],
+              ["C 定义", "C(x) = ∫₀ˣ cos(πt²/2) dt"],
+              ["定义域", "R"],
+              ["值域", "(−0.5, 0.5)"],
+              ["奇偶性", "均为奇函数"],
+              ["渐近", "S(∞) = C(∞) = 0.5"],
+            ],
+            hw: 6,
+            cy: 0,
+            includeZero: true,
+            keyPts: function () {
+              return [
+                { x: 1, y: fresnelS(1) },
+                { x: 1, y: fresnelC(1) },
+                { x: 2, y: fresnelS(2) },
+                { x: 2, y: fresnelC(2) },
+                { x: 3, y: fresnelS(3) },
+                { x: 3, y: fresnelC(3) },
+              ];
+            },
+          },
+          {
+            key: "bes",
+            tab: "贝塞尔函数",
+            formula: "y = J_n(x)",
+            params: [{ id: "n", label: "n 阶", value: 0 }],
+            fn: function (x, pv) {
+              var n = Math.round(parseFloat(pv.n));
+              if (!isFinite(n) || n < 0 || n > 15) return null;
+              return besselJ(n, x);
+            },
+            props: [
+              ["定义域", "R"],
+              ["值域", "[−1, 1]（近似）"],
+              ["对称", "J_n(−x) = (−1)ⁿ J_n(x)"],
+              ["递推", "J_{n−1}+J_{n+1} = (2n/x)J_n"],
+              ["渐近", "J_n(x) ~ √(2/πx)·cos(x−nπ/2−π/4)"],
+              ["零点", "无穷多个"],
+            ],
+            hw: 15,
+            cy: 0,
+            includeZero: true,
+            keyPts: function (pv) {
+              var n = Math.round(parseFloat(pv.n)) || 0;
+              return [
+                { x: 0, y: besselJ(n, 0) },
+                { x: 2, y: besselJ(n, 2) },
+                { x: 5, y: besselJ(n, 5) },
+                { x: 10, y: besselJ(n, 10) },
+              ];
+            },
+          },
+        ];
+
+        /* ============================================================
+   通用工具
+   ============================================================ */
+        function n2s(v) {
+          if (!isFinite(v)) return "—";
+          if (Math.abs(v) > 1e15) return v.toExponential(3);
+          var r = Math.round(v * 1e6) / 1e6;
+          if (Math.abs(r) < 1e-9) return "0";
+          var s = r.toFixed(4);
+          if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+          return s;
+        }
+        function c2s(x, y) {
+          return "(" + n2s(x) + ", " + n2s(y) + ")";
+        }
+        function pt2s(x, y) {
+          var f = function (v) {
+            if (!isFinite(v)) return "—";
+            return isRound ? String(Math.round(v)) : n2s(v);
+          };
+          return "(" + f(x) + ", " + f(y) + ")";
+        }
+        function niceStep(range, target) {
+          if (!(range > 0) || !isFinite(range)) return 1;
+          var raw = range / target;
+          var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+          var n = raw / p;
+          var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+          return m * p;
+        }
+        function viewRect(v) {
+          return {
+            xmin: v.cx - v.hw,
+            xmax: v.cx + v.hw,
+            ymin: v.cy - v.hh,
+            ymax: v.cy + v.hh,
+          };
+        }
+        function clampHalf(v) {
+          if (!isFinite(v) || v < 1e-9) return 1e-9;
+          if (v > MAX_ABS) return MAX_ABS;
+          return v;
+        }
+        function zoomView(v, f) {
+          v.hw = clampHalf(v.hw * f);
+          v.hh = clampHalf(v.hh * f);
+        }
+
+        function smartView(view, fn, hw, includeZero) {
+          var N = 200;
+          var ys = [];
+          for (var i = 0; i <= N; i++) {
+            var x = -hw + (2 * hw * i) / N;
+            var y = null;
+            try {
+              y = fn(x);
+            } catch (e) {
+              y = null;
+            }
+            if (y === null || y === undefined) continue;
+            if (!isFinite(y) || Math.abs(y) > 1e8) continue;
+            ys.push(y);
+          }
+          if (ys.length < 5) {
+            view.cy = 0;
+            view.hh = Math.max(1, Math.min(MAX_ABS, hw * 0.5));
+            return;
+          }
+          ys.sort(function (a, b) {
+            return a - b;
+          });
+          var lo = ys[Math.floor(ys.length * 0.03)];
+          var hi = ys[Math.floor(ys.length * 0.97)];
+          if (includeZero !== false) {
+            lo = Math.min(lo, 0);
+            hi = Math.max(hi, 0);
+          }
+          var range = hi - lo;
+          if (!(range > 1e-9)) range = 2;
+          var pad = range * 0.12;
+          view.cy = (lo + hi) / 2;
+          view.hh = Math.max(0.5, Math.min(MAX_ABS, range / 2 + pad));
+        }
+
+        function rrect(ctx, x, y, w, h, r) {
+          if (w < 2 * r) r = w / 2;
+          if (h < 2 * r) r = h / 2;
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + w, y, x + w, y + h, r);
+          ctx.arcTo(x + w, y + h, x, y + h, r);
+          ctx.arcTo(x, y + h, x, y, r);
+          ctx.arcTo(x, y, x + w, y, r);
+          ctx.closePath();
+        }
+
+        function drawGrid(ctx, W, H, v) {
+          var xmin = v.xmin,
+            xmax = v.xmax,
+            ymin = v.ymin,
+            ymax = v.ymax;
+          var X = function (x) {
+            return ((x - xmin) / (xmax - xmin)) * W;
+          };
+          var Y = function (y) {
+            return H - ((y - ymin) / (ymax - ymin)) * H;
+          };
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, W, H);
+          var sx = niceStep(xmax - xmin, 9),
+            sy = niceStep(ymax - ymin, 6);
+          ctx.strokeStyle = "#eef2f7";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          var x, y, px, py;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, H);
+          }
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            py = Math.round(Y(y)) + 0.5;
+            ctx.moveTo(0, py);
+            ctx.lineTo(W, py);
+          }
+          ctx.stroke();
+          var y0 = null,
+            x0 = null;
+          ctx.strokeStyle = "#b9c7d6";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (ymin <= 0 && ymax >= 0) {
+            y0 = Math.round(Y(0)) + 0.5;
+            ctx.moveTo(0, y0);
+            ctx.lineTo(W, y0);
+          }
+          if (xmin <= 0 && xmax >= 0) {
+            x0 = Math.round(X(0)) + 0.5;
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, H);
+          }
+          ctx.stroke();
+          var onX = y0 !== null,
+            onY = x0 !== null;
+          ctx.font =
+            '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tick = function (txt, lx, ly) {
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText(txt, lx, ly);
+            ctx.fillStyle = "#6b8299";
+            ctx.fillText(txt, lx, ly);
+          };
+          var xLY = onX ? (y0 > H - 24 ? y0 - 19 : y0 + 5) : H - 17;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          var xTB = onX ? y0 : H - 5;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            if (px < 16 || px > W - 16) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(px, xTB - 3.5);
+            ctx.lineTo(px, xTB + 3.5);
+            ctx.stroke();
+            if (Math.abs(x) < sx * 0.001) {
+              if (!onY) tick("0", px, xLY);
+              continue;
+            }
+            tick(n2s(x), px, xLY);
+          }
+          var yLX, yA;
+          if (onY && x0 > 46) {
+            yLX = x0 - 7;
+            yA = "right";
+          } else {
+            yLX = onY ? x0 + 7 : 7;
+            yA = "left";
+          }
+          ctx.textAlign = yA;
+          ctx.textBaseline = "middle";
+          var yTB = onY ? x0 : 5;
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            if (Math.abs(y) < sy * 0.001) continue;
+            py = Math.round(Y(y)) + 0.5;
+            if (py < 14 || py > H - 14) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(yTB - 3.5, py);
+            ctx.lineTo(yTB + 3.5, py);
+            ctx.stroke();
+            tick(n2s(y), yLX, py);
+          }
+          if (onX && onY) {
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.font = 'italic 700 12.5px "Times New Roman", Georgia, serif';
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText("O", x0 - 3, y0 + 4);
+            ctx.fillStyle = "#5a7592";
+            ctx.fillText("O", x0 - 3, y0 + 4);
+          }
+          return { X: X, Y: Y };
+        }
+
+        function drawTag(ctx, px, py, text, color, dx, dy, taken) {
+          var W = ctx.canvas.width,
+            H = ctx.canvas.height;
+          ctx.save();
+          ctx.font =
+            '600 11.5px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tw = ctx.measureText(text).width;
+          var w = tw + 12,
+            hh = 18;
+          var x = px + dx - 6,
+            y = py + dy - hh / 2;
+          if (x < 3) x = 3;
+          if (x + w > W - 3) x = W - 3 - w;
+          if (y < 3) y = 3;
+          if (y + hh > H - 3) y = H - 3 - hh;
+          var rect = { x: x, y: y, w: w, h: hh };
+          if (taken) {
+            for (var i = 0; i < taken.length; i++) {
+              var r = taken[i];
+              if (
+                rect.x < r.x + r.w &&
+                rect.x + rect.w > r.x &&
+                rect.y < r.y + r.h &&
+                rect.y + rect.h > r.y
+              ) {
+                ctx.restore();
+                return false;
+              }
+            }
+            taken.push(rect);
+          }
+          ctx.shadowColor = "rgba(16,42,74,.16)";
+          ctx.shadowBlur = 7;
+          ctx.shadowOffsetY = 2;
+          ctx.fillStyle = "rgba(255,255,255,.97)";
+          rrect(ctx, x, y, w, hh, 6);
+          ctx.fill();
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.strokeStyle = "rgba(47,111,176,.22)";
+          ctx.lineWidth = 1;
+          rrect(ctx, x + 0.5, y + 0.5, w - 1, hh - 1, 6);
+          ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x + 6, y + hh / 2 + 0.5);
+          ctx.restore();
+          return true;
+        }
+
+        function drawRedDot(ctx, W, H, X, Y, p, taken, labelColor) {
+          if (!p || !isFinite(p.x) || !isFinite(p.y)) return;
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (px < -40 || px > W + 40 || py < -40 || py > H + 40) return;
+          ctx.beginPath();
+          ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,77,61,.18)";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff4d3d";
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            pt2s(p.x, p.y),
+            labelColor || "#c4321f",
+            12,
+            -16,
+            taken,
+          );
+        }
+
+        function drawKeyPoint(ctx, X, Y, p, taken, color) {
+          if (p.y === null || p.y === undefined || !isFinite(p.y)) return;
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (
+            px < -20 ||
+            px > ctx.canvas.width + 20 ||
+            py < -20 ||
+            py > ctx.canvas.height + 20
+          )
+            return;
+          ctx.beginPath();
+          ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = color || "#1f4e7a";
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            c2s(p.x, p.y),
+            color || "#31536f",
+            10,
+            -15,
+            taken,
+          );
+        }
+
+        function attachDrag(cv, onMove) {
+          var dragging = false;
+          var pos = function (e) {
+            var r = cv.getBoundingClientRect();
+            return {
+              px: ((e.clientX - r.left) / r.width) * cv.width,
+              py: ((e.clientY - r.top) / r.height) * cv.height,
+            };
+          };
+          cv.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            dragging = true;
+            onMove(pos(e));
+            e.preventDefault();
+          });
+          document.addEventListener("pointermove", function (e) {
+            if (!dragging) return;
+            onMove(pos(e));
+          });
+          document.addEventListener("pointerup", function () {
+            dragging = false;
+          });
+          document.addEventListener("pointercancel", function () {
+            dragging = false;
+          });
+        }
+
+        function attachRelSlider(id, view, axis, redraw) {
+          var el = $(id);
+          el.value = 0;
+          var lastVal = 0;
+          var active = false;
+          el.addEventListener("pointerdown", function () {
+            active = true;
+            lastVal = 0;
+            el.value = 0;
+          });
+          el.addEventListener("input", function () {
+            if (!active) return;
+            var v = parseFloat(el.value);
+            var delta = v - lastVal;
+            lastVal = v;
+            var range = axis === "y" ? view.hh : view.hw;
+            var step = delta * range * 0.01;
+            if (axis === "y") view.cy += step;
+            else view.cx += step;
+            redraw();
+          });
+          document.addEventListener("pointerup", function () {
+            if (active) {
+              active = false;
+              el.value = 0;
+              lastVal = 0;
+            }
+          });
+        }
+
+        /* ============================================================
+   动态生成面板
+   ============================================================ */
+        var tabsEl = $("tabs");
+        var panesEl = $("panes");
+        var VIEWS = {};
+        var POINTS = {};
+
+        SPECS.forEach(function (sp, i) {
+          VIEWS[sp.key] = { cx: 0, cy: sp.cy, hw: sp.hw, hh: 2 };
+          POINTS[sp.key] = null;
+
+          /* 选项卡 */
+          var tb = document.createElement("button");
+          tb.className = "tab" + (i === 0 ? " on" : "");
+          tb.dataset.pane = "pane_" + sp.key;
+          tb.textContent = sp.tab;
+          tabsEl.appendChild(tb);
+
+          /* 面板 */
+          var pane = document.createElement("div");
+          pane.className = "pane";
+          pane.id = "pane_" + sp.key;
+          if (i > 0) pane.style.display = "none";
+
+          var paramsHTML = "";
+          (sp.params || []).forEach(function (p) {
+            paramsHTML +=
+              '<div class="grp"><label>' +
+              p.label +
+              '</label><input type="text" id="' +
+              sp.key +
+              "_" +
+              p.id +
+              '" value="' +
+              p.value +
+              '"></div>';
+          });
+
+          var propsHTML = sp.props
+            .map(function (pr) {
+              return (
+                '<div class="it"><span class="lbl">' +
+                pr[0] +
+                '</span><span class="val small">' +
+                pr[1] +
+                "</span></div>"
+              );
+            })
+            .join("");
+
+          pane.innerHTML =
+            '<div class="row">' +
+            paramsHTML +
+            '<button class="btn" id="bu_' +
+            sp.key +
+            '">绘制</button></div>' +
+            '<div class="err" id="er_' +
+            sp.key +
+            '"></div>' +
+            '<div class="res">' +
+            '<div class="it"><span class="lbl">函数式</span><span class="val" id="dg_' +
+            sp.key +
+            '">' +
+            sp.formula +
+            "</span></div>" +
+            propsHTML +
+            "</div>" +
+            '<div class="calc"><div class="cb">' +
+            '<div class="ct">单值求值 <span style="font-weight:400;color:#8aa0b8;font-size:10px">(拖动红点联动)</span></div>' +
+            '<div class="cr"><span class="prefix">X =</span><input type="text" id="sv_' +
+            sp.key +
+            '" value="1"><button class="bs" id="bsv_' +
+            sp.key +
+            '">计算</button></div>' +
+            '<div class="o" id="osv_' +
+            sp.key +
+            '">y = —</div>' +
+            "</div></div>" +
+            '<div class="chart"><canvas id="cv_' +
+            sp.key +
+            '" width="800" height="340"></canvas></div>' +
+            '<div class="zoombar">' +
+            '<button class="zb" id="zin_' +
+            sp.key +
+            '">＋</button>' +
+            '<button class="zb" id="zout_' +
+            sp.key +
+            '">－</button>' +
+            '<button class="zb" id="zrst_' +
+            sp.key +
+            '">⟲</button>' +
+            '<span class="zlab">水平</span><input type="range" class="zslider" id="px_' +
+            sp.key +
+            '" min="-100" max="100" step="1" value="0">' +
+            '<span class="zlab">垂直</span><input type="range" class="zslider" id="py_' +
+            sp.key +
+            '" min="-100" max="100" step="1" value="0">' +
+            '<div class="toggle-row"><span class="toggle-label">四舍五入</span><label class="switch"><input type="checkbox" class="rt"><span class="slider"></span></label></div>' +
+            "</div>" +
+            '<div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>';
+
+          panesEl.appendChild(pane);
+        });
+
+        /* ============================================================
+   参数、更新、绘制
+   ============================================================ */
+        function getParams(sp) {
+          var pv = {};
+          (sp.params || []).forEach(function (p) {
+            pv[p.id] = $(sp.key + "_" + p.id).value;
+          });
+          return pv;
+        }
+
+        function updateFunc(sp) {
+          var k = sp.key;
+          var pv = getParams(sp);
+          var er = $("er_" + k);
+          er.textContent = "";
+
+          /* 验证参数 */
+          for (var i = 0; i < (sp.params || []).length; i++) {
+            var v = parseFloat(pv[sp.params[i].id]);
+            if (!isFinite(v)) {
+              er.textContent = "请输入有效数字";
+              return;
+            }
+          }
+
+          /* 智能视野 */
+          var view = VIEWS[k];
+          view.cx = 0;
+          view.hw = sp.hw;
+          smartView(
+            view,
+            function (x) {
+              return sp.fn(x, pv);
+            },
+            sp.hw,
+            sp.includeZero,
+          );
+          view.cy = sp.cy;
+
+          /* 计算红点默认位置 */
+          var sv = parseFloat($("sv_" + k).value);
+          if (!isFinite(sv)) sv = 1;
+          var y0 = sp.fn(sv, pv);
+          if (y0 !== null && y0 !== undefined && isFinite(y0)) {
+            POINTS[k] = { x: sv, y: y0 };
+            $("osv_" + k).textContent = "y = " + n2s(y0);
+          } else {
+            POINTS[k] = null;
+            $("osv_" + k).textContent = "无定义";
+          }
+
+          drawFunc(sp);
+        }
+
+        function calcFunc(sp) {
+          var k = sp.key;
+          var pv = getParams(sp);
+          var x = parseFloat($("sv_" + k).value);
+          if (!isFinite(x)) {
+            $("osv_" + k).textContent = "请输入有效数字";
+            POINTS[k] = null;
+            return;
+          }
+          var y = sp.fn(x, pv);
+          if (y === null || y === undefined || !isFinite(y)) {
+            $("osv_" + k).textContent = "无定义";
+            POINTS[k] = null;
+            return;
+          }
+          $("osv_" + k).textContent = "y = " + n2s(y);
+          POINTS[k] = { x: x, y: y };
+        }
+
+        function drawFunc(sp) {
+          var k = sp.key;
+          var cv = $("cv_" + k);
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(VIEWS[k]);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          var pv = getParams(sp);
+
+          /* 主曲线 */
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv = sp.fn(xv, pv);
+            if (yv === null || yv === undefined || !isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+
+          /* 菲涅尔第二曲线 C(x) */
+          if (sp.double) {
+            ctx.beginPath();
+            ctx.strokeStyle = "#e07a5f";
+            ctx.lineWidth = 2.4;
+            started = false;
+            for (var px2 = 0; px2 <= W; px2 += 1.5) {
+              var xv2 = rect.xmin + (px2 / W) * (rect.xmax - rect.xmin);
+              var yv2 = fresnelC(xv2);
+              if (!isFinite(yv2)) {
+                started = false;
+                continue;
+              }
+              var py2 = Y(yv2);
+              if (!isFinite(py2)) {
+                started = false;
+                continue;
+              }
+              if (!started) {
+                ctx.moveTo(px2, py2);
+                started = true;
+              } else ctx.lineTo(px2, py2);
+            }
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          /* 图例（菲涅尔） */
+          if (sp.double) {
+            ctx.save();
+            ctx.font =
+              '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            /* S(x) */
+            ctx.strokeStyle = "#2f6fb0";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(W - 88, 14);
+            ctx.lineTo(W - 72, 14);
+            ctx.stroke();
+            ctx.fillStyle = "#31536f";
+            ctx.fillText("S(x)", W - 66, 14);
+            /* C(x) */
+            ctx.strokeStyle = "#e07a5f";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(W - 88, 30);
+            ctx.lineTo(W - 72, 30);
+            ctx.stroke();
+            ctx.fillStyle = "#31536f";
+            ctx.fillText("C(x)", W - 66, 30);
+            ctx.restore();
+          }
+
+          /* 关键点 */
+          var taken = [];
+          if (sp.keyPts) {
+            var kps = sp.keyPts(pv);
+            kps.forEach(function (p) {
+              if (p.y === null || p.y === undefined || !isFinite(p.y)) return;
+              if (
+                p.x >= rect.xmin &&
+                p.x <= rect.xmax &&
+                p.y >= rect.ymin &&
+                p.y <= rect.ymax
+              ) {
+                drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+              }
+            });
+          }
+
+          /* 红点 */
+          drawRedDot(ctx, W, H, X, Y, POINTS[k], taken, "#c4321f");
+        }
+
+        /* ============================================================
+   事件绑定
+   ============================================================ */
+        SPECS.forEach(function (sp) {
+          var k = sp.key;
+          $("bu_" + k).addEventListener("click", function () {
+            updateFunc(sp);
+          });
+          $("bsv_" + k).addEventListener("click", function () {
+            calcFunc(sp);
+            drawFunc(sp);
+          });
+          $("zin_" + k).addEventListener("click", function () {
+            zoomView(VIEWS[k], 1 / 1.3);
+            drawFunc(sp);
+          });
+          $("zout_" + k).addEventListener("click", function () {
+            zoomView(VIEWS[k], 1.3);
+            drawFunc(sp);
+          });
+          $("zrst_" + k).addEventListener("click", function () {
+            updateFunc(sp);
+          });
+
+          (sp.params || []).forEach(function (p) {
+            $(k + "_" + p.id).addEventListener("keydown", function (e) {
+              if (e.key === "Enter") updateFunc(sp);
+            });
+          });
+
+          $("sv_" + k).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              calcFunc(sp);
+              drawFunc(sp);
+            }
+          });
+
+          attachRelSlider("px_" + k, VIEWS[k], "x", function () {
+            drawFunc(sp);
+          });
+          attachRelSlider("py_" + k, VIEWS[k], "y", function () {
+            drawFunc(sp);
+          });
+
+          attachDrag($("cv_" + k), function (pos) {
+            var rect = viewRect(VIEWS[k]);
+            var cv = $("cv_" + k);
+            var x = rect.xmin + (pos.px / cv.width) * (rect.xmax - rect.xmin);
+            x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+            if (isRound) x = Math.round(x);
+            var pv2 = getParams(sp);
+            var y = sp.fn(x, pv2);
+            if (y === null || y === undefined || !isFinite(y)) return;
+            if (isRound) y = Math.round(y);
+            $("sv_" + k).value = n2s(x);
+            POINTS[k] = { x: x, y: y };
+            $("osv_" + k).textContent = "y = " + n2s(y);
+            drawFunc(sp);
+          });
+        });
+
+        /* 四舍五入开关 */
+        document.querySelectorAll(".rt").forEach(function (t) {
+          t.checked = isRound;
+          t.addEventListener("change", function () {
+            isRound = this.checked;
+            document.querySelectorAll(".rt").forEach(function (o) {
+              o.checked = isRound;
+            });
+            SPECS.forEach(function (sp) {
+              var k = sp.key;
+              if (POINTS[k]) {
+                $("sv_" + k).value = n2s(POINTS[k].x);
+                $("osv_" + k).textContent = "y = " + n2s(POINTS[k].y);
+              }
+              drawFunc(sp);
+            });
+          });
+        });
+
+        /* 选项卡切换 */
+        document.querySelectorAll(".tabs .tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            document.querySelectorAll(".tabs .tab").forEach(function (t) {
+              t.classList.remove("on");
+            });
+            tab.classList.add("on");
+            SPECS.forEach(function (sp) {
+              var el = $("pane_" + sp.key);
+              if (!el) return;
+              el.style.display =
+                "pane_" + sp.key === tab.dataset.pane ? "" : "none";
+            });
+            var sp = SPECS.find(function (s) {
+              return "pane_" + s.key === tab.dataset.pane;
+            });
+            if (sp) drawFunc(sp);
+          });
+        });
+
+        /* 初始化 */
+        SPECS.forEach(function (sp) {
+          updateFunc(sp);
+        });
+      })();
+    </script>
+  </body>
+</html>
