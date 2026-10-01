@@ -249,7 +249,7 @@
                     actionsHtml += '<a class="project-detail-btn" href="' + data.online + '" target="_blank">打开网页</a>';
                 }else{
                     for(var i=0;i<data.online.length;i++){
-                        actionsHtml += '<a class="project-detail-btn" href="' + data.online[i] + '" target="_blank">打开网页</a>';
+                        actionsHtml += `<a class="project-detail-btn" href="${data.online[i]}" target="_blank">打开${data.version[i]}版</a>`;
                     }
                 }
             }
