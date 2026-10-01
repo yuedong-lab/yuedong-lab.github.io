@@ -305,7 +305,7 @@ function writeProjects(){
             online = projectData[i].online;
         }
 
-        $("#project_container").append(`<a href="./project_detail.html?id=${i+1}" class="project_card_link" style="text-decoration:none;color:inherit;display:block;"><div class="project_card"><h2 class="project_title">${title}</h2><p class="project_desc">${desc}</p><div class="project_actions">${online?`<a class="project_btn" href="${online}" target="_blank" onclick="event.stopPropagation();">打开网页</a>`:""}${download?`<a class="project_btn" href="${download}" download="${downloadName}" onclick="event.stopPropagation();">立即下载</a>`:""}<a class="project_btn" href="./project_detail.html?id=${i+1}" onclick="event.stopPropagation()">查看详情</a></div></div></a>`)
+        $("#project_container").append(`<a href="./project_detail.html?id=${i+1}" class="project_card_link" style="text-decoration:none;color:inherit;display:block;"><div class="project_card"><h2 class="project_title">${title}</h2><p class="project_desc">${desc}</p><div class="project_actions">${online && typeof(online)==="string"?`<a class="project_btn" href="${online}" target="_blank" onclick="event.stopPropagation();">打开网页</a>`:""}${download?`<a class="project_btn" href="${download}" download="${downloadName}" onclick="event.stopPropagation();">立即下载</a>`:""}<a class="project_btn" href="./project_detail.html?id=${i+1}" onclick="event.stopPropagation()">查看详情</a></div></div></a>`)
     }
 }
 
