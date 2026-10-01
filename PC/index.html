@@ -40,23 +40,29 @@
                 <button id="project_b" onclick="ani_page(screen,'project')">项目</button>
                 <button id="new_b" onclick="ani_page(screen,'news')">官方新闻</button>
                 <button id="about_b" onclick="ani_page(screen,'about')">关于</button>
-                <div id="nav-fold">
-                    <button id="navFold_b" class="nav-switch" onclick="ani_on()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path class="menu-icon" d="M3 12h18M3 6h18M3 18h18"></path>
-                            <path class="close-icon" d="M18 6L6 18M6 6l12 12" style="display:none"></path>
-                        </svg>
-                    </button>
-                    <ul id="nav_select" onmouseenter="ani_on()">
-                        <li id="nav_options" class="nav_option" onclick="ani_page(screen,'home')">主页</li><hr>
-                        <li id="nav_options" class="nav_option" onclick="ani_page(screen,'project')">项目</li><hr>
-                        <li id="nav_options" class="nav_option" onclick="ani_page(screen,'news')">官方新闻</li><hr>
-                        <li id="nav_options" class="nav_option" onclick="ani_page(screen,'about')">关于</li><hr>
-                        <li id="nav_options" class="nav_option" onclick="location.href='../mobile/index.html'">手机版</li>
-                    </ul>
+                <button id="navFold_b" class="nav-switch" onclick="openMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path class="menu-icon" d="M3 12h18M3 6h18M3 18h18"></path>
+                        <path class="close-icon" d="M18 6L6 18M6 6l12 12" style="display:none"></path>
+                    </svg>
+                </button>
                 </div>
             </div>
         </nav>
+        <!--侧滑菜单-->
+        <div id="sideMenu" class="side-menu">
+            <div class="side-menu-header">
+                <span class="nav-title">导航菜单</span>
+                <button id="closeMenu" aria-label="关闭菜单" onclick="closeMenu()">&times;</button>
+            </div>
+            <ul class="side-menu-list">
+                <li><button class="menu-item active" data-page="home" onclick="ani_page(screen,'home');closeMenu()">主页</button></li>
+                <li><button class="menu-item" data-page="project" onclick="ani_page(screen,'project');closeMenu()">项目</button></li>
+                <li><button class="menu-item" data-page="news" onclick="ani_page(screen,'news');closeMenu()">官方新闻</button></li>
+                <li><button class="menu-item" data-page="about" onclick="ani_page(screen,'about');closeMenu()">关于</button></li>
+            </ul>
+        </div>
+        <div id="menuOverlay" class="menu-overlay" onclick="closeMenu()"></div>
         <div id="body">
             <div id="menu">
                 <span id="home" class="box">
@@ -110,7 +116,6 @@
         <script src="../version.js"></script>
         <script src="./script.js"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        <script>window.jQuery || document.write('<script src="./jquery-3.7.1.min.js"><\/script>');</script>
         <script>
             syncTimeBase();
             timeCheck(getDate());
