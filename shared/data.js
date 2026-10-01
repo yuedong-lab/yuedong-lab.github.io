@@ -289,10 +289,10 @@ var projectData = [
             '简单易用的界面设计'
         ],
         online: [
-            '../Projects/函数工具.html',
-            '../Projects/函数工具Plus.html',
-            '../Projects/函数工具Pro.html',
-            '../Projects/函数工具Pro_Max.html'
+            '../Projects/function.html',
+            '../Projects/functionPlus.html',
+            '../Projects/functionPro.html',
+            '../Projects/functionPro_Max.html'
         ],
         version: ["普通","Plus","Pro","Pro Max"]
     }
