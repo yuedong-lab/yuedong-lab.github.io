@@ -74,6 +74,7 @@ body.dark-mode #mainNav {
     margin-left: auto;
     display: flex;
     align-items: center;
+    margin-right:50px;
 }
 
 .nav-links button {
@@ -123,66 +124,122 @@ body.dark-mode .nav-links button:hover {
     display: inline-block;
 }
 
-/* 选择器容器 */
-#nav-fold {
-    margin-left: auto;
-    cursor: default;
-    padding-right: 30px;
-    position: relative;
-    width: 120px;
-    height: 50px;
-    display: inline-block;
-    white-space: nowrap;
-    line-height: 50px;
-    z-index: 10000;
+/* 侧滑菜单 */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100vh;
+    background: var(--card-bg);
+    z-index: 1001;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
 }
 
-/* 语言选择下拉菜单 */
-#nav_select {
-    position: auto;
-    background-color: #333;
-    border-radius: 8px;
-    padding: 8px 0;
-    width: 120px;
+.side-menu.open {
     right: 0;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    transform: translateX(20px);
-    top: 100%;
-    z-index: 1000;
-    display: none;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
 }
 
-body.dark-mode #nav_select {
-    background-color: #2d3748;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+.side-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--nav-bg);
 }
 
-/* 打开状态的语言选择菜单 */
-.open #nav_select {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-/* 语言选项样式 */
-#nav_options {
-    padding: 10px 15px;
-    list-style: none;
-    transition: all 0.3s;
-    text-align: center;
-    cursor: pointer;
-    font-size: 16px;
+.side-menu-header .nav-title {
     color: white;
+    font-size: 18px;
 }
 
-/* 语言选项悬停效果 */
-#nav_options:hover {
-    background-color: #444;
+#closeMenu {
+    font-size: 28px;
+    color: white;
+    background:none;
+    border:0;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
 }
 
-body.dark-mode #nav_line {
-    background-color: #4a5568;
+.side-menu-list {
+    list-style: none;
+    padding: 8px 0;
+}
+
+.side-menu-list li {
+    padding: 0;
+}
+
+.menu-item {
+    display: block;
+    width: 100%;
+    padding: 16px 24px;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s, padding-left 0.2s;
+    position: relative;
+}
+
+.menu-item:active {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .menu-item:active {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.menu-item.active {
+    color: #1385ff;
+    font-weight: 600;
+    padding-left: 28px;
+}
+
+.menu-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: #1385ff;
+    border-radius: 0 2px 2px 0;
+}
+
+body.dark-mode .menu-item.active {
+    color: #5a9fe6;
+}
+
+body.dark-mode .menu-item.active::before {
+    background: #5a9fe6;
+}
+
+/* 菜单遮罩 */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.menu-overlay.show {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* 淡入动画 */
