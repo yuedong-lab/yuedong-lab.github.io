@@ -284,7 +284,7 @@ var projectData = [
         desc: '一款简单实用的软件，专门用于解决二次函数问题',
         icon: '../Picture/icon.webp',
         features: [
-            '轻量高效，操作便捷',
+            '普通版：解决一次函数、二次函数',
             '能快速解决大部分二次函数图像问题',
             '简单易用的界面设计'
         ],
@@ -293,6 +293,7 @@ var projectData = [
             '../Projects/函数工具Plus.html',
             '../Projects/函数工具Pro.html',
             '../Projects/函数工具Pro_Max.html'
-        ]
+        ],
+        version: ["普通","Plus","Pro","Pro Max"]
     }
 ];
