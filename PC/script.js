@@ -5,9 +5,15 @@ function ani_page(page,target) {
     if(page !== target){
         $("#home,#project,#support,#about,#news,#findour").fadeOut(350);
         setTimeout(function(){$("#findour,#"+target).fadeIn(350);},350);
-        ani_off();
         screen = target;
         localStorage.setItem('currentPage', target);
+
+        document.querySelectorAll('.menu-item').forEach(function(item) {
+        item.classList.remove('active');
+        if (item.getAttribute('data-page') === target) {
+            item.classList.add('active');
+        }
+    });
     }
 }
 
@@ -62,7 +68,6 @@ nav.addEventListener('mouseleave', () => {
     timer = setTimeout(() => {
         nav.style.transform = 'translateY(-50px)';
         nav.style.opacity = '0';
-        ani_off();
     }, 1000);
 });
 
@@ -87,18 +92,21 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             nav.style.transform = 'translateY(-50px)';
             nav.style.opacity = '0';
-            ani_off();
         }, 5000);
     }
 });
 
-function ani_on(){
-    $("#nav-fold").addClass('open');
-};
+function openMenu() {
+    document.getElementById('sideMenu').classList.add('open');
+    document.getElementById('menuOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
 
-function ani_off(){
-    $("#nav-fold").removeClass('open');
-};
+function closeMenu() {
+    document.getElementById('sideMenu').classList.remove('open');
+    document.getElementById('menuOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
 
 function forceReflow(element) {
     return element.offsetHeight;
