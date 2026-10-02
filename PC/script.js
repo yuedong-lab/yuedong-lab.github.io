@@ -3,8 +3,12 @@
 
 function ani_page(page,target) {
     if(page !== target){
-        $("#home,#project,#support,#about,#news,#findour").fadeOut(350);
-        setTimeout(function(){$("#findour,#"+target).fadeIn(350);},350);
+        if(page !== "none"){
+            $("#home,#project,#support,#about,#news,#findour").fadeOut(350);
+            setTimeout(function(){$("#findour,#"+target).fadeIn(350);},350);
+        }else{
+            $("#findour,#"+target).fadeIn(350);
+        }
         screen = target;
         localStorage.setItem('currentPage', target);
 
