@@ -9,6 +9,7 @@
     --menu-bg: #ffffff;
     --shadow-color: rgba(0, 0, 0, 0.1);
     --border-color: #e0e0e0;
+    --theme-color:#1385ff;
 }
 
 body.dark-mode {
@@ -20,6 +21,16 @@ body.dark-mode {
     --menu-bg: #2d3748;
     --shadow-color: rgba(0, 0, 0, 0.3);
     --border-color: #4a5568;
+    --theme-color: #5a9fe6;
+}
+
+body.festival{
+    --nav-bg: linear-gradient(to right, #b81010, #e02020);
+    --theme-color:#e02020;
+}
+
+body.festival.dark-mode{
+    --nav-bg: linear-gradient(to right, #981010, #b02020);
 }
 
 * {
@@ -179,7 +190,7 @@ body.dark-mode .menu-item:active {
 }
 
 .menu-item.active {
-    color: #1385ff;
+    color: var(--theme-color);
     font-weight: 600;
     padding-left: 28px;
 }
@@ -192,16 +203,8 @@ body.dark-mode .menu-item:active {
     transform: translateY(-50%);
     width: 4px;
     height: 24px;
-    background: #1385ff;
+    background: var(--theme-color);
     border-radius: 0 2px 2px 0;
-}
-
-body.dark-mode .menu-item.active {
-    color: #5a9fe6;
-}
-
-body.dark-mode .menu-item.active::before {
-    background: #5a9fe6;
 }
 
 /* 菜单遮罩 */
@@ -386,7 +389,7 @@ body.dark-mode .menu-item.active::before {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 12px;
-    color: #006eff;
+    color: var(--theme-color);
     line-height: 1.4;
 }
 
