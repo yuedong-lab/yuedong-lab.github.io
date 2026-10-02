@@ -14,7 +14,7 @@ body {
     --nav-bg: linear-gradient(to bottom, #1385ff, #49a1ff);
     --card-bg: #ffffff;
     --findour-bg: #d3d3d3db;
-    --theme-color:#1385ff;
+    --theme-color:#006eff;
 }
 
 body.dark-mode {
@@ -23,6 +23,7 @@ body.dark-mode {
     --nav-bg: linear-gradient(to bottom, #2d3748, #4a5568);
     --card-bg: #2d3748;
     --findour-bg: #3e3e3edb;
+    --theme-color: #5a9fe6;
 }
 
 body.festival{
@@ -219,14 +220,6 @@ body.dark-mode .menu-item:active {
     height: 24px;
     background: var(--theme-color);
     border-radius: 0 2px 2px 0;
-}
-
-body.dark-mode .menu-item.active {
-    color: #5a9fe6;
-}
-
-body.dark-mode .menu-item.active::before {
-    background: #5a9fe6;
 }
 
 /* 菜单遮罩 */
