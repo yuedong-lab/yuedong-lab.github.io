@@ -263,7 +263,7 @@ var projectData = [
             '快速生成安全可靠的强密码',
             '保护账户安全'
         ],
-        online: '../Projects/随机密码生成器.html',
+        online: '../Projects/randomCodeGenerator.html',
         download: '../Projects/随机密码生成器.zip',
         downloadName: '随机密码生成器.zip'
     },
