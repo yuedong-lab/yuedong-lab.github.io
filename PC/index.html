@@ -127,26 +127,22 @@
             writeProjects();
             writeMember("pc");
             
-            var screen = "home";
+            var screen = "none";
             var savedPage = localStorage.getItem('currentPage');
             $("#home,#project,#support,#about,#news,#findour").hide();
             $("body").css("display", "block");
             if (savedPage && savedPage !== 'home') {
                 if (savedPage === 'project') {
-                    screen = 'project';
-                    $("#project,#findour").fadeIn(500);
+                    ani_page(screen,'project');
                 } else if (savedPage === 'support') {
-                    screen = 'support';
-                    $("#support,#findour").fadeIn(500);
+                    ani_page(screen,'support');
                 } else if (savedPage === 'about') {
-                    screen = 'about';
-                    $("#about,#findour").fadeIn(500);
+                    ani_page(screen,'about');
                 } else if (savedPage === 'news') {
-                    screen = 'news';
-                    $("#news,#findour").fadeIn(500);
+                    ani_page(screen,'news');
                 }
             } else {
-                $("#findour,#home").fadeIn(500);
+                ani_page(screen,'home');
             }
         </script>
     </body>
