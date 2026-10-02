@@ -14,6 +14,7 @@ body {
     --nav-bg: linear-gradient(to bottom, #1385ff, #49a1ff);
     --card-bg: #ffffff;
     --findour-bg: #d3d3d3db;
+    --theme-color:#1385ff;
 }
 
 body.dark-mode {
@@ -22,6 +23,15 @@ body.dark-mode {
     --nav-bg: linear-gradient(to bottom, #2d3748, #4a5568);
     --card-bg: #2d3748;
     --findour-bg: #3e3e3edb;
+}
+
+body.festival{
+    --nav-bg: linear-gradient(to right, #b81010, #e02020);
+    --theme-color:#e02020;
+}
+
+body.festival.dark-mode{
+    --nav-bg: linear-gradient(to right, #981010, #b02020);
 }
 
 body {
@@ -95,13 +105,9 @@ body.dark-mode #mainNav {
 }
 
 .nav-links button:hover {
-    background-color: #1749fc;
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
     transition: all 0.5s;
-}
-
-body.dark-mode .nav-links button:hover {
-    background-color: #3c3c3c;
 }
 
 #navFold_b {
@@ -198,7 +204,7 @@ body.dark-mode .menu-item:active {
 }
 
 .menu-item.active {
-    color: #1385ff;
+    color: var(--theme-color);
     font-weight: 600;
     padding-left: 28px;
 }
@@ -211,7 +217,7 @@ body.dark-mode .menu-item:active {
     transform: translateY(-50%);
     width: 4px;
     height: 24px;
-    background: #1385ff;
+    background: var(--theme-color);
     border-radius: 0 2px 2px 0;
 }
 
@@ -731,7 +737,7 @@ body.dark-mode .news_box:hover {
 .news_box h1 {
     font-size: 30px;
     text-align: center;
-    color:#006eff;
+    color:var(--theme-color);
 }
 
 .news_box h2 {
@@ -941,6 +947,7 @@ label {
 
     #news_box {
         width: 70%;
+        margin-left:15%;
     }
 }
 
@@ -985,6 +992,7 @@ label {
 
     #news_box {
         width: 85%;
+        margin-left:7.5%;
     }
 
     #title {
@@ -1096,6 +1104,7 @@ label {
 
     #news_box {
         width: 95%;
+        margin-left:2.5%
     }
 
     #title {
