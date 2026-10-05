@@ -280,8 +280,8 @@ var projectData = [
         downloadName: '刷屏器.zip'
     },
     {
-        title: '二次函数图像',
-        desc: '一款简单实用的软件，专门用于解决二次函数问题',
+        title: '函数图像',
+        desc: '一款简单实用的软件，专门用于解决函数图像问题',
         icon: '../Picture/icon.webp',
         features: [
             '普通版：解决一次函数、二次函数、反比例函数等基础问题',
