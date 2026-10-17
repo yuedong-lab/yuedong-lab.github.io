@@ -138,7 +138,7 @@ body.dark-mode #mainNav {
     right: -280px;
     width: 280px;
     height: 100vh;
-    background: var(--card-bg);
+    background: var(--bg-color);
     z-index: 1001;
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
