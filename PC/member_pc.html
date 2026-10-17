@@ -306,6 +306,8 @@
         <a href="./index.html" id="backButton">&#8592; 返回主页</a>
     </nav>
     <div class="content">
+        <canvas id="fireworksCanvas"
+            style="position:fixed;background-color:transparent;top:0;left:0;z-index:-1;"></canvas>
         <div class="header" id="memberHeader">
             <img src="" id="memberImage" draggable="false">
             <h1 id="name"></h1>
@@ -324,9 +326,13 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="../shared/devMode.js"></script>
+    <script src="../shared/fetchTime.js"></script>
     <script src="../version.js"></script>
     <script>
         // 版本: Pre_7.29.4 - 成员页面脚本（PC端）
+        syncTimeBase();
+        timeCheck(getDate());
+        setInterval(timeCheck, 10000, getDate());
         var members = {
             1: {
                 name: '小郑',
