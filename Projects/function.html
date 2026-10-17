@@ -1,0 +1,2436 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>函数工具</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0b1e33;
+        --ink2: #31536f;
+        --muted: #8aa0b8;
+        --line: #e6ecf3;
+        --brand: #2f6fb0;
+        --bd: #1f4e7a;
+        --bl: #eaf2fb;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        background:
+          radial-gradient(
+            900px 520px at 8% -12%,
+            #dbe9fb 0%,
+            rgba(219, 233, 251, 0) 62%
+          ),
+          radial-gradient(
+            760px 480px at 102% -6%,
+            #e2f0ff 0%,
+            rgba(226, 240, 255, 0) 58%
+          ),
+          linear-gradient(180deg, #f7fafd, #eef3f9);
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 16px;
+      }
+      .box {
+        position: relative;
+        max-width: 780px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 24px;
+        padding: 22px 24px 26px;
+        overflow: hidden;
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.04),
+          0 14px 34px -12px rgba(16, 42, 74, 0.18),
+          0 46px 90px -50px rgba(16, 42, 74, 0.35);
+      }
+      .box::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2f6fb0, #66a7e2, #9fcdf3, #2f6fb0);
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 14px;
+      }
+      h2::before {
+        content: "ƒ";
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 17px;
+        color: #fff;
+        background: linear-gradient(135deg, #4a8fd0, #1f4e7a);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.38),
+          0 6px 14px -5px rgba(31, 78, 122, 0.65);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin: 0 0 16px;
+        padding: 4px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+        box-shadow: inset 0 1px 2px rgba(16, 42, 74, 0.06);
+      }
+      .tabs .tab {
+        flex: 1 1 0;
+        min-width: 96px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 8px 14px;
+        border-radius: 10px;
+        transition: all 0.18s;
+      }
+      .tabs .tab:hover {
+        color: var(--bd);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .tabs .tab.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 6px 16px -9px rgba(16, 42, 74, 0.5);
+      }
+      .pane {
+        animation: paneIn 0.2s ease;
+      }
+      @keyframes paneIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .mode-tabs {
+        display: flex;
+        gap: 4px;
+        margin: 0 0 10px;
+        padding: 4px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+      }
+      .mode-tabs .mbtn {
+        flex: 1 1 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 6px 10px;
+        border-radius: 8px;
+        transition: all 0.18s;
+      }
+      .mode-tabs .mbtn:hover {
+        color: var(--bd);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .mode-tabs .mbtn.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 4px 12px -8px rgba(16, 42, 74, 0.5);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 10px 12px;
+        background: linear-gradient(180deg, #fbfdff, #f5f9fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .grp {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 50px;
+        min-width: 46px;
+      }
+      .grp label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #4d637d;
+        margin-bottom: 4px;
+      }
+      .grp input {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+        transition:
+          border-color 0.18s,
+          box-shadow 0.18s;
+      }
+      .grp input:hover {
+        border-color: #c6d4e3;
+      }
+      .grp input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 4px rgba(59, 130, 196, 0.13);
+      }
+      .btn {
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(180deg, #3a7cbb, #25609b);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 6px 14px -7px rgba(31, 78, 122, 0.8);
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        filter: brightness(1.07);
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0);
+        filter: brightness(0.97);
+      }
+      .err {
+        min-height: 18px;
+        margin: -4px 0 8px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d14949;
+      }
+      .res {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px 16px;
+        background: linear-gradient(180deg, #fbfdff, #f4f9fe);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .res .it {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding-left: 11px;
+      }
+      .res .it::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #8bc0ee, #2f6fb0);
+        opacity: 0.8;
+      }
+      .res .it .lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+      .res .it .val {
+        font-family: "Times New Roman", Cambria, serif;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--ink);
+        word-break: break-word;
+      }
+      .res .it .val.small {
+        font-size: 13.5px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .res .it .sub {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: var(--ink2);
+      }
+      .calc {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .calc .cb {
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 11px 13px 13px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .calc .cb .ct {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4d637d;
+        margin-bottom: 7px;
+      }
+      .calc .cb .dir {
+        display: inline-flex;
+        gap: 3px;
+        padding: 3px;
+        margin-bottom: 9px;
+        border-radius: 9px;
+        background: #e9eff7;
+      }
+      .calc .cb .dir span {
+        padding: 3px 12px;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        user-select: none;
+        color: #6b8299;
+        background: transparent;
+        transition: all 0.16s;
+      }
+      .calc .cb .dir span.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.1),
+          0 4px 10px -7px rgba(16, 42, 74, 0.55);
+      }
+      .calc .cb .cr {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .calc .cb .cr .prefix {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        padding: 0 2px;
+        white-space: nowrap;
+      }
+      .calc .cb .cr input {
+        flex: 1 1 0;
+        min-width: 44px;
+        padding: 6px 9px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+        transition: all 0.18s;
+      }
+      .calc .cb .cr input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3.5px rgba(59, 130, 196, 0.13);
+      }
+      .calc .cb .cr .bs {
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--bd);
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+        transition: all 0.15s;
+      }
+      .calc .cb .cr .bs:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+      .calc .cb .cr .sym {
+        height: 30px;
+        min-width: 34px;
+        padding: 0 8px;
+        text-align: center;
+        line-height: 27px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--bd);
+        cursor: pointer;
+        user-select: none;
+      }
+      .calc .cb .cr .sym:hover {
+        background: var(--bl);
+        border-color: #bcd3ea;
+      }
+      .calc .cb .cr .fix {
+        padding: 0 3px;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .calc .cb .o {
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px dashed #cfdcea;
+        border-radius: 9px;
+        background: #fff;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .chart {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 1px 3px rgba(16, 42, 74, 0.05);
+      }
+      .chart canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .zoombar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .zoombar .zb {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 9px;
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+        color: var(--bd);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: all 0.15s;
+      }
+      .zoombar .zb:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .zoombar .zlab {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b8299;
+        letter-spacing: 0.3px;
+      }
+      .zoombar .zslider {
+        flex: 1 1 70px;
+        min-width: 50px;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(90deg, #cfe0f2, #dce9f7);
+        border-radius: 3px;
+        outline: none;
+        cursor: grab;
+      }
+      .zoombar .zslider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        box-shadow: 0 2px 6px rgba(31, 78, 122, 0.4);
+        cursor: grab;
+      }
+      .zoombar .zslider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        cursor: grab;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 6px;
+        border-top: 1px dashed #dbe6f1;
+        margin-top: 4px;
+      }
+      .toggle-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b8299;
+        white-space: nowrap;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex: 0 0 auto;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 20px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      input:checked + .slider {
+        background-color: #3b82c4;
+      }
+      input:checked + .slider:before {
+        transform: translateX(16px);
+      }
+      .hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 4px 0;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      @media (max-width: 620px) {
+        body {
+          padding: 10px;
+        }
+        .box {
+          padding: 18px 16px 20px;
+          border-radius: 20px;
+        }
+        h2 {
+          font-size: 17px;
+        }
+        .tabs .tab {
+          min-width: 0;
+          padding: 8px 10px;
+          font-size: 12.5px;
+        }
+        .calc {
+          grid-template-columns: 1fr;
+        }
+        .res {
+          grid-template-columns: 1fr;
+        }
+        .toggle-row {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>函数工具</h2>
+      <div class="tabs">
+        <button class="tab on" data-pane="paneQ">二次函数</button>
+        <button class="tab" data-pane="paneL">一次函数</button>
+        <button class="tab" data-pane="paneI">反比例函数</button>
+      </div>
+
+      <!-- 二次函数 -->
+      <div class="pane" id="paneQ">
+        <div class="mode-tabs" id="qmode">
+          <button class="mbtn on" data-mode="general">
+            一般式 y = ax² + bx + c
+          </button>
+          <button class="mbtn" data-mode="vertex">
+            顶点式 y = a(x−h)² + k
+          </button>
+          <button class="mbtn" data-mode="root">
+            交点式 y = a(x−x₁)(x−x₂)
+          </button>
+        </div>
+        <div class="row q-input" id="qRowGeneral">
+          <div class="grp">
+            <label>a</label><input type="text" id="ia" value="1" />
+          </div>
+          <div class="grp">
+            <label>b</label><input type="text" id="ib" value="-2" />
+          </div>
+          <div class="grp">
+            <label>c</label><input type="text" id="ic" value="-3" />
+          </div>
+          <button class="btn" id="bu">转换</button>
+        </div>
+        <div class="row q-input" id="qRowVertex" style="display: none">
+          <div class="grp">
+            <label>a</label><input type="text" id="va" value="1" />
+          </div>
+          <div class="grp">
+            <label>h</label><input type="text" id="vh" value="1" />
+          </div>
+          <div class="grp">
+            <label>k</label><input type="text" id="vk" value="-4" />
+          </div>
+          <button class="btn" id="vbu">转换</button>
+        </div>
+        <div class="row q-input" id="qRowRoot" style="display: none">
+          <div class="grp">
+            <label>a</label><input type="text" id="ra" value="1" />
+          </div>
+          <div class="grp">
+            <label>x₁</label><input type="text" id="rx1" value="-1" />
+          </div>
+          <div class="grp">
+            <label>x₂</label><input type="text" id="rx2" value="3" />
+          </div>
+          <button class="btn" id="rbu">转换</button>
+        </div>
+        <div class="err" id="er"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">一般式</span
+            ><span class="val" id="dg">y = x² − 2x − 3</span>
+          </div>
+          <div class="it">
+            <span class="lbl">顶点式</span
+            ><span class="val" id="dv">y = (x − 1)² − 4</span>
+          </div>
+          <div class="it">
+            <span class="lbl">顶点 / 对称轴</span
+            ><span class="val" id="dc">(1, -4)</span>
+          </div>
+          <div class="it">
+            <span class="lbl">开口方向</span
+            ><span class="sub" id="de">向上</span>
+          </div>
+          <div class="it">
+            <span class="lbl">增减性</span><span class="sub" id="dinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">五个关键点</span
+            ><span class="val small" id="dpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="dir">
+              <span class="on" id="dir1">X → Y</span
+              ><span id="dir1r">Y → X</span>
+            </div>
+            <div class="cr">
+              <span class="prefix" id="svLabel">X =</span
+              ><input type="text" id="sv" value="0" /><button
+                class="bs"
+                id="bsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="osv">y = -3</div>
+          </div>
+          <div class="cb">
+            <div class="ct">范围转换</div>
+            <div class="dir">
+              <span class="on" id="dir2">X → Y</span
+              ><span id="dir2r">Y → X</span>
+            </div>
+            <div class="cr">
+              <input type="text" id="rl" value="0" /><span class="sym" id="op1l"
+                >&lt;</span
+              ><span class="fix" id="varLabel">X</span
+              ><span class="sym" id="op1r">≤</span
+              ><input type="text" id="rr" value="3" /><button
+                class="bs"
+                id="brng"
+              >
+                转换
+              </button>
+            </div>
+            <div class="o" id="orng">-4 ≤ y ≤ 0</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="cv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="qzin" title="放大">＋</button>
+          <button class="zb" id="qzout" title="缩小">－</button>
+          <button class="zb" id="qzrst" title="重置">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="qpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="qpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 左右拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 一次函数 -->
+      <div class="pane" id="paneL" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>k</label><input type="text" id="lk" value="2" />
+          </div>
+          <div class="grp">
+            <label>b</label><input type="text" id="lb" value="-1" />
+          </div>
+          <button class="btn" id="lbu">转换</button>
+        </div>
+        <div class="err" id="ler"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">一般式</span
+            ><span class="val" id="ldg">y = 2x − 1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">斜率 / 截距</span
+            ><span class="val" id="ldv">k = 2，b = -1</span>
+          </div>
+          <div class="it">
+            <span class="lbl">与 x 轴交点</span
+            ><span class="val" id="ldc">(0.5, 0)</span>
+          </div>
+          <div class="it">
+            <span class="lbl">与 y 轴交点</span
+            ><span class="val" id="ldb">(0, -1)</span>
+          </div>
+          <div class="it">
+            <span class="lbl">增减性</span><span class="sub" id="lde">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">经过象限</span><span class="sub" id="lq">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="dir">
+              <span class="on" id="ldir1">X → Y</span
+              ><span id="ldir1r">Y → X</span>
+            </div>
+            <div class="cr">
+              <span class="prefix" id="lsvLabel">X =</span
+              ><input type="text" id="lsv" value="0" /><button
+                class="bs"
+                id="lbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="losv">y = -1</div>
+          </div>
+          <div class="cb">
+            <div class="ct">范围转换</div>
+            <div class="dir">
+              <span class="on" id="ldir2">X → Y</span
+              ><span id="ldir2r">Y → X</span>
+            </div>
+            <div class="cr">
+              <input type="text" id="lrl" value="0" /><span
+                class="sym"
+                id="lop1l"
+                >&lt;</span
+              ><span class="fix" id="lvarLabel">X</span
+              ><span class="sym" id="lop1r">≤</span
+              ><input type="text" id="lrr" value="3" /><button
+                class="bs"
+                id="lbrng"
+              >
+                转换
+              </button>
+            </div>
+            <div class="o" id="lorng">-1 ≤ y ≤ 5</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="cv2" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="lzin" title="放大">＋</button>
+          <button class="zb" id="lzout" title="缩小">－</button>
+          <button class="zb" id="lzrst" title="重置">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="lpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="lpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 左右拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 反比例函数 -->
+      <div class="pane" id="paneI" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>k</label><input type="text" id="ik" value="6" />
+          </div>
+          <button class="btn" id="ibu">转换</button>
+        </div>
+        <div class="err" id="ier"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">一般式</span
+            ><span class="val" id="idg">y = 6/x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">图像位置</span
+            ><span class="val" id="idc">第一、三象限</span>
+          </div>
+          <div class="it">
+            <span class="lbl">增减性</span><span class="sub" id="ide">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="dir">
+              <span class="on" id="idir1">X → Y</span
+              ><span id="idir1r">Y → X</span>
+            </div>
+            <div class="cr">
+              <span class="prefix" id="isvLabel">X =</span
+              ><input type="text" id="isv" value="1" /><button
+                class="bs"
+                id="ibsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="iosv">y = 6</div>
+          </div>
+          <div class="cb">
+            <div class="ct">范围转换</div>
+            <div class="dir">
+              <span class="on" id="idir2">X → Y</span
+              ><span id="idir2r">Y → X</span>
+            </div>
+            <div class="cr">
+              <input type="text" id="irl" value="1" /><span
+                class="sym"
+                id="iop1l"
+                >&lt;</span
+              ><span class="fix" id="ivarLabel">X</span
+              ><span class="sym" id="iop1r">≤</span
+              ><input type="text" id="irr" value="6" /><button
+                class="bs"
+                id="ibrng"
+              >
+                转换
+              </button>
+            </div>
+            <div class="o" id="iorng">1 ≤ y ≤ 6</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="cv3" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="izin" title="放大">＋</button>
+          <button class="zb" id="izout" title="缩小">－</button>
+          <button class="zb" id="izrst" title="重置">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="ipx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="ipy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 左右拖动下方滑杆平移视野</div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) {
+          return document.getElementById(id);
+        };
+        var ROUND = false;
+        var MAX_ABS = 2e9;
+
+        function n2s(v) {
+          if (!isFinite(v)) return "—";
+          if (Math.abs(v) > 1e15) return v.toExponential(3);
+          var r = Math.round(v * 1e6) / 1e6;
+          if (Math.abs(r) < 1e-9) return "0";
+          var s = r.toFixed(4);
+          if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+          return s;
+        }
+        function c2s(x, y) {
+          return "(" + n2s(x) + ", " + n2s(y) + ")";
+        }
+        function pt2s(x, y) {
+          var f = function (v) {
+            if (!isFinite(v)) return "—";
+            return ROUND ? String(Math.round(v)) : n2s(v);
+          };
+          return "(" + f(x) + ", " + f(y) + ")";
+        }
+        function solveQ(A, B, C) {
+          var D = B * B - 4 * A * C;
+          if (D < -1e-9) return [];
+          if (Math.abs(D) <= 1e-9) return [-B / (2 * A)];
+          var s = Math.sqrt(D);
+          return [(-B - s) / (2 * A), (-B + s) / (2 * A)].sort(function (p, q) {
+            return p - q;
+          });
+        }
+        function niceStep(range, target) {
+          if (!(range > 0) || !isFinite(range)) return 1;
+          var raw = range / target;
+          var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+          var n = raw / p;
+          var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+          return m * p;
+        }
+        function viewRect(v) {
+          return {
+            xmin: v.cx - v.hw,
+            xmax: v.cx + v.hw,
+            ymin: v.cy - v.hh,
+            ymax: v.cy + v.hh,
+          };
+        }
+        function clampHalf(v) {
+          if (!isFinite(v) || v < 1e-9) return 1e-9;
+          if (v > MAX_ABS) return MAX_ABS;
+          return v;
+        }
+        function zoomView(v, f) {
+          v.hw = clampHalf(v.hw * f);
+          v.hh = clampHalf(v.hh * f);
+        }
+        function rrect(ctx, x, y, w, h, r) {
+          if (w < 2 * r) r = w / 2;
+          if (h < 2 * r) r = h / 2;
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + w, y, x + w, y + h, r);
+          ctx.arcTo(x + w, y + h, x, y + h, r);
+          ctx.arcTo(x, y + h, x, y, r);
+          ctx.arcTo(x, y, x + w, y, r);
+          ctx.closePath();
+        }
+        function drawGrid(ctx, W, H, v) {
+          var xmin = v.xmin,
+            xmax = v.xmax,
+            ymin = v.ymin,
+            ymax = v.ymax;
+          var X = function (x) {
+            return ((x - xmin) / (xmax - xmin)) * W;
+          };
+          var Y = function (y) {
+            return H - ((y - ymin) / (ymax - ymin)) * H;
+          };
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, W, H);
+          var sx = niceStep(xmax - xmin, 9),
+            sy = niceStep(ymax - ymin, 6);
+          ctx.strokeStyle = "#eef2f7";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          var x, y, px, py;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, H);
+          }
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            py = Math.round(Y(y)) + 0.5;
+            ctx.moveTo(0, py);
+            ctx.lineTo(W, py);
+          }
+          ctx.stroke();
+          var y0 = null,
+            x0 = null;
+          ctx.strokeStyle = "#b9c7d6";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (ymin <= 0 && ymax >= 0) {
+            y0 = Math.round(Y(0)) + 0.5;
+            ctx.moveTo(0, y0);
+            ctx.lineTo(W, y0);
+          }
+          if (xmin <= 0 && xmax >= 0) {
+            x0 = Math.round(X(0)) + 0.5;
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, H);
+          }
+          ctx.stroke();
+          var onX = y0 !== null,
+            onY = x0 !== null;
+          ctx.font =
+            '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tick = function (txt, lx, ly) {
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText(txt, lx, ly);
+            ctx.fillStyle = "#6b8299";
+            ctx.fillText(txt, lx, ly);
+          };
+          var xLY = onX ? (y0 > H - 24 ? y0 - 19 : y0 + 5) : H - 17;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          var xTB = onX ? y0 : H - 5;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            if (px < 16 || px > W - 16) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(px, xTB - 3.5);
+            ctx.lineTo(px, xTB + 3.5);
+            ctx.stroke();
+            if (Math.abs(x) < sx * 0.001) {
+              if (!onY) tick("0", px, xLY);
+              continue;
+            }
+            tick(n2s(x), px, xLY);
+          }
+          var yLX, yA;
+          if (onY && x0 > 46) {
+            yLX = x0 - 7;
+            yA = "right";
+          } else {
+            yLX = onY ? x0 + 7 : 7;
+            yA = "left";
+          }
+          ctx.textAlign = yA;
+          ctx.textBaseline = "middle";
+          var yTB = onY ? x0 : 5;
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            if (Math.abs(y) < sy * 0.001) continue;
+            py = Math.round(Y(y)) + 0.5;
+            if (py < 14 || py > H - 14) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(yTB - 3.5, py);
+            ctx.lineTo(yTB + 3.5, py);
+            ctx.stroke();
+            tick(n2s(y), yLX, py);
+          }
+          if (onX && onY) {
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.font = 'italic 700 12.5px "Times New Roman", Georgia, serif';
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText("O", x0 - 3, y0 + 4);
+            ctx.fillStyle = "#5a7592";
+            ctx.fillText("O", x0 - 3, y0 + 4);
+          }
+          return { X: X, Y: Y };
+        }
+        function drawTag(ctx, px, py, text, color, dx, dy, taken) {
+          var W = ctx.canvas.width,
+            H = ctx.canvas.height;
+          ctx.save();
+          ctx.font =
+            '600 11.5px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tw = ctx.measureText(text).width;
+          var w = tw + 12,
+            hh = 18;
+          var x = px + dx - 6,
+            y = py + dy - hh / 2;
+          if (x < 3) x = 3;
+          if (x + w > W - 3) x = W - 3 - w;
+          if (y < 3) y = 3;
+          if (y + hh > H - 3) y = H - 3 - hh;
+          var rect = { x: x, y: y, w: w, h: hh };
+          if (taken) {
+            for (var i = 0; i < taken.length; i++) {
+              var r = taken[i];
+              if (
+                rect.x < r.x + r.w &&
+                rect.x + rect.w > r.x &&
+                rect.y < r.y + r.h &&
+                rect.y + rect.h > r.y
+              ) {
+                ctx.restore();
+                return false;
+              }
+            }
+            taken.push(rect);
+          }
+          ctx.shadowColor = "rgba(16,42,74,.16)";
+          ctx.shadowBlur = 7;
+          ctx.shadowOffsetY = 2;
+          ctx.fillStyle = "rgba(255,255,255,.97)";
+          rrect(ctx, x, y, w, hh, 6);
+          ctx.fill();
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.strokeStyle = "rgba(47,111,176,.22)";
+          ctx.lineWidth = 1;
+          rrect(ctx, x + 0.5, y + 0.5, w - 1, hh - 1, 6);
+          ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x + 6, y + hh / 2 + 0.5);
+          ctx.restore();
+          return true;
+        }
+        function drawRedDot(ctx, W, H, X, Y, p, taken, labelColor) {
+          if (!p || !isFinite(p.x) || !isFinite(p.y)) return;
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (px < -40 || px > W + 40 || py < -40 || py > H + 40) return;
+          ctx.beginPath();
+          ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,77,61,.18)";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff4d3d";
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            pt2s(p.x, p.y),
+            labelColor || "#c4321f",
+            12,
+            -16,
+            taken,
+          );
+        }
+        function attachDrag(cv, onMove) {
+          var dragging = false;
+          var pos = function (e) {
+            var r = cv.getBoundingClientRect();
+            return {
+              px: ((e.clientX - r.left) / r.width) * cv.width,
+              py: ((e.clientY - r.top) / r.height) * cv.height,
+            };
+          };
+          cv.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            dragging = true;
+            onMove(pos(e));
+            e.preventDefault();
+          });
+          document.addEventListener("pointermove", function (e) {
+            if (!dragging) return;
+            onMove(pos(e));
+          });
+          document.addEventListener("pointerup", function () {
+            dragging = false;
+          });
+          document.addEventListener("pointercancel", function () {
+            dragging = false;
+          });
+        }
+        function dirToggle(idOn, idOff, cb) {
+          var A = $(idOn),
+            B = $(idOff);
+          A.addEventListener("click", function () {
+            A.classList.add("on");
+            B.classList.remove("on");
+            cb(true);
+          });
+          B.addEventListener("click", function () {
+            B.classList.add("on");
+            A.classList.remove("on");
+            cb(false);
+          });
+        }
+        function opToggle(id, cb) {
+          var el = $(id);
+          el.addEventListener("click", function () {
+            el.textContent = el.textContent.trim() === "<" ? "≤" : "<";
+            cb();
+          });
+        }
+        function attachRelSlider(id, view, axis, redraw) {
+          var el = $(id);
+          el.value = 0;
+          var lastVal = 0;
+          var active = false;
+          el.addEventListener("pointerdown", function () {
+            active = true;
+            lastVal = 0;
+            el.value = 0;
+          });
+          el.addEventListener("input", function () {
+            if (!active) return;
+            var v = parseFloat(el.value);
+            var delta = v - lastVal;
+            lastVal = v;
+            var range = axis === "y" ? view.hh : view.hw;
+            var step = delta * range * 0.01;
+            if (axis === "y") view.cy += step;
+            else view.cx += step;
+            redraw();
+          });
+          document.addEventListener("pointerup", function () {
+            if (active) {
+              active = false;
+              el.value = 0;
+              lastVal = 0;
+            }
+          });
+        }
+
+        /* ============ 二次函数 ============ */
+        var Q = { a: 1, b: -2, c: -3, h: 1, k: -4 };
+        var QV = { cx: 1, cy: -2, hw: 6, hh: 5 };
+        var qPoint = null,
+          qDir = "xy",
+          qRangeDir = "xy",
+          qMode = "general";
+
+        function quadGeneral(a, b, c) {
+          var s = "y = ";
+          if (a === 1) s += "x²";
+          else if (a === -1) s += "−x²";
+          else s += n2s(a) + "x²";
+          if (Math.abs(b) > 1e-12) {
+            s += b > 0 ? " + " : " − ";
+            if (Math.abs(b) !== 1) s += n2s(Math.abs(b));
+            s += "x";
+          }
+          if (Math.abs(c) > 1e-12)
+            s += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          return s;
+        }
+        function quadVertexForm(a, h, k) {
+          var s = "y = ";
+          if (a === 1) s += "";
+          else if (a === -1) s += "−";
+          else s += n2s(a);
+          if (Math.abs(h) < 1e-12) s += "x²";
+          else s += "(x " + (h > 0 ? "− " : "+ ") + n2s(Math.abs(h)) + ")²";
+          if (Math.abs(k) > 1e-12)
+            s += (k > 0 ? " + " : " − ") + n2s(Math.abs(k));
+          return s;
+        }
+        function quadKeyPoints() {
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c,
+            h = Q.h,
+            k = Q.k;
+          var pts = [],
+            seen = {};
+          var add = function (x, y, kind) {
+            if (!isFinite(x) || !isFinite(y)) return;
+            var key = Math.round(x * 1e6) + "," + Math.round(y * 1e6);
+            if (seen[key]) return;
+            seen[key] = 1;
+            pts.push({ x: x, y: y, kind: kind });
+          };
+          add(h, k, "vertex");
+          var rts = solveQ(a, b, c);
+          if (rts.length === 2) {
+            add(rts[0], 0, "root");
+            add(rts[1], 0, "root");
+          }
+          add(0, c, "yint");
+          if (Math.abs(h) > 1e-9) add(2 * h, c, "yint");
+          var m = 1;
+          while (pts.length < 5 && m <= 10) {
+            add(h - m, a * (h - m) * (h - m) + b * (h - m) + c, "aux");
+            if (pts.length < 5)
+              add(h + m, a * (h + m) * (h + m) + b * (h + m) + c, "aux");
+            m++;
+          }
+          pts.sort(function (p, q) {
+            return p.x - q.x;
+          });
+          return pts;
+        }
+        function quadAutoView() {
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c,
+            h = Q.h,
+            k = Q.k;
+          if (Math.abs(a) < 1e-12) a = 1e-6;
+          var rts = solveQ(a, b, c);
+          var hw;
+          if (rts.length === 2) hw = Math.max(2, (rts[1] - rts[0]) * 0.75);
+          else hw = Math.max(2, Math.sqrt(8 / Math.abs(a)) * 1.2);
+          hw = clampHalf(hw);
+          var xmin = h - hw,
+            xmax = h + hw;
+          var y1 = a * xmin * xmin + b * xmin + c;
+          var y2 = a * xmax * xmax + b * xmax + c;
+          var ymin = Math.min(y1, y2, k, 0),
+            ymax = Math.max(y1, y2, k, 0);
+          var pad = (ymax - ymin) * 0.15 + 1;
+          ymin -= pad;
+          ymax += pad;
+          QV.cx = h;
+          QV.cy = (ymin + ymax) / 2;
+          QV.hw = hw;
+          QV.hh = clampHalf((ymax - ymin) / 2);
+        }
+        function applyQuadABC(a, b, c) {
+          Q.a = a;
+          Q.b = b;
+          Q.c = c;
+          Q.h = -b / (2 * a);
+          Q.k = c - (b * b) / (4 * a);
+          $("dg").textContent = quadGeneral(a, b, c);
+          $("dv").textContent = quadVertexForm(a, Q.h, Q.k);
+          $("dc").textContent = c2s(Q.h, Q.k) + " · x = " + n2s(Q.h);
+          $("de").textContent = a > 0 ? "向上" : "向下";
+          if (a > 0)
+            $("dinc").textContent =
+              "x < " +
+              n2s(Q.h) +
+              " 时 y 随 x 增大而减小；x > " +
+              n2s(Q.h) +
+              " 时增大";
+          else
+            $("dinc").textContent =
+              "x < " +
+              n2s(Q.h) +
+              " 时 y 随 x 增大而增大；x > " +
+              n2s(Q.h) +
+              " 时减小";
+          var pts = quadKeyPoints();
+          var labels = {
+            vertex: "顶点",
+            root: "零点",
+            yint: "截距",
+            aux: "取点",
+          };
+          $("dpts").textContent = pts
+            .map(function (p) {
+              return labels[p.kind] + c2s(p.x, p.y);
+            })
+            .join("　");
+          quadAutoView();
+          quadCalc();
+          quadRange();
+          drawQuad();
+        }
+        function quadUpdateFromGeneral() {
+          var a = parseFloat($("ia").value),
+            b = parseFloat($("ib").value),
+            c = parseFloat($("ic").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("er").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("er").textContent = "a 不能为 0";
+            return;
+          }
+          $("er").textContent = "";
+          applyQuadABC(a, b, c);
+        }
+        function quadUpdateFromVertex() {
+          var a = parseFloat($("va").value),
+            h = parseFloat($("vh").value),
+            k = parseFloat($("vk").value);
+          if (!isFinite(a) || !isFinite(h) || !isFinite(k)) {
+            $("er").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("er").textContent = "a 不能为 0";
+            return;
+          }
+          $("er").textContent = "";
+          applyQuadABC(a, -2 * a * h, a * h * h + k);
+        }
+        function quadUpdateFromRoots() {
+          var a = parseFloat($("ra").value),
+            x1 = parseFloat($("rx1").value),
+            x2 = parseFloat($("rx2").value);
+          if (!isFinite(a) || !isFinite(x1) || !isFinite(x2)) {
+            $("er").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("er").textContent = "a 不能为 0";
+            return;
+          }
+          $("er").textContent = "";
+          applyQuadABC(a, -a * (x1 + x2), a * x1 * x2);
+        }
+        function switchQuadMode(nm) {
+          if (nm === qMode) return;
+          qMode = nm;
+          document.querySelectorAll("#qmode .mbtn").forEach(function (b) {
+            b.classList.toggle("on", b.dataset.mode === nm);
+          });
+          $("qRowGeneral").style.display = nm === "general" ? "" : "none";
+          $("qRowVertex").style.display = nm === "vertex" ? "" : "none";
+          $("qRowRoot").style.display = nm === "root" ? "" : "none";
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c,
+            h = Q.h,
+            k = Q.k;
+          if (nm === "general") {
+            $("ia").value = n2s(a);
+            $("ib").value = n2s(b);
+            $("ic").value = n2s(c);
+          } else if (nm === "vertex") {
+            $("va").value = n2s(a);
+            $("vh").value = n2s(h);
+            $("vk").value = n2s(k);
+          } else {
+            var rts = solveQ(a, b, c);
+            $("ra").value = n2s(a);
+            if (rts.length === 2) {
+              $("rx1").value = n2s(rts[0]);
+              $("rx2").value = n2s(rts[1]);
+            } else if (rts.length === 1) {
+              $("rx1").value = n2s(rts[0]);
+              $("rx2").value = n2s(rts[0]);
+            } else {
+              $("rx1").value = n2s(h - 1);
+              $("rx2").value = n2s(h + 1);
+            }
+          }
+        }
+        function quadCalc() {
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c;
+          var v = parseFloat($("sv").value);
+          if (!isFinite(v)) {
+            $("osv").textContent = "请输入有效数字";
+            return;
+          }
+          if (qDir === "xy") {
+            var y = a * v * v + b * v + c;
+            $("osv").textContent = "y = " + n2s(y);
+            qPoint = { x: v, y: y };
+          } else {
+            var roots = solveQ(a, b, c - v);
+            if (roots.length === 0) {
+              $("osv").textContent = "y = " + n2s(v) + " 无对应 x";
+              qPoint = null;
+            } else if (roots.length === 1) {
+              $("osv").textContent = "x = " + n2s(roots[0]);
+              qPoint = { x: roots[0], y: v };
+            } else {
+              $("osv").textContent =
+                "x₁ = " + n2s(roots[0]) + " ，x₂ = " + n2s(roots[1]);
+              qPoint = { x: roots[0], y: v };
+            }
+          }
+        }
+        function quadYRangeToX(a, b, c, lo, hi) {
+          var k = c - (b * b) / (4 * a);
+          var roots = function (y) {
+            return solveQ(a, b, c - y);
+          };
+          var res = [];
+          if (a > 0) {
+            if (hi < k - 1e-9) return res;
+            if (lo <= k + 1e-9) {
+              var R = roots(hi);
+              if (R.length < 2) return res;
+              res.push([R[0], R[1]]);
+            } else {
+              var Rl = roots(lo),
+                Rh = roots(hi);
+              if (Rl.length < 2 || Rh.length < 2) return res;
+              res.push([Rh[0], Rl[0]]);
+              res.push([Rl[1], Rh[1]]);
+            }
+          } else {
+            if (lo > k + 1e-9) return res;
+            if (hi >= k - 1e-9) {
+              var R2 = roots(lo);
+              if (R2.length < 2) return res;
+              res.push([R2[0], R2[1]]);
+            } else {
+              var Rl2 = roots(lo),
+                Rh2 = roots(hi);
+              if (Rl2.length < 2 || Rh2.length < 2) return res;
+              res.push([Rl2[0], Rh2[0]]);
+              res.push([Rh2[1], Rl2[1]]);
+            }
+          }
+          return res;
+        }
+        function quadRange() {
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c;
+          var l = parseFloat($("rl").value),
+            r = parseFloat($("rr").value);
+          if (!isFinite(l) || !isFinite(r)) {
+            $("orng").textContent = "请输入有效数字";
+            return;
+          }
+          var lo = Math.min(l, r),
+            hi = Math.max(l, r);
+          var o1 = $("op1l").textContent.trim(),
+            o2 = $("op1r").textContent.trim();
+          if (qRangeDir === "xy") {
+            var cands = [lo, hi];
+            if (Q.h > lo && Q.h < hi) cands.push(Q.h);
+            var ys = cands.map(function (x) {
+              return a * x * x + b * x + c;
+            });
+            var mn = Math.min.apply(null, ys),
+              mx = Math.max.apply(null, ys);
+            $("orng").textContent =
+              n2s(mn) + " " + o1 + " y " + o2 + " " + n2s(mx);
+          } else {
+            var segs = quadYRangeToX(a, b, c, lo, hi);
+            if (!segs.length) $("orng").textContent = "无对应的 x 范围";
+            else
+              $("orng").textContent = segs
+                .map(function (s) {
+                  return n2s(s[0]) + " ≤ x ≤ " + n2s(s[1]);
+                })
+                .join("  或  ");
+          }
+        }
+        function drawQuad() {
+          var cv = $("cv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var a = Q.a,
+            b = Q.b,
+            c = Q.c,
+            h = Q.h,
+            k = Q.k;
+          var rect = viewRect(QV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          if (h >= rect.xmin - 1e-9 && h <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(h)) + 0.5;
+            if (isFinite(ax)) {
+              ctx.save();
+              ctx.setLineDash([7, 5]);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "#8fb3d6";
+              ctx.beginPath();
+              ctx.moveTo(ax, 0);
+              ctx.lineTo(ax, H);
+              ctx.stroke();
+              ctx.restore();
+              var lab = "x = " + n2s(h);
+              ctx.save();
+              ctx.font =
+                '600 11.5px -apple-system, system-ui, "PingFang SC", sans-serif';
+              var lw = ctx.measureText(lab).width + 12;
+              var lx = Math.min(Math.max(ax + 8, 4), W - lw - 4);
+              ctx.fillStyle = "rgba(255,255,255,.96)";
+              rrect(ctx, lx, 7, lw, 19, 6);
+              ctx.fill();
+              ctx.strokeStyle = "rgba(143,179,214,.6)";
+              ctx.lineWidth = 1;
+              rrect(ctx, lx + 0.5, 7.5, lw - 1, 18, 6);
+              ctx.stroke();
+              ctx.fillStyle = "#5a7fa3";
+              ctx.textAlign = "left";
+              ctx.textBaseline = "middle";
+              ctx.fillText(lab, lx + 6, 17);
+              ctx.restore();
+            }
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv = a * xv * xv + b * xv + c;
+            if (!isFinite(yv)) continue;
+            if (yv > 1e12) yv = 1e12;
+            if (yv < -1e12) yv = -1e12;
+            var py = Y(yv);
+            if (!isFinite(py)) continue;
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+          var pts = quadKeyPoints();
+          var taken = [];
+          pts.forEach(function (p) {
+            var px = X(p.x),
+              py = Y(p.y);
+            if (!isFinite(px) || !isFinite(py)) return;
+            if (px < -20 || px > W + 20 || py < -20 || py > H + 20) return;
+            var isV = p.kind === "vertex";
+            ctx.beginPath();
+            ctx.arc(px, py, isV ? 5.4 : 4.3, 0, Math.PI * 2);
+            ctx.fillStyle = isV ? "#1f4e7a" : "#4a8fd0";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#fff";
+            ctx.stroke();
+          });
+          pts.forEach(function (p) {
+            var px = X(p.x),
+              py = Y(p.y);
+            if (!isFinite(px) || !isFinite(py)) return;
+            if (px < 0 || px > W || py < 0 || py > H) return;
+            var dx = 10,
+              dy = -15;
+            if (p.kind === "vertex") {
+              dx = 12;
+              dy = -16;
+            } else if (p.kind === "root") {
+              dx = 9;
+              dy = 17;
+            } else if (p.kind === "yint") {
+              dx = 12;
+              dy = -15;
+            }
+            drawTag(ctx, px, py, c2s(p.x, p.y), "#31536f", dx, dy, taken);
+          });
+          drawRedDot(ctx, W, H, X, Y, qPoint, taken, "#c4321f");
+        }
+        $("bu").addEventListener("click", quadUpdateFromGeneral);
+        $("vbu").addEventListener("click", quadUpdateFromVertex);
+        $("rbu").addEventListener("click", quadUpdateFromRoots);
+        $("bsv").addEventListener("click", function () {
+          quadCalc();
+          drawQuad();
+        });
+        $("brng").addEventListener("click", quadRange);
+        ["ia", "ib", "ic"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") quadUpdateFromGeneral();
+          });
+        });
+        ["va", "vh", "vk"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") quadUpdateFromVertex();
+          });
+        });
+        ["ra", "rx1", "rx2"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") quadUpdateFromRoots();
+          });
+        });
+        $("sv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            quadCalc();
+            drawQuad();
+          }
+        });
+        ["rl", "rr"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") quadRange();
+          });
+        });
+        dirToggle("dir1", "dir1r", function (f) {
+          qDir = f ? "xy" : "yx";
+          $("svLabel").textContent = f ? "X =" : "Y =";
+          quadCalc();
+          drawQuad();
+        });
+        dirToggle("dir2", "dir2r", function (f) {
+          qRangeDir = f ? "xy" : "yx";
+          $("varLabel").textContent = f ? "X" : "Y";
+          quadRange();
+        });
+        opToggle("op1l", quadRange);
+        opToggle("op1r", quadRange);
+        document.querySelectorAll("#qmode .mbtn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            switchQuadMode(b.dataset.mode);
+          });
+        });
+        $("qzin").addEventListener("click", function () {
+          zoomView(QV, 1 / 1.3);
+          drawQuad();
+        });
+        $("qzout").addEventListener("click", function () {
+          zoomView(QV, 1.3);
+          drawQuad();
+        });
+        $("qzrst").addEventListener("click", function () {
+          quadAutoView();
+          drawQuad();
+        });
+        attachRelSlider("qpx", QV, "x", drawQuad);
+        attachRelSlider("qpy", QV, "y", drawQuad);
+        attachDrag($("cv"), function (p) {
+          var rect = viewRect(QV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          if (ROUND) x = Math.round(x);
+          var y = Q.a * x * x + Q.b * x + Q.c;
+          if (ROUND) y = Math.round(y);
+          qDir = "xy";
+          $("dir1").classList.add("on");
+          $("dir1r").classList.remove("on");
+          $("svLabel").textContent = "X =";
+          $("sv").value = n2s(x);
+          qPoint = { x: x, y: y };
+          $("osv").textContent = "y = " + n2s(y);
+          drawQuad();
+        });
+
+        /* ============ 一次函数 ============ */
+        var L = { k: 2, b: -1 };
+        var LV = { cx: 0, cy: -1, hw: 6, hh: 3 };
+        var lPoint = null,
+          lDir = "xy",
+          lRangeDir = "xy";
+
+        function linGeneral(k, b) {
+          var s = "y = ";
+          if (Math.abs(k) < 1e-12) return "y = " + n2s(b);
+          if (k === 1) s += "x";
+          else if (k === -1) s += "−x";
+          else s += n2s(k) + "x";
+          if (Math.abs(b) > 1e-12)
+            s += (b > 0 ? " + " : " − ") + n2s(Math.abs(b));
+          return s;
+        }
+        function linAutoView() {
+          var k = L.k,
+            b = L.b,
+            hw = 8;
+          var y1 = k * -hw + b,
+            y2 = k * hw + b;
+          var ymin = Math.min(y1, y2, 0),
+            ymax = Math.max(y1, y2, 0);
+          var pad = (ymax - ymin) * 0.15 + 0.6;
+          ymin -= pad;
+          ymax += pad;
+          LV.cx = 0;
+          LV.cy = (ymin + ymax) / 2;
+          LV.hw = hw;
+          LV.hh = clampHalf((ymax - ymin) / 2);
+        }
+        function linUpdate() {
+          var k = parseFloat($("lk").value),
+            b = parseFloat($("lb").value);
+          if (!isFinite(k) || !isFinite(b)) {
+            $("ler").textContent = "请输入有效数字";
+            return;
+          }
+          $("ler").textContent = "";
+          L.k = k;
+          L.b = b;
+          $("ldg").textContent = linGeneral(k, b);
+          $("ldv").textContent = "k = " + n2s(k) + "，b = " + n2s(b);
+          if (Math.abs(k) < 1e-12)
+            $("ldc").textContent =
+              Math.abs(b) < 1e-12 ? "与 x 轴重合" : "无交点（k = 0）";
+          else $("ldc").textContent = c2s(-b / k, 0);
+          $("ldb").textContent = c2s(0, b);
+          if (k > 0) $("lde").textContent = "k > 0，y 随 x 增大而增大";
+          else if (k < 0) $("lde").textContent = "k < 0，y 随 x 增大而减小";
+          else $("lde").textContent = "k = 0，常函数";
+          var q;
+          if (Math.abs(k) < 1e-12)
+            q =
+              b > 0
+                ? "一、二象限上方"
+                : b < 0
+                  ? "三、四象限下方"
+                  : "与 x 轴重合";
+          else if (k > 0 && b > 0) q = "第一、二、三象限";
+          else if (k > 0 && b < 0) q = "第一、三、四象限";
+          else if (k > 0) q = "第一、三象限（过原点）";
+          else if (k < 0 && b > 0) q = "第一、二、四象限";
+          else if (k < 0 && b < 0) q = "第二、三、四象限";
+          else q = "第二、四象限（过原点）";
+          $("lq").textContent = q;
+          linAutoView();
+          linCalc();
+          linRange();
+          drawLin();
+        }
+        function linCalc() {
+          var v = parseFloat($("lsv").value);
+          if (!isFinite(v)) {
+            $("losv").textContent = "请输入有效数字";
+            return;
+          }
+          var k = L.k,
+            b = L.b;
+          if (lDir === "xy") {
+            var y = k * v + b;
+            $("losv").textContent = "y = " + n2s(y);
+            lPoint = { x: v, y: y };
+          } else {
+            if (Math.abs(k) < 1e-12) {
+              if (Math.abs(v - b) < 1e-9) {
+                $("losv").textContent = "x 为任意实数";
+                lPoint = null;
+              } else {
+                $("losv").textContent = "无解";
+                lPoint = null;
+              }
+            } else {
+              var x = (v - b) / k;
+              $("losv").textContent = "x = " + n2s(x);
+              lPoint = { x: x, y: v };
+            }
+          }
+        }
+        function linRange() {
+          var l = parseFloat($("lrl").value),
+            r = parseFloat($("lrr").value);
+          if (!isFinite(l) || !isFinite(r)) {
+            $("lorng").textContent = "请输入有效数字";
+            return;
+          }
+          var lo = Math.min(l, r),
+            hi = Math.max(l, r);
+          var o1 = $("lop1l").textContent.trim(),
+            o2 = $("lop1r").textContent.trim();
+          var k = L.k,
+            b = L.b;
+          if (lRangeDir === "xy") {
+            var y1 = k * lo + b,
+              y2 = k * hi + b;
+            var mn = Math.min(y1, y2),
+              mx = Math.max(y1, y2);
+            if (Math.abs(mx - mn) < 1e-12)
+              $("lorng").textContent = "y = " + n2s(mn);
+            else
+              $("lorng").textContent =
+                n2s(mn) + " " + o1 + " y " + o2 + " " + n2s(mx);
+          } else {
+            if (Math.abs(k) < 1e-12) {
+              $("lorng").textContent = "k = 0，无法反解 x";
+              return;
+            }
+            var x1 = (lo - b) / k,
+              x2 = (hi - b) / k;
+            var mnx = Math.min(x1, x2),
+              mxx = Math.max(x1, x2);
+            $("lorng").textContent =
+              n2s(mnx) + " " + o1 + " x " + o2 + " " + n2s(mxx);
+          }
+        }
+        function drawLin() {
+          var cv = $("cv2");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var k = L.k,
+            b = L.b;
+          var rect = viewRect(LV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          var xa = rect.xmin,
+            xb = rect.xmax;
+          var ya = k * xa + b,
+            yb = k * xb + b;
+          ya = Math.max(-1e12, Math.min(1e12, ya));
+          yb = Math.max(-1e12, Math.min(1e12, yb));
+          ctx.moveTo(X(xa), Y(ya));
+          ctx.lineTo(X(xb), Y(yb));
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.restore();
+          var taken = [];
+          var iy = Y(b),
+            ix0 = X(0);
+          if (
+            isFinite(iy) &&
+            isFinite(ix0) &&
+            ix0 > -20 &&
+            ix0 < W + 20 &&
+            iy > -20 &&
+            iy < H + 20
+          ) {
+            ctx.beginPath();
+            ctx.arc(ix0, iy, 5.2, 0, Math.PI * 2);
+            ctx.fillStyle = "#1f4e7a";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#fff";
+            ctx.stroke();
+            drawTag(ctx, ix0, iy, c2s(0, b), "#1f4e7a", 12, -15, taken);
+          }
+          if (Math.abs(k) > 1e-12) {
+            var xr = -b / k;
+            var pxr = X(xr),
+              pyr = Y(0);
+            if (
+              isFinite(pxr) &&
+              isFinite(pyr) &&
+              pxr > -20 &&
+              pxr < W + 20 &&
+              pyr > -20 &&
+              pyr < H + 20
+            ) {
+              ctx.beginPath();
+              ctx.arc(pxr, pyr, 5.2, 0, Math.PI * 2);
+              ctx.fillStyle = "#1f4e7a";
+              ctx.fill();
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "#fff";
+              ctx.stroke();
+              drawTag(ctx, pxr, pyr, c2s(xr, 0), "#1f4e7a", 10, 17, taken);
+            }
+          }
+          drawRedDot(ctx, W, H, X, Y, lPoint, taken, "#c4321f");
+        }
+        $("lbu").addEventListener("click", linUpdate);
+        $("lbsv").addEventListener("click", function () {
+          linCalc();
+          drawLin();
+        });
+        $("lbrng").addEventListener("click", linRange);
+        ["lk", "lb"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") linUpdate();
+          });
+        });
+        $("lsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            linCalc();
+            drawLin();
+          }
+        });
+        ["lrl", "lrr"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") linRange();
+          });
+        });
+        dirToggle("ldir1", "ldir1r", function (f) {
+          lDir = f ? "xy" : "yx";
+          $("lsvLabel").textContent = f ? "X =" : "Y =";
+          linCalc();
+          drawLin();
+        });
+        dirToggle("ldir2", "ldir2r", function (f) {
+          lRangeDir = f ? "xy" : "yx";
+          $("lvarLabel").textContent = f ? "X" : "Y";
+          linRange();
+        });
+        opToggle("lop1l", linRange);
+        opToggle("lop1r", linRange);
+        $("lzin").addEventListener("click", function () {
+          zoomView(LV, 1 / 1.3);
+          drawLin();
+        });
+        $("lzout").addEventListener("click", function () {
+          zoomView(LV, 1.3);
+          drawLin();
+        });
+        $("lzrst").addEventListener("click", function () {
+          linAutoView();
+          drawLin();
+        });
+        attachRelSlider("lpx", LV, "x", drawLin);
+        attachRelSlider("lpy", LV, "y", drawLin);
+        attachDrag($("cv2"), function (p) {
+          var rect = viewRect(LV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          if (ROUND) x = Math.round(x);
+          var y = L.k * x + L.b;
+          if (ROUND) y = Math.round(y);
+          lDir = "xy";
+          $("ldir1").classList.add("on");
+          $("ldir1r").classList.remove("on");
+          $("lsvLabel").textContent = "X =";
+          $("lsv").value = n2s(x);
+          lPoint = { x: x, y: y };
+          $("losv").textContent = "y = " + n2s(y);
+          drawLin();
+        });
+
+        /* ============ 反比例函数 ============ */
+        var I = { k: 6 };
+        var IV = { cx: 0, cy: 0, hw: 8, hh: 8 };
+        var iPoint = null,
+          iDir = "xy",
+          iRangeDir = "xy";
+
+        function invAutoView() {
+          var k = I.k;
+          var lim = Math.max(5, Math.sqrt(Math.abs(k)) * 5);
+          lim = clampHalf(lim);
+          IV.cx = 0;
+          IV.cy = 0;
+          IV.hw = lim;
+          IV.hh = lim;
+        }
+        function invUpdate() {
+          var k = parseFloat($("ik").value);
+          if (!isFinite(k)) {
+            $("ier").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(k) < 1e-12) {
+            $("ier").textContent = "k 不能为 0";
+            return;
+          }
+          $("ier").textContent = "";
+          I.k = k;
+          $("idg").textContent = "y = " + n2s(k) + "/x";
+          $("idc").textContent = k > 0 ? "第一、三象限" : "第二、四象限";
+          $("ide").textContent =
+            k > 0 ? "每一支上 y 随 x 增大而减小" : "每一支上 y 随 x 增大而增大";
+          invAutoView();
+          invCalc();
+          invRangeCalc();
+          drawInv();
+        }
+        function invCalc() {
+          var v = parseFloat($("isv").value);
+          if (!isFinite(v)) {
+            $("iosv").textContent = "请输入有效数字";
+            return;
+          }
+          var k = I.k;
+          if (iDir === "xy") {
+            if (Math.abs(v) < 1e-12) {
+              $("iosv").textContent = "x 不能为 0";
+              iPoint = null;
+              return;
+            }
+            var y = k / v;
+            $("iosv").textContent = "y = " + n2s(y);
+            iPoint = { x: v, y: y };
+          } else {
+            if (Math.abs(v) < 1e-12) {
+              $("iosv").textContent = "y 不能为 0";
+              iPoint = null;
+              return;
+            }
+            var x = k / v;
+            $("iosv").textContent = "x = " + n2s(x);
+            iPoint = { x: x, y: v };
+          }
+        }
+        function invSegments(lo, hi, k) {
+          if (lo > hi) {
+            var t = lo;
+            lo = hi;
+            hi = t;
+          }
+          var out = [];
+          if (lo === 0 && hi === 0) return out;
+          if (lo > 0 || hi < 0) {
+            var a1 = k / lo,
+              a2 = k / hi;
+            out.push([Math.min(a1, a2), Math.max(a1, a2)]);
+            return out;
+          }
+          if (lo < 0 && hi > 0) {
+            if (k > 0) {
+              out.push([-Infinity, k / lo]);
+              out.push([k / hi, Infinity]);
+            } else {
+              out.push([k / lo, Infinity]);
+              out.push([-Infinity, k / hi]);
+            }
+            return out;
+          }
+          if (lo === 0) {
+            if (k > 0) out.push([k / hi, Infinity]);
+            else out.push([-Infinity, k / hi]);
+            return out;
+          }
+          if (hi === 0) {
+            if (k > 0) out.push([-Infinity, k / lo]);
+            else out.push([k / lo, Infinity]);
+            return out;
+          }
+          return out;
+        }
+        function fmtSegments(segs, name) {
+          if (!segs.length) return "无对应范围";
+          return segs
+            .map(function (s) {
+              var a = s[0],
+                b = s[1];
+              if (a === -Infinity) return name + " ≤ " + n2s(b);
+              if (b === Infinity) return name + " ≥ " + n2s(a);
+              return n2s(a) + " ≤ " + name + " ≤ " + n2s(b);
+            })
+            .join("  或  ");
+        }
+        function invRangeCalc() {
+          var l = parseFloat($("irl").value),
+            r = parseFloat($("irr").value);
+          if (!isFinite(l) || !isFinite(r)) {
+            $("iorng").textContent = "请输入有效数字";
+            return;
+          }
+          var segs = invSegments(l, r, I.k);
+          $("iorng").textContent =
+            iRangeDir === "xy"
+              ? fmtSegments(segs, "y")
+              : fmtSegments(segs, "x");
+        }
+        function drawInv() {
+          var cv = $("cv3");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var k = I.k;
+          var rect = viewRect(IV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          function branch(xa, xb) {
+            ctx.beginPath();
+            var N = 400,
+              started = false;
+            for (var i = 0; i <= N; i++) {
+              var x = xa + ((xb - xa) * i) / N;
+              if (Math.abs(x) < 1e-9) continue;
+              var y = k / x;
+              if (!isFinite(y)) continue;
+              var py = Y(Math.max(-1e12, Math.min(1e12, y)));
+              var px = X(x);
+              if (!isFinite(px) || !isFinite(py)) continue;
+              if (!started) {
+                ctx.moveTo(px, py);
+                started = true;
+              } else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+          var eps = IV.hw / 500;
+          branch(Math.max(eps, rect.xmin), rect.xmax);
+          branch(rect.xmin, Math.min(-eps, rect.xmax));
+          ctx.restore();
+          var taken = [];
+          drawRedDot(ctx, W, H, X, Y, iPoint, taken, "#c4321f");
+        }
+        $("ibu").addEventListener("click", invUpdate);
+        $("ibsv").addEventListener("click", function () {
+          invCalc();
+          drawInv();
+        });
+        $("ibrng").addEventListener("click", invRangeCalc);
+        $("ik").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") invUpdate();
+        });
+        $("isv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            invCalc();
+            drawInv();
+          }
+        });
+        ["irl", "irr"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") invRangeCalc();
+          });
+        });
+        dirToggle("idir1", "idir1r", function (f) {
+          iDir = f ? "xy" : "yx";
+          $("isvLabel").textContent = f ? "X =" : "Y =";
+          invCalc();
+          drawInv();
+        });
+        dirToggle("idir2", "idir2r", function (f) {
+          iRangeDir = f ? "xy" : "yx";
+          $("ivarLabel").textContent = f ? "X" : "Y";
+          invRangeCalc();
+        });
+        opToggle("iop1l", invRangeCalc);
+        opToggle("iop1r", invRangeCalc);
+        $("izin").addEventListener("click", function () {
+          zoomView(IV, 1 / 1.3);
+          drawInv();
+        });
+        $("izout").addEventListener("click", function () {
+          zoomView(IV, 1.3);
+          drawInv();
+        });
+        $("izrst").addEventListener("click", function () {
+          invAutoView();
+          drawInv();
+        });
+        attachRelSlider("ipx", IV, "x", drawInv);
+        attachRelSlider("ipy", IV, "y", drawInv);
+        attachDrag($("cv3"), function (p) {
+          var rect = viewRect(IV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          if (ROUND) x = Math.round(x);
+          if (Math.abs(x) < 1e-9) return;
+          var y = I.k / x;
+          if (ROUND) y = Math.round(y);
+          iDir = "xy";
+          $("idir1").classList.add("on");
+          $("idir1r").classList.remove("on");
+          $("isvLabel").textContent = "X =";
+          $("isv").value = n2s(x);
+          iPoint = { x: x, y: y };
+          $("iosv").textContent = "y = " + n2s(y);
+          drawInv();
+        });
+
+        /* ============ 四舍五入开关 ============ */
+        document.querySelectorAll(".rt").forEach(function (t) {
+          t.checked = ROUND;
+          t.addEventListener("change", function () {
+            ROUND = this.checked;
+            document.querySelectorAll(".rt").forEach(function (o) {
+              o.checked = ROUND;
+            });
+            if (qPoint) {
+              if (ROUND) {
+                qPoint.x = Math.round(qPoint.x);
+                qPoint.y = Math.round(qPoint.y);
+              }
+              $("sv").value = n2s(qPoint.x);
+              $("osv").textContent = "y = " + n2s(qPoint.y);
+            }
+            if (lPoint) {
+              if (ROUND) {
+                lPoint.x = Math.round(lPoint.x);
+                lPoint.y = Math.round(lPoint.y);
+              }
+              $("lsv").value = n2s(lPoint.x);
+              $("losv").textContent = "y = " + n2s(lPoint.y);
+            }
+            if (iPoint) {
+              if (ROUND) {
+                iPoint.x = Math.round(iPoint.x);
+                iPoint.y = Math.round(iPoint.y);
+              }
+              $("isv").value = n2s(iPoint.x);
+              $("iosv").textContent = "y = " + n2s(iPoint.y);
+            }
+            drawQuad();
+            drawLin();
+            drawInv();
+          });
+        });
+
+        /* ============ 选项卡 ============ */
+        var titleEl = document.querySelector(".box>h2");
+        document.querySelectorAll(".tabs .tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            document.querySelectorAll(".tabs .tab").forEach(function (t) {
+              t.classList.remove("on");
+            });
+            tab.classList.add("on");
+            ["paneQ", "paneL", "paneI"].forEach(function (pid) {
+              var el = $(pid);
+              if (!el) return;
+              el.style.display = pid === tab.dataset.pane ? "" : "none";
+            });
+            if (titleEl) titleEl.textContent = tab.textContent + "工具";
+            if (tab.dataset.pane === "paneQ") drawQuad();
+            else if (tab.dataset.pane === "paneL") drawLin();
+            else drawInv();
+          });
+        });
+
+        /* ============ 初始化 ============ */
+        quadUpdateFromGeneral();
+        linUpdate();
+        invUpdate();
+      })();
+    </script>
+  </body>
+</html>

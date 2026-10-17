@@ -1,0 +1,2873 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>函数工具 Plus</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --ink: #0b1e33;
+        --ink2: #31536f;
+        --muted: #8aa0b8;
+        --line: #e6ecf3;
+        --brand: #2f6fb0;
+        --bd: #1f4e7a;
+        --bl: #eaf2fb;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        background:
+          radial-gradient(
+            900px 520px at 8% -12%,
+            #dbe9fb 0%,
+            rgba(219, 233, 251, 0) 62%
+          ),
+          radial-gradient(
+            760px 480px at 102% -6%,
+            #e2f0ff 0%,
+            rgba(226, 240, 255, 0) 58%
+          ),
+          linear-gradient(180deg, #f7fafd, #eef3f9);
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 16px;
+      }
+      .box {
+        position: relative;
+        max-width: 780px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 24px;
+        padding: 22px 24px 26px;
+        overflow: hidden;
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.04),
+          0 14px 34px -12px rgba(16, 42, 74, 0.18),
+          0 46px 90px -50px rgba(16, 42, 74, 0.35);
+      }
+      .box::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2f6fb0, #66a7e2, #9fcdf3, #2f6fb0);
+      }
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 14px;
+      }
+      h2::before {
+        content: "ƒ";
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 17px;
+        color: #fff;
+        background: linear-gradient(135deg, #4a8fd0, #1f4e7a);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.38),
+          0 6px 14px -5px rgba(31, 78, 122, 0.65);
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin: 0 0 16px;
+        padding: 4px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+        box-shadow: inset 0 1px 2px rgba(16, 42, 74, 0.06);
+      }
+      .tabs .tab {
+        flex: 1 1 0;
+        min-width: 70px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 8px 8px;
+        border-radius: 10px;
+        transition: all 0.18s;
+      }
+      .tabs .tab:hover {
+        color: var(--bd);
+        background: rgba(255, 255, 255, 0.65);
+      }
+      .tabs .tab.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 6px 16px -9px rgba(16, 42, 74, 0.5);
+      }
+      .pane {
+        animation: paneIn 0.2s ease;
+      }
+      @keyframes paneIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .mode-tabs {
+        display: flex;
+        gap: 4px;
+        margin: 0 0 10px;
+        padding: 4px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #eff4fa, #e7eef7);
+        border: 1px solid #e2eaf3;
+      }
+      .mode-tabs .mbtn {
+        flex: 1 1 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #5a7592;
+        padding: 6px 10px;
+        border-radius: 8px;
+        transition: all 0.18s;
+      }
+      .mode-tabs .mbtn.on {
+        background: #fff;
+        color: var(--bd);
+        box-shadow:
+          0 1px 2px rgba(16, 42, 74, 0.08),
+          0 4px 12px -8px rgba(16, 42, 74, 0.5);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 10px 12px;
+        background: linear-gradient(180deg, #fbfdff, #f5f9fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .grp {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 50px;
+        min-width: 44px;
+      }
+      .grp label {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #4d637d;
+        margin-bottom: 4px;
+      }
+      .grp input {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+        transition: all 0.18s;
+      }
+      .grp input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 4px rgba(59, 130, 196, 0.13);
+      }
+      .btn {
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(180deg, #3a7cbb, #25609b);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 6px 14px -7px rgba(31, 78, 122, 0.8);
+        transition: all 0.15s;
+      }
+      .btn:hover {
+        filter: brightness(1.07);
+        transform: translateY(-1px);
+      }
+      .btn:active {
+        transform: translateY(0);
+        filter: brightness(0.97);
+      }
+      .err {
+        min-height: 18px;
+        margin: -4px 0 8px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #d14949;
+      }
+      .res {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px 16px;
+        background: linear-gradient(180deg, #fbfdff, #f4f9fe);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .res .it {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding-left: 11px;
+      }
+      .res .it::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #8bc0ee, #2f6fb0);
+        opacity: 0.8;
+      }
+      .res .it .lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+      .res .it .val {
+        font-family: "Times New Roman", Cambria, serif;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--ink);
+        word-break: break-word;
+      }
+      .res .it .val.small {
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .res .it .sub {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: var(--ink2);
+      }
+      .calc {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .calc .cb {
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 11px 13px 13px;
+        box-shadow: 0 1px 2px rgba(16, 42, 74, 0.03);
+      }
+      .calc .cb .ct {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4d637d;
+        margin-bottom: 7px;
+      }
+      .calc .cb .cr {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .calc .cb .cr .prefix {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        padding: 0 2px;
+        white-space: nowrap;
+      }
+      .calc .cb .cr input {
+        flex: 1 1 0;
+        min-width: 44px;
+        padding: 6px 9px;
+        border: 1.5px solid #dbe3ec;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+      }
+      .calc .cb .cr input:focus {
+        border-color: #3b82c4;
+        box-shadow: 0 0 0 3.5px rgba(59, 130, 196, 0.13);
+      }
+      .calc .cb .cr .bs {
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--bd);
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+      }
+      .calc .cb .cr .bs:hover {
+        filter: brightness(1.05);
+      }
+      .calc .cb .o {
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border: 1px dashed #cfdcea;
+        border-radius: 9px;
+        background: #fff;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .chart {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 1px 3px rgba(16, 42, 74, 0.05);
+      }
+      .chart canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      .zoombar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: linear-gradient(180deg, #fbfdff, #f4f8fd);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .zoombar .zb {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 9px;
+        background: linear-gradient(180deg, #ecf3fb, #dce9f7);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 176, 0.16);
+        color: var(--bd);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .zoombar .zb:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .zoombar .zlab {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b8299;
+      }
+      .zoombar .zslider {
+        flex: 1 1 70px;
+        min-width: 50px;
+        height: 6px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(90deg, #cfe0f2, #dce9f7);
+        border-radius: 3px;
+        outline: none;
+        cursor: grab;
+      }
+      .zoombar .zslider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        box-shadow: 0 2px 6px rgba(31, 78, 122, 0.4);
+        cursor: grab;
+      }
+      .zoombar .zslider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #4a8fd0, #25609b);
+        cursor: grab;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 6px;
+        border-top: 1px dashed #dbe6f1;
+        margin-top: 4px;
+      }
+      .toggle-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b8299;
+        white-space: nowrap;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex: 0 0 auto;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 20px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      input:checked + .slider {
+        background-color: #3b82c4;
+      }
+      input:checked + .slider:before {
+        transform: translateX(16px);
+      }
+      .hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 4px 0;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      @media (max-width: 620px) {
+        body {
+          padding: 10px;
+        }
+        .box {
+          padding: 18px 16px 20px;
+          border-radius: 20px;
+        }
+        h2 {
+          font-size: 17px;
+        }
+        .tabs .tab {
+          min-width: 0;
+          padding: 8px 6px;
+          font-size: 11.5px;
+        }
+        .res {
+          grid-template-columns: 1fr;
+        }
+        .toggle-row {
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>函数工具 Plus</h2>
+      <div class="tabs">
+        <button class="tab on" data-pane="panePow">幂函数</button>
+        <button class="tab" data-pane="paneExp">指数函数</button>
+        <button class="tab" data-pane="paneLog">对数函数</button>
+        <button class="tab" data-pane="paneTri">三角函数</button>
+        <button class="tab" data-pane="paneHook">对勾函数</button>
+        <button class="tab" data-pane="paneCubic">三次函数</button>
+      </div>
+
+      <!-- 幂函数 -->
+      <div class="pane" id="panePow">
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="pa" value="1" />
+          </div>
+          <div class="grp">
+            <label>n 指数</label><input type="text" id="pn" value="2" />
+          </div>
+          <button class="btn" id="pbu">绘制</button>
+        </div>
+        <div class="err" id="per"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="pdg">y = x²</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="pdom">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="prng">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">奇偶性</span
+            ><span class="val small" id="ppar">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="pinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="ppts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="psv" value="1" /><button
+                class="bs"
+                id="pbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="posv">y = 1</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="pcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="pzin">＋</button
+          ><button class="zb" id="pzout">－</button
+          ><button class="zb" id="pzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="ppx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="ppy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 指数函数 -->
+      <div class="pane" id="paneExp" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="ea" value="1" />
+          </div>
+          <div class="grp">
+            <label>b 底数</label><input type="text" id="eb" value="2" />
+          </div>
+          <div class="grp">
+            <label>c 平移</label><input type="text" id="ec" value="0" />
+          </div>
+          <button class="btn" id="ebu">绘制</button>
+        </div>
+        <div class="err" id="eer"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="edg">y = 2ˣ</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="edom">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="erng">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="einc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">渐近线</span
+            ><span class="sub" id="easm">y = 0</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="epts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="esv" value="0" /><button
+                class="bs"
+                id="ebsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="eosv">y = 1</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="ecv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="ezin">＋</button
+          ><button class="zb" id="ezout">－</button
+          ><button class="zb" id="ezrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="epx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="epy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 对数函数 -->
+      <div class="pane" id="paneLog" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="la" value="1" />
+          </div>
+          <div class="grp">
+            <label>b 底数</label><input type="text" id="lb" value="2" />
+          </div>
+          <div class="grp">
+            <label>c 平移</label><input type="text" id="lc" value="0" />
+          </div>
+          <button class="btn" id="lbu">绘制</button>
+        </div>
+        <div class="err" id="ler"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="ldg">y = log₂x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="ldom">x &gt; 0</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="lrng">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="linc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">渐近线</span
+            ><span class="sub" id="lasm">x = 0</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="lpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="lsv" value="1" /><button
+                class="bs"
+                id="lbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="losv">y = 0</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="lcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="lzin">＋</button
+          ><button class="zb" id="lzout">－</button
+          ><button class="zb" id="lzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="lpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="lpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 三角函数 -->
+      <div class="pane" id="paneTri" style="display: none">
+        <div class="mode-tabs" id="trmode">
+          <button class="mbtn on" data-mode="sin">y = A·sin(ωx + φ) + k</button>
+          <button class="mbtn" data-mode="cos">y = A·cos(ωx + φ) + k</button>
+        </div>
+        <div class="row">
+          <div class="grp">
+            <label>A 振幅</label><input type="text" id="ta" value="1" />
+          </div>
+          <div class="grp">
+            <label>ω 角频率</label><input type="text" id="tw" value="1" />
+          </div>
+          <div class="grp">
+            <label>φ 相位</label><input type="text" id="tp" value="0" />
+          </div>
+          <div class="grp">
+            <label>k 平移</label><input type="text" id="tk" value="0" />
+          </div>
+          <button class="btn" id="tbu">绘制</button>
+        </div>
+        <div class="err" id="ter"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="tdg">y = sin x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span><span class="val small">R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="trng">[-1, 1]</span>
+          </div>
+          <div class="it">
+            <span class="lbl">周期 T</span
+            ><span class="val small" id="tper">2π</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="tinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="tpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="tsv" value="0" /><button
+                class="bs"
+                id="tbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="tosv">y = 0</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="tcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="tzin">＋</button
+          ><button class="zb" id="tzout">－</button
+          ><button class="zb" id="tzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="tpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="tpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 对勾函数 -->
+      <div class="pane" id="paneHook" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a 系数</label><input type="text" id="ha" value="1" />
+          </div>
+          <div class="grp">
+            <label>b 系数</label><input type="text" id="hb" value="1" />
+          </div>
+          <button class="btn" id="hbu">绘制</button>
+        </div>
+        <div class="err" id="her"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="hdg">y = x + 1/x</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域</span
+            ><span class="val small" id="hdom">x ≠ 0</span>
+          </div>
+          <div class="it">
+            <span class="lbl">值域</span
+            ><span class="val small" id="hrng">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">奇偶性</span
+            ><span class="val small" id="hpar">奇函数</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="hinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">极值点</span
+            ><span class="val small" id="hpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="hsv" value="1" /><button
+                class="bs"
+                id="hbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="hosv">y = 2</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="hcv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="hzin">＋</button
+          ><button class="zb" id="hzout">－</button
+          ><button class="zb" id="hzrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="hpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="hpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+
+      <!-- 三次函数 -->
+      <div class="pane" id="paneCubic" style="display: none">
+        <div class="row">
+          <div class="grp">
+            <label>a (x³)</label><input type="text" id="ca" value="1" />
+          </div>
+          <div class="grp">
+            <label>b (x²)</label><input type="text" id="cb" value="-3" />
+          </div>
+          <div class="grp">
+            <label>c (x)</label><input type="text" id="cc" value="0" />
+          </div>
+          <div class="grp">
+            <label>d 常数</label><input type="text" id="cd" value="2" />
+          </div>
+          <button class="btn" id="cbu">绘制</button>
+        </div>
+        <div class="err" id="cer"></div>
+        <div class="res">
+          <div class="it">
+            <span class="lbl">函数式</span
+            ><span class="val" id="cdg">y = x³ − 3x² + 2</span>
+          </div>
+          <div class="it">
+            <span class="lbl">定义域 / 值域</span
+            ><span class="val small">R / R</span>
+          </div>
+          <div class="it">
+            <span class="lbl">极值点</span
+            ><span class="val small" id="cext">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">拐点</span
+            ><span class="val small" id="cinf">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">单调性</span><span class="sub" id="cinc">—</span>
+          </div>
+          <div class="it">
+            <span class="lbl">关键点</span
+            ><span class="val small" id="cpts">—</span>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="cb">
+            <div class="ct">
+              单值求值
+              <span style="font-weight: 400; color: #8aa0b8; font-size: 10px"
+                >(拖动红点联动)</span
+              >
+            </div>
+            <div class="cr">
+              <span class="prefix">X =</span
+              ><input type="text" id="csv" value="0" /><button
+                class="bs"
+                id="cbsv"
+              >
+                计算
+              </button>
+            </div>
+            <div class="o" id="cosv">y = 2</div>
+          </div>
+        </div>
+        <div class="chart">
+          <canvas id="ccv" width="800" height="340"></canvas>
+        </div>
+        <div class="zoombar">
+          <button class="zb" id="czin">＋</button
+          ><button class="zb" id="czout">－</button
+          ><button class="zb" id="czrst">⟲</button>
+          <span class="zlab">水平</span
+          ><input
+            type="range"
+            class="zslider"
+            id="cpx"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <span class="zlab">垂直</span
+          ><input
+            type="range"
+            class="zslider"
+            id="cpy"
+            min="-100"
+            max="100"
+            step="1"
+            value="0"
+          />
+          <div class="toggle-row">
+            <span class="toggle-label">四舍五入</span
+            ><label class="switch"
+              ><input type="checkbox" class="rt" /><span class="slider"></span
+            ></label>
+          </div>
+        </div>
+        <div class="hint">🟠 点击/拖动红点 · 拖动下方滑杆平移视野</div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var $ = function (id) {
+          return document.getElementById(id);
+        };
+        var ROUND = false;
+        var MAX_ABS = 2e9;
+
+        /* ========== 通用工具 ========== */
+        function n2s(v) {
+          if (!isFinite(v)) return "—";
+          if (Math.abs(v) > 1e15) return v.toExponential(3);
+          var r = Math.round(v * 1e6) / 1e6;
+          if (Math.abs(r) < 1e-9) return "0";
+          var s = r.toFixed(4);
+          if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+          return s;
+        }
+        function c2s(x, y) {
+          return "(" + n2s(x) + ", " + n2s(y) + ")";
+        }
+        function pt2s(x, y) {
+          var f = function (v) {
+            if (!isFinite(v)) return "—";
+            return ROUND ? String(Math.round(v)) : n2s(v);
+          };
+          return "(" + f(x) + ", " + f(y) + ")";
+        }
+        function niceStep(range, target) {
+          if (!(range > 0) || !isFinite(range)) return 1;
+          var raw = range / target;
+          var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+          var n = raw / p;
+          var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+          return m * p;
+        }
+        function viewRect(v) {
+          return {
+            xmin: v.cx - v.hw,
+            xmax: v.cx + v.hw,
+            ymin: v.cy - v.hh,
+            ymax: v.cy + v.hh,
+          };
+        }
+        function clampHalf(v) {
+          if (!isFinite(v) || v < 1e-9) return 1e-9;
+          if (v > MAX_ABS) return MAX_ABS;
+          return v;
+        }
+        function zoomView(v, f) {
+          v.hw = clampHalf(v.hw * f);
+          v.hh = clampHalf(v.hh * f);
+        }
+        function rrect(ctx, x, y, w, h, r) {
+          if (w < 2 * r) r = w / 2;
+          if (h < 2 * r) r = h / 2;
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + w, y, x + w, y + h, r);
+          ctx.arcTo(x + w, y + h, x, y + h, r);
+          ctx.arcTo(x, y + h, x, y, r);
+          ctx.arcTo(x, y, x + w, y, r);
+          ctx.closePath();
+        }
+        function drawGrid(ctx, W, H, v) {
+          var xmin = v.xmin,
+            xmax = v.xmax,
+            ymin = v.ymin,
+            ymax = v.ymax;
+          var X = function (x) {
+            return ((x - xmin) / (xmax - xmin)) * W;
+          };
+          var Y = function (y) {
+            return H - ((y - ymin) / (ymax - ymin)) * H;
+          };
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, W, H);
+          var sx = niceStep(xmax - xmin, 9),
+            sy = niceStep(ymax - ymin, 6);
+          ctx.strokeStyle = "#eef2f7";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          var x, y, px, py;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, H);
+          }
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            py = Math.round(Y(y)) + 0.5;
+            ctx.moveTo(0, py);
+            ctx.lineTo(W, py);
+          }
+          ctx.stroke();
+          var y0 = null,
+            x0 = null;
+          ctx.strokeStyle = "#b9c7d6";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (ymin <= 0 && ymax >= 0) {
+            y0 = Math.round(Y(0)) + 0.5;
+            ctx.moveTo(0, y0);
+            ctx.lineTo(W, y0);
+          }
+          if (xmin <= 0 && xmax >= 0) {
+            x0 = Math.round(X(0)) + 0.5;
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, H);
+          }
+          ctx.stroke();
+          var onX = y0 !== null,
+            onY = x0 !== null;
+          ctx.font =
+            '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tick = function (txt, lx, ly) {
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText(txt, lx, ly);
+            ctx.fillStyle = "#6b8299";
+            ctx.fillText(txt, lx, ly);
+          };
+          var xLY = onX ? (y0 > H - 24 ? y0 - 19 : y0 + 5) : H - 17;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          var xTB = onX ? y0 : H - 5;
+          for (x = Math.ceil(xmin / sx) * sx; x <= xmax + 1e-9; x += sx) {
+            px = Math.round(X(x)) + 0.5;
+            if (px < 16 || px > W - 16) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(px, xTB - 3.5);
+            ctx.lineTo(px, xTB + 3.5);
+            ctx.stroke();
+            if (Math.abs(x) < sx * 0.001) {
+              if (!onY) tick("0", px, xLY);
+              continue;
+            }
+            tick(n2s(x), px, xLY);
+          }
+          var yLX, yA;
+          if (onY && x0 > 46) {
+            yLX = x0 - 7;
+            yA = "right";
+          } else {
+            yLX = onY ? x0 + 7 : 7;
+            yA = "left";
+          }
+          ctx.textAlign = yA;
+          ctx.textBaseline = "middle";
+          var yTB = onY ? x0 : 5;
+          for (y = Math.ceil(ymin / sy) * sy; y <= ymax + 1e-9; y += sy) {
+            if (Math.abs(y) < sy * 0.001) continue;
+            py = Math.round(Y(y)) + 0.5;
+            if (py < 14 || py > H - 14) continue;
+            ctx.beginPath();
+            ctx.strokeStyle = "#b9c7d6";
+            ctx.lineWidth = 1.2;
+            ctx.moveTo(yTB - 3.5, py);
+            ctx.lineTo(yTB + 3.5, py);
+            ctx.stroke();
+            tick(n2s(y), yLX, py);
+          }
+          if (onX && onY) {
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.font = 'italic 700 12.5px "Times New Roman", Georgia, serif';
+            ctx.lineWidth = 3.2;
+            ctx.strokeStyle = "rgba(255,255,255,.94)";
+            ctx.strokeText("O", x0 - 3, y0 + 4);
+            ctx.fillStyle = "#5a7592";
+            ctx.fillText("O", x0 - 3, y0 + 4);
+          }
+          return { X: X, Y: Y };
+        }
+        /* ★ 修复版 drawTag：之前有个 `h:h` 引用了未定义变量，导致整个函数抛错，
+   进而中断 drawKeyPoint / drawRedDot，使红点完全不显示。 */
+        function drawTag(ctx, px, py, text, color, dx, dy, taken) {
+          var W = ctx.canvas.width,
+            H = ctx.canvas.height;
+          ctx.save();
+          ctx.font =
+            '600 11.5px -apple-system, system-ui, "PingFang SC", sans-serif';
+          var tw = ctx.measureText(text).width;
+          var w = tw + 12,
+            hh = 18;
+          var x = px + dx - 6,
+            y = py + dy - hh / 2;
+          if (x < 3) x = 3;
+          if (x + w > W - 3) x = W - 3 - w;
+          if (y < 3) y = 3;
+          if (y + hh > H - 3) y = H - 3 - hh;
+          var rect = { x: x, y: y, w: w, h: hh };
+          if (taken) {
+            for (var i = 0; i < taken.length; i++) {
+              var r = taken[i];
+              if (
+                rect.x < r.x + r.w &&
+                rect.x + rect.w > r.x &&
+                rect.y < r.y + r.h &&
+                rect.y + rect.h > r.y
+              ) {
+                ctx.restore();
+                return false;
+              }
+            }
+            taken.push(rect);
+          }
+          ctx.shadowColor = "rgba(16,42,74,.16)";
+          ctx.shadowBlur = 7;
+          ctx.shadowOffsetY = 2;
+          ctx.fillStyle = "rgba(255,255,255,.97)";
+          rrect(ctx, x, y, w, hh, 6);
+          ctx.fill();
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.strokeStyle = "rgba(47,111,176,.22)";
+          ctx.lineWidth = 1;
+          rrect(ctx, x + 0.5, y + 0.5, w - 1, hh - 1, 6);
+          ctx.stroke();
+          ctx.fillStyle = color;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, x + 6, y + hh / 2 + 0.5);
+          ctx.restore();
+          return true;
+        }
+        function drawRedDot(ctx, W, H, X, Y, p, taken, labelColor) {
+          if (!p || !isFinite(p.x) || !isFinite(p.y)) return;
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (px < -40 || px > W + 40 || py < -40 || py > H + 40) return;
+          ctx.beginPath();
+          ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,77,61,.18)";
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff4d3d";
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            pt2s(p.x, p.y),
+            labelColor || "#c4321f",
+            12,
+            -16,
+            taken,
+          );
+        }
+        function drawKeyPoint(ctx, X, Y, p, taken, color) {
+          var px = X(p.x),
+            py = Y(p.y);
+          if (!isFinite(px) || !isFinite(py)) return;
+          if (
+            px < -20 ||
+            px > ctx.canvas.width + 20 ||
+            py < -20 ||
+            py > ctx.canvas.height + 20
+          )
+            return;
+          ctx.beginPath();
+          ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = color || "#1f4e7a";
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          drawTag(
+            ctx,
+            px,
+            py,
+            c2s(p.x, p.y),
+            color || "#31536f",
+            10,
+            -15,
+            taken,
+          );
+        }
+        function attachDrag(cv, onMove) {
+          var dragging = false;
+          var pos = function (e) {
+            var r = cv.getBoundingClientRect();
+            return {
+              px: ((e.clientX - r.left) / r.width) * cv.width,
+              py: ((e.clientY - r.top) / r.height) * cv.height,
+            };
+          };
+          cv.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            dragging = true;
+            onMove(pos(e));
+            e.preventDefault();
+          });
+          document.addEventListener("pointermove", function (e) {
+            if (!dragging) return;
+            onMove(pos(e));
+          });
+          document.addEventListener("pointerup", function () {
+            dragging = false;
+          });
+          document.addEventListener("pointercancel", function () {
+            dragging = false;
+          });
+        }
+        function attachRelSlider(id, view, axis, redraw) {
+          var el = $(id);
+          el.value = 0;
+          var lastVal = 0;
+          var active = false;
+          el.addEventListener("pointerdown", function () {
+            active = true;
+            lastVal = 0;
+            el.value = 0;
+          });
+          el.addEventListener("input", function () {
+            if (!active) return;
+            var v = parseFloat(el.value);
+            var delta = v - lastVal;
+            lastVal = v;
+            var range = axis === "y" ? view.hh : view.hw;
+            var step = delta * range * 0.01;
+            if (axis === "y") view.cy += step;
+            else view.cx += step;
+            redraw();
+          });
+          document.addEventListener("pointerup", function () {
+            if (active) {
+              active = false;
+              el.value = 0;
+              lastVal = 0;
+            }
+          });
+        }
+        function applyRound(v) {
+          return ROUND ? Math.round(v) : v;
+        }
+
+        /* ============ 幂函数 ============ */
+        var P = { a: 1, n: 2, kp: [] };
+        var PV = { cx: 0, cy: 0, hw: 5, hh: 5 };
+        var pPoint = null;
+
+        function powUpdate() {
+          var a = parseFloat($("pa").value),
+            n = parseFloat($("pn").value);
+          if (!isFinite(a) || !isFinite(n)) {
+            $("per").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("per").textContent = "a 不能为 0";
+            return;
+          }
+          $("per").textContent = "";
+          P.a = a;
+          P.n = n;
+          var fs = "y = ";
+          if (a === 1) fs += "";
+          else if (a === -1) fs += "−";
+          else fs += n2s(a);
+          if (n === 1) fs += "x";
+          else if (n === 0.5) fs += "√x";
+          else if (n === -1) fs += "1/x";
+          else fs += "x^" + n2s(n);
+          $("pdg").textContent = fs;
+          var isInt = Math.abs(n - Math.round(n)) < 1e-9;
+          var dom = "R";
+          if (!isInt && n > 0) dom = "x ≥ 0";
+          else if (!isInt && n < 0) dom = "x > 0";
+          else if (isInt && n < 0) dom = "x ≠ 0";
+          $("pdom").textContent = dom;
+          var par = "非奇非偶";
+          if (isInt) {
+            par = Math.round(n) % 2 === 0 ? "偶函数" : "奇函数";
+          } else if (Math.abs(n - 0.5) < 1e-9) par = "非奇非偶";
+          $("ppar").textContent = par;
+          var inc = "—";
+          if (isInt) {
+            if (n > 0) {
+              inc = Math.round(n) % 2 === 0 ? "(-∞,0)↓，(0,+∞)↑" : "在 R 上 ↑";
+            } else if (n < 0) inc = "(-∞,0)↓，(0,+∞)↓";
+          } else {
+            if (n > 0) inc = "[0,+∞) ↑";
+            else inc = "(0,+∞) ↓";
+          }
+          if (a < 0)
+            inc = inc
+              .replace(/↑/g, "T")
+              .replace(/↓/g, "U")
+              .replace(/T/g, "↓")
+              .replace(/U/g, "↑");
+          $("pinc").textContent = inc;
+          var rng = "—";
+          if (isInt) {
+            if (n > 0 && Math.round(n) % 2 === 0)
+              rng = a > 0 ? "[0,+∞)" : "(−∞,0]";
+            else if (n > 0) rng = "R";
+            else if (n < 0) rng = a > 0 ? "(0,+∞)" : "(−∞,0)";
+          }
+          $("prng").textContent = rng;
+          var pts = [];
+          if (n > 0) pts.push({ x: 0, y: 0, label: "(0,0)" });
+          pts.push({ x: 1, y: a, label: c2s(1, a) });
+          if (isInt && Math.round(n) % 2 === 1)
+            pts.push({ x: -1, y: -a, label: c2s(-1, -a) });
+          else if (isInt && Math.round(n) % 2 === 0)
+            pts.push({ x: -1, y: a, label: c2s(-1, a) });
+          P.kp = pts.slice(0, 5);
+          $("ppts").textContent = P.kp
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+          PV.cx = 0;
+          PV.cy = 0;
+          PV.hw = Math.max(3, Math.min(20, 5 / Math.pow(Math.abs(a), 0.3)));
+          var maxY = 1;
+          for (var i = 0; i <= 40; i++) {
+            var x = -PV.hw + (i * PV.hw) / 20;
+            var y = a * Math.pow(x, n);
+            if (isFinite(y) && Math.abs(y) > maxY && Math.abs(y) < 1e6)
+              maxY = Math.abs(y);
+          }
+          PV.hh = Math.max(3, Math.min(20, maxY * 1.1));
+          powCalc();
+          drawPow();
+        }
+        function powCalc() {
+          var v = parseFloat($("psv").value);
+          if (!isFinite(v)) {
+            $("posv").textContent = "请输入有效数字";
+            return;
+          }
+          var y = P.a * Math.pow(v, P.n);
+          if (!isFinite(y)) {
+            $("posv").textContent = "无定义";
+            pPoint = null;
+            return;
+          }
+          $("posv").textContent = "y = " + n2s(y);
+          pPoint = { x: v, y: y };
+        }
+        function drawPow() {
+          var cv = $("pcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(PV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv = P.a * Math.pow(xv, P.n);
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+          var taken = [];
+          P.kp.forEach(function (p) {
+            drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+          });
+          drawRedDot(ctx, W, H, X, Y, pPoint, taken, "#c4321f");
+        }
+        $("pbu").addEventListener("click", powUpdate);
+        $("pbsv").addEventListener("click", function () {
+          powCalc();
+          drawPow();
+        });
+        ["pa", "pn"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") powUpdate();
+          });
+        });
+        $("psv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            powCalc();
+            drawPow();
+          }
+        });
+        $("pzin").addEventListener("click", function () {
+          zoomView(PV, 1 / 1.3);
+          drawPow();
+        });
+        $("pzout").addEventListener("click", function () {
+          zoomView(PV, 1.3);
+          drawPow();
+        });
+        $("pzrst").addEventListener("click", powUpdate);
+        attachRelSlider("ppx", PV, "x", drawPow);
+        attachRelSlider("ppy", PV, "y", drawPow);
+        attachDrag($("pcv"), function (p) {
+          var rect = viewRect(PV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var y = P.a * Math.pow(x, P.n);
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("psv").value = n2s(x);
+          pPoint = { x: x, y: y };
+          $("posv").textContent = "y = " + n2s(y);
+          drawPow();
+        });
+
+        /* ============ 指数函数 ============ */
+        var E = { a: 1, b: 2, c: 0, kp: [] };
+        var EV = { cx: 0, cy: 0, hw: 5, hh: 5 };
+        var ePoint = null;
+
+        function expUpdate() {
+          var a = parseFloat($("ea").value),
+            b = parseFloat($("eb").value),
+            c = parseFloat($("ec").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("eer").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("eer").textContent = "a 不能为 0";
+            return;
+          }
+          if (b <= 0 || Math.abs(b - 1) < 1e-12) {
+            $("eer").textContent = "底数 b 需 > 0 且 ≠ 1";
+            return;
+          }
+          $("eer").textContent = "";
+          E.a = a;
+          E.b = b;
+          E.c = c;
+          var fs = "y = ";
+          if (a === 1) fs += "";
+          else if (a === -1) fs += "−";
+          else fs += n2s(a);
+          fs += n2s(b) + "ˣ";
+          if (Math.abs(c) > 1e-12)
+            fs += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          $("edg").textContent = fs;
+          $("edom").textContent = "R";
+          if (a > 0) $("erng").textContent = "(" + n2s(c) + ", +∞)";
+          else $("erng").textContent = "(−∞, " + n2s(c) + ")";
+          var inc = b > 1 ? "↑" : "↓";
+          if (a < 0) inc = inc === "↑" ? "↓" : "↑";
+          $("einc").textContent =
+            (b > 1 ? "b > 1，" : "0 < b < 1，") +
+            "在 R 上 " +
+            (inc === "↑" ? "单调递增" : "单调递减");
+          $("easm").textContent = "y = " + n2s(c);
+          var pts = [
+            { x: 0, y: a + c, label: c2s(0, a + c) },
+            { x: 1, y: a * b + c, label: c2s(1, a * b + c) },
+            { x: -1, y: a / b + c, label: c2s(-1, a / b + c) },
+          ];
+          E.kp = pts;
+          $("epts").textContent = pts
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+          EV.cx = 0;
+          EV.cy = c;
+          EV.hw = 5;
+          EV.hh = Math.max(3, Math.min(20, Math.abs(a) * 2 + 1));
+          expCalc();
+          drawExp();
+        }
+        function expCalc() {
+          var v = parseFloat($("esv").value);
+          if (!isFinite(v)) {
+            $("eosv").textContent = "请输入有效数字";
+            return;
+          }
+          var y = E.a * Math.pow(E.b, v) + E.c;
+          if (!isFinite(y)) {
+            $("eosv").textContent = "无定义";
+            ePoint = null;
+            return;
+          }
+          $("eosv").textContent = "y = " + n2s(y);
+          ePoint = { x: v, y: y };
+        }
+        function drawExp() {
+          var cv = $("ecv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(EV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          if (E.c >= rect.ymin - 1e-9 && E.c <= rect.ymax + 1e-9) {
+            var ay = Math.round(Y(E.c)) + 0.5;
+            if (isFinite(ay)) {
+              ctx.save();
+              ctx.setLineDash([7, 5]);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "#8fb3d6";
+              ctx.beginPath();
+              ctx.moveTo(0, ay);
+              ctx.lineTo(W, ay);
+              ctx.stroke();
+              ctx.restore();
+              ctx.save();
+              ctx.font =
+                '600 11px -apple-system, system-ui, "PingFang SC", sans-serif';
+              var lab = "y = " + n2s(E.c);
+              var lw = ctx.measureText(lab).width + 12;
+              ctx.fillStyle = "rgba(255,255,255,.96)";
+              rrect(ctx, 6, ay - 9, lw, 18, 6);
+              ctx.fill();
+              ctx.strokeStyle = "rgba(143,179,214,.6)";
+              ctx.lineWidth = 1;
+              rrect(ctx, 6.5, ay - 8.5, lw - 1, 17, 6);
+              ctx.stroke();
+              ctx.fillStyle = "#5a7fa3";
+              ctx.textAlign = "left";
+              ctx.textBaseline = "middle";
+              ctx.fillText(lab, 12, ay + 0.5);
+              ctx.restore();
+            }
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv = E.a * Math.pow(E.b, xv) + E.c;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+          var taken = [];
+          E.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, ePoint, taken, "#c4321f");
+        }
+        $("ebu").addEventListener("click", expUpdate);
+        $("ebsv").addEventListener("click", function () {
+          expCalc();
+          drawExp();
+        });
+        ["ea", "eb", "ec"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") expUpdate();
+          });
+        });
+        $("esv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            expCalc();
+            drawExp();
+          }
+        });
+        $("ezin").addEventListener("click", function () {
+          zoomView(EV, 1 / 1.3);
+          drawExp();
+        });
+        $("ezout").addEventListener("click", function () {
+          zoomView(EV, 1.3);
+          drawExp();
+        });
+        $("ezrst").addEventListener("click", expUpdate);
+        attachRelSlider("epx", EV, "x", drawExp);
+        attachRelSlider("epy", EV, "y", drawExp);
+        attachDrag($("ecv"), function (p) {
+          var rect = viewRect(EV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var y = E.a * Math.pow(E.b, x) + E.c;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("esv").value = n2s(x);
+          ePoint = { x: x, y: y };
+          $("eosv").textContent = "y = " + n2s(y);
+          drawExp();
+        });
+
+        /* ============ 对数函数 ============ */
+        var Lg = { a: 1, b: 2, c: 0, kp: [] };
+        var LV = { cx: 3, cy: 0, hw: 5, hh: 5 };
+        var lPoint = null;
+
+        function logUpdate() {
+          var a = parseFloat($("la").value),
+            b = parseFloat($("lb").value),
+            c = parseFloat($("lc").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c)) {
+            $("ler").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("ler").textContent = "a 不能为 0";
+            return;
+          }
+          if (b <= 0 || Math.abs(b - 1) < 1e-12) {
+            $("ler").textContent = "底数 b 需 > 0 且 ≠ 1";
+            return;
+          }
+          $("ler").textContent = "";
+          Lg.a = a;
+          Lg.b = b;
+          Lg.c = c;
+          var fs = "y = ";
+          if (a === 1) fs += "";
+          else if (a === -1) fs += "−";
+          else fs += n2s(a);
+          if (Math.abs(b - 2) < 1e-9) fs += "log₂x";
+          else if (Math.abs(b - 10) < 1e-9) fs += "lg x";
+          else fs += "log_" + n2s(b) + "x";
+          if (Math.abs(c) > 1e-12)
+            fs += (c > 0 ? " + " : " − ") + n2s(Math.abs(c));
+          $("ldg").textContent = fs;
+          $("ldom").textContent = "x > 0";
+          $("lrng").textContent = "R";
+          var inc = b > 1 ? "↑" : "↓";
+          if (a < 0) inc = inc === "↑" ? "↓" : "↑";
+          $("linc").textContent =
+            (b > 1 ? "b > 1，" : "0 < b < 1，") +
+            "在 (0, +∞) 上 " +
+            (inc === "↑" ? "单调递增" : "单调递减");
+          $("lasm").textContent = "x = 0";
+          var pts = [
+            { x: 1, y: c, label: c2s(1, c) },
+            { x: b, y: a + c, label: c2s(b, a + c) },
+            { x: 1 / b, y: -a + c, label: c2s(1 / b, -a + c) },
+          ];
+          Lg.kp = pts;
+          $("lpts").textContent = pts
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+          LV.cx = 3;
+          LV.cy = c;
+          LV.hw = 5;
+          LV.hh = 5;
+          logCalc();
+          drawLog();
+        }
+        function logCalc() {
+          var v = parseFloat($("lsv").value);
+          if (!isFinite(v)) {
+            $("losv").textContent = "请输入有效数字";
+            return;
+          }
+          if (v <= 0) {
+            $("losv").textContent = "x 需 > 0";
+            lPoint = null;
+            return;
+          }
+          var y = (Lg.a * Math.log(v)) / Math.log(Lg.b) + Lg.c;
+          if (!isFinite(y)) {
+            $("losv").textContent = "无定义";
+            lPoint = null;
+            return;
+          }
+          $("losv").textContent = "y = " + n2s(y);
+          lPoint = { x: v, y: y };
+        }
+        function drawLog() {
+          var cv = $("lcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(LV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          if (0 >= rect.xmin - 1e-9 && 0 <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(0)) + 0.5;
+            if (isFinite(ax)) {
+              ctx.save();
+              ctx.setLineDash([7, 5]);
+              ctx.lineWidth = 1.5;
+              ctx.strokeStyle = "#8fb3d6";
+              ctx.beginPath();
+              ctx.moveTo(ax, 0);
+              ctx.lineTo(ax, H);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            if (xv <= 0) {
+              started = false;
+              continue;
+            }
+            var yv = (Lg.a * Math.log(xv)) / Math.log(Lg.b) + Lg.c;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+          var taken = [];
+          Lg.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, lPoint, taken, "#c4321f");
+        }
+        $("lbu").addEventListener("click", logUpdate);
+        $("lbsv").addEventListener("click", function () {
+          logCalc();
+          drawLog();
+        });
+        ["la", "lb", "lc"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") logUpdate();
+          });
+        });
+        $("lsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            logCalc();
+            drawLog();
+          }
+        });
+        $("lzin").addEventListener("click", function () {
+          zoomView(LV, 1 / 1.3);
+          drawLog();
+        });
+        $("lzout").addEventListener("click", function () {
+          zoomView(LV, 1.3);
+          drawLog();
+        });
+        $("lzrst").addEventListener("click", logUpdate);
+        attachRelSlider("lpx", LV, "x", drawLog);
+        attachRelSlider("lpy", LV, "y", drawLog);
+        attachDrag($("lcv"), function (p) {
+          var rect = viewRect(LV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          if (x <= 0) return;
+          var y = (Lg.a * Math.log(x)) / Math.log(Lg.b) + Lg.c;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("lsv").value = n2s(x);
+          lPoint = { x: x, y: y };
+          $("losv").textContent = "y = " + n2s(y);
+          drawLog();
+        });
+
+        /* ============ 三角函数 ============ */
+        var T = { A: 1, w: 1, p: 0, k: 0, mode: "sin", kp: [] };
+        var TV = { cx: 0, cy: 0, hw: 2 * Math.PI, hh: 3 };
+        var tPoint = null;
+
+        function triUpdate() {
+          var A = parseFloat($("ta").value),
+            w = parseFloat($("tw").value),
+            p = parseFloat($("tp").value),
+            k = parseFloat($("tk").value);
+          if (!isFinite(A) || !isFinite(w) || !isFinite(p) || !isFinite(k)) {
+            $("ter").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(w) < 1e-12) {
+            $("ter").textContent = "ω 不能为 0";
+            return;
+          }
+          $("ter").textContent = "";
+          T.A = A;
+          T.w = w;
+          T.p = p;
+          T.k = k;
+          var fname = T.mode === "sin" ? "sin" : "cos";
+          var fs = "y = ";
+          if (A === 1) fs += "";
+          else if (A === -1) fs += "−";
+          else fs += n2s(A);
+          fs += fname + "(";
+          if (Math.abs(w - 1) < 1e-9) fs += "x";
+          else fs += n2s(w) + "x";
+          if (Math.abs(p) > 1e-12)
+            fs += (p > 0 ? " + " : " − ") + n2s(Math.abs(p));
+          fs += ")";
+          if (Math.abs(k) > 1e-12)
+            fs += (k > 0 ? " + " : " − ") + n2s(Math.abs(k));
+          $("tdg").textContent = fs;
+          var ymin = k - Math.abs(A),
+            ymax = k + Math.abs(A);
+          $("trng").textContent = "[" + n2s(ymin) + ", " + n2s(ymax) + "]";
+          var Tp = (2 * Math.PI) / Math.abs(w);
+          var tp = "";
+          if (Math.abs(w - 1) < 1e-9) tp = "2π";
+          else if (Math.abs(w - 2) < 1e-9) tp = "π";
+          else if (Math.abs(w - 0.5) < 1e-9) tp = "4π";
+          else tp = n2s(Tp) + " ≈ " + Tp.toFixed(3);
+          $("tper").textContent = tp;
+          $("tinc").textContent =
+            A > 0 ? "与 sin 同步的增减区间" : "与 sin 反相的增减区间";
+          var pts = [];
+          var y0 =
+            T.A * (T.mode === "sin" ? Math.sin(T.p) : Math.cos(T.p)) + T.k;
+          pts.push({ x: 0, y: y0, label: c2s(0, y0) });
+          for (var m = -2; m <= 2; m++) {
+            var xv = (m * Tp) / 2;
+            if (Math.abs(xv) < 1e-9) continue;
+            var yv =
+              T.A *
+                (T.mode === "sin"
+                  ? Math.sin(T.w * xv + T.p)
+                  : Math.cos(T.w * xv + T.p)) +
+              T.k;
+            if (isFinite(yv)) pts.push({ x: xv, y: yv, label: c2s(xv, yv) });
+          }
+          T.kp = pts.slice(0, 5);
+          $("tpts").textContent = T.kp
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+          TV.cx = 0;
+          TV.cy = k;
+          TV.hw = Math.max(Math.PI, 2 * Tp);
+          TV.hh = Math.max(1.5, Math.abs(A) * 1.5);
+          triCalc();
+          drawTri();
+        }
+        function triCalc() {
+          var v = parseFloat($("tsv").value);
+          if (!isFinite(v)) {
+            $("tosv").textContent = "请输入有效数字";
+            return;
+          }
+          var ang = T.w * v + T.p;
+          var yv =
+            T.A * (T.mode === "sin" ? Math.sin(ang) : Math.cos(ang)) + T.k;
+          $("tosv").textContent = "y = " + n2s(yv);
+          tPoint = { x: v, y: yv };
+        }
+        function drawTri() {
+          var cv = $("tcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(TV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+          if (T.A !== 0) {
+            [T.k + Math.abs(T.A), T.k - Math.abs(T.A)].forEach(function (ly) {
+              if (ly >= rect.ymin && ly <= rect.ymax) {
+                var py = Math.round(Y(ly)) + 0.5;
+                ctx.save();
+                ctx.setLineDash([4, 4]);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "#dbe6f1";
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(W, py);
+                ctx.stroke();
+                ctx.restore();
+              }
+            });
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var ang = T.w * xv + T.p;
+            var yv =
+              T.A * (T.mode === "sin" ? Math.sin(ang) : Math.cos(ang)) + T.k;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+          var taken = [];
+          T.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, H, X, Y, tPoint, taken, "#c4321f");
+        }
+        $("tbu").addEventListener("click", triUpdate);
+        $("tbsv").addEventListener("click", function () {
+          triCalc();
+          drawTri();
+        });
+        ["ta", "tw", "tp", "tk"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") triUpdate();
+          });
+        });
+        $("tsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            triCalc();
+            drawTri();
+          }
+        });
+        $("tzin").addEventListener("click", function () {
+          zoomView(TV, 1 / 1.3);
+          drawTri();
+        });
+        $("tzout").addEventListener("click", function () {
+          zoomView(TV, 1.3);
+          drawTri();
+        });
+        $("tzrst").addEventListener("click", triUpdate);
+        attachRelSlider("tpx", TV, "x", drawTri);
+        attachRelSlider("tpy", TV, "y", drawTri);
+        attachDrag($("tcv"), function (p) {
+          var rect = viewRect(TV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var ang = T.w * x + T.p;
+          var yv =
+            T.A * (T.mode === "sin" ? Math.sin(ang) : Math.cos(ang)) + T.k;
+          yv = applyRound(yv);
+          $("tsv").value = n2s(x);
+          tPoint = { x: x, y: yv };
+          $("tosv").textContent = "y = " + n2s(yv);
+          drawTri();
+        });
+        document.querySelectorAll("#trmode .mbtn").forEach(function (b) {
+          b.addEventListener("click", function () {
+            T.mode = b.dataset.mode;
+            document.querySelectorAll("#trmode .mbtn").forEach(function (x) {
+              x.classList.toggle("on", x.dataset.mode === T.mode);
+            });
+            triUpdate();
+          });
+        });
+
+        /* ============ 对勾函数 ============ */
+        var Hk = { a: 1, b: 1, kp: [] };
+        var HV = { cx: 0, cy: 0, hw: 6, hh: 6 };
+        var hPoint = null;
+
+        function hookUpdate() {
+          var a = parseFloat($("ha").value),
+            b = parseFloat($("hb").value);
+          if (!isFinite(a) || !isFinite(b)) {
+            $("her").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12 || Math.abs(b) < 1e-12) {
+            $("her").textContent = "a、b 都不能为 0";
+            return;
+          }
+          $("her").textContent = "";
+          Hk.a = a;
+          Hk.b = b;
+          var fs = "y = ";
+          if (a === 1) fs += "x";
+          else if (a === -1) fs += "−x";
+          else fs += n2s(a) + "x";
+          if (b > 0) fs += " + ";
+          else fs += " − ";
+          if (Math.abs(b) !== 1) fs += n2s(Math.abs(b));
+          fs += "/x";
+          $("hdg").textContent = fs;
+          $("hdom").textContent = "x ≠ 0";
+          $("hpar").textContent = "奇函数";
+          var ab = a * b;
+          var pts = [];
+          if (ab > 0) {
+            var x0 = Math.sqrt(b / a);
+            var y0 = 2 * Math.sqrt(ab);
+            if (y0 > 0) {
+              $("hrng").textContent =
+                "(−∞, −" + n2s(y0) + "] ∪ [" + n2s(y0) + ", +∞)";
+              $("hinc").textContent =
+                "(−∞, −√(b/a)] ↑，[−√(b/a), 0) ↓，(0, √(b/a)] ↓，[√(b/a), +∞) ↑";
+              pts.push({ x: -x0, y: -y0, label: c2s(-x0, -y0) });
+              pts.push({ x: x0, y: y0, label: c2s(x0, y0) });
+            } else {
+              $("hrng").textContent =
+                "(−∞, " + n2s(y0) + "] ∪ [" + (-y0).toFixed(4) + ", +∞)";
+              $("hinc").textContent = "单调区间见图像";
+            }
+          } else {
+            $("hrng").textContent = "R";
+            $("hinc").textContent =
+              a > 0
+                ? "在 (−∞,0) 和 (0,+∞) 上均单调递增"
+                : "在 (−∞,0) 和 (0,+∞) 上均单调递减";
+          }
+          Hk.kp = pts;
+          $("hpts").textContent = pts.length
+            ? pts
+                .map(function (p) {
+                  return p.label;
+                })
+                .join(" ")
+            : "无极值点";
+          HV.cx = 0;
+          HV.cy = 0;
+          var scale = Math.max(1, Math.sqrt(Math.abs(ab)));
+          HV.hw = Math.max(3, 3 * scale);
+          HV.hh = Math.max(3, 3 * scale);
+          hookCalc();
+          drawHook();
+        }
+        function hookCalc() {
+          var v = parseFloat($("hsv").value);
+          if (!isFinite(v)) {
+            $("hosv").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(v) < 1e-12) {
+            $("hosv").textContent = "x 不能为 0";
+            hPoint = null;
+            return;
+          }
+          var y = Hk.a * v + Hk.b / v;
+          if (!isFinite(y)) {
+            $("hosv").textContent = "无定义";
+            hPoint = null;
+            return;
+          }
+          $("hosv").textContent = "y = " + n2s(y);
+          hPoint = { x: v, y: y };
+        }
+        function drawHook() {
+          var cv = $("hcv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            Hc = cv.height;
+          var rect = viewRect(HV);
+          var g = drawGrid(ctx, W, Hc, rect);
+          var X = g.X,
+            Y = g.Y;
+          if (0 >= rect.xmin - 1e-9 && 0 <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(0)) + 0.5;
+            ctx.save();
+            ctx.setLineDash([7, 5]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "#8fb3d6";
+            ctx.beginPath();
+            ctx.moveTo(ax, 0);
+            ctx.lineTo(ax, Hc);
+            ctx.stroke();
+            ctx.restore();
+          }
+          if (Math.abs(Hk.a) > 1e-9) {
+            var ya = Hk.a * rect.xmin,
+              yb = Hk.a * rect.xmax;
+            if (isFinite(ya) && isFinite(yb)) {
+              ctx.save();
+              ctx.setLineDash([5, 5]);
+              ctx.lineWidth = 1;
+              ctx.strokeStyle = "#cfe0f2";
+              ctx.beginPath();
+              ctx.moveTo(X(rect.xmin), Y(Math.max(-1e9, Math.min(1e9, ya))));
+              ctx.lineTo(X(rect.xmax), Y(Math.max(-1e9, Math.min(1e9, yb))));
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, Hc);
+          ctx.clip();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var eps = rect.hw / 500;
+          function branch(xa, xb) {
+            ctx.beginPath();
+            var N = 400,
+              started = false;
+            for (var i = 0; i <= N; i++) {
+              var xv = xa + ((xb - xa) * i) / N;
+              if (Math.abs(xv) < 1e-9) continue;
+              var yv = Hk.a * xv + Hk.b / xv;
+              if (!isFinite(yv)) {
+                started = false;
+                continue;
+              }
+              if (yv > 1e9) yv = 1e9;
+              if (yv < -1e9) yv = -1e9;
+              var py = Y(yv);
+              if (!isFinite(py)) {
+                started = false;
+                continue;
+              }
+              var px = X(xv);
+              if (!isFinite(px)) {
+                started = false;
+                continue;
+              }
+              if (!started) {
+                ctx.moveTo(px, py);
+                started = true;
+              } else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+          branch(Math.max(eps, rect.xmin), rect.xmax);
+          branch(rect.xmin, Math.min(-eps, rect.xmax));
+          ctx.restore();
+          var taken = [];
+          Hk.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+          drawRedDot(ctx, W, Hc, X, Y, hPoint, taken, "#c4321f");
+        }
+        $("hbu").addEventListener("click", hookUpdate);
+        $("hbsv").addEventListener("click", function () {
+          hookCalc();
+          drawHook();
+        });
+        ["ha", "hb"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") hookUpdate();
+          });
+        });
+        $("hsv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            hookCalc();
+            drawHook();
+          }
+        });
+        $("hzin").addEventListener("click", function () {
+          zoomView(HV, 1 / 1.3);
+          drawHook();
+        });
+        $("hzout").addEventListener("click", function () {
+          zoomView(HV, 1.3);
+          drawHook();
+        });
+        $("hzrst").addEventListener("click", hookUpdate);
+        attachRelSlider("hpx", HV, "x", drawHook);
+        attachRelSlider("hpy", HV, "y", drawHook);
+        attachDrag($("hcv"), function (p) {
+          var rect = viewRect(HV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          if (Math.abs(x) < 1e-9) return;
+          var y = Hk.a * x + Hk.b / x;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("hsv").value = n2s(x);
+          hPoint = { x: x, y: y };
+          $("hosv").textContent = "y = " + n2s(y);
+          drawHook();
+        });
+
+        /* ============ 三次函数 y = a·x³ + b·x² + c·x + d ============ */
+        var Cu = { a: 1, b: -3, c: 0, d: 2, kp: [] };
+        var CV = { cx: 0, cy: 0, hw: 5, hh: 5 };
+        var cPoint = null;
+
+        function cubicUpdate() {
+          var a = parseFloat($("ca").value),
+            b = parseFloat($("cb").value),
+            c = parseFloat($("cc").value),
+            d = parseFloat($("cd").value);
+          if (!isFinite(a) || !isFinite(b) || !isFinite(c) || !isFinite(d)) {
+            $("cer").textContent = "请输入有效数字";
+            return;
+          }
+          if (Math.abs(a) < 1e-12) {
+            $("cer").textContent = "a 不能为 0（否则不是三次函数）";
+            return;
+          }
+          $("cer").textContent = "";
+          Cu.a = a;
+          Cu.b = b;
+          Cu.c = c;
+          Cu.d = d;
+
+          /* 函数式 */
+          var fs = "y = ";
+          if (a === 1) fs += "x³";
+          else if (a === -1) fs += "−x³";
+          else fs += n2s(a) + "x³";
+          if (Math.abs(b) > 1e-12) {
+            fs += b > 0 ? " + " : " − ";
+            if (Math.abs(b) !== 1) fs += n2s(Math.abs(b));
+            fs += "x²";
+          }
+          if (Math.abs(c) > 1e-12) {
+            fs += c > 0 ? " + " : " − ";
+            if (Math.abs(c) !== 1) fs += n2s(Math.abs(c));
+            fs += "x";
+          }
+          if (Math.abs(d) > 1e-12)
+            fs += (d > 0 ? " + " : " − ") + n2s(Math.abs(d));
+          $("cdg").textContent = fs;
+
+          /* 极值点：y' = 3ax² + 2bx + c = 0 */
+          var disc = 4 * b * b - 12 * a * c;
+          var ext = [];
+          var incTxt = "—";
+          if (disc > 1e-9) {
+            var sq = Math.sqrt(disc);
+            var x1 = (-2 * b - sq) / (6 * a);
+            var x2 = (-2 * b + sq) / (6 * a);
+            if (x2 < x1) {
+              var t = x1;
+              x1 = x2;
+              x2 = t;
+            }
+            var y1 = a * x1 * x1 * x1 + b * x1 * x1 + c * x1 + d;
+            var y2 = a * x2 * x2 * x2 + b * x2 * x2 + c * x2 + d;
+            ext = [
+              { x: x1, y: y1 },
+              { x: x2, y: y2 },
+            ];
+            $("cext").textContent = ext
+              .map(function (p) {
+                return c2s(p.x, p.y);
+              })
+              .join("  ");
+            if (a > 0) {
+              incTxt =
+                "(−∞, " +
+                n2s(x1) +
+                "] 增，[" +
+                n2s(x1) +
+                ", " +
+                n2s(x2) +
+                "] 减，[" +
+                n2s(x2) +
+                ", +∞) 增";
+            } else {
+              incTxt =
+                "(−∞, " +
+                n2s(x1) +
+                "] 减，[" +
+                n2s(x1) +
+                ", " +
+                n2s(x2) +
+                "] 增，[" +
+                n2s(x2) +
+                ", +∞) 减";
+            }
+          } else if (Math.abs(disc) <= 1e-9) {
+            $("cext").textContent = "无极值点（有拐点水平切线）";
+            incTxt = a > 0 ? "在 R 上单调递增" : "在 R 上单调递减";
+          } else {
+            $("cext").textContent = "无极值点";
+            incTxt = a > 0 ? "在 R 上单调递增" : "在 R 上单调递减";
+          }
+          $("cinc").textContent = incTxt;
+
+          /* 拐点：y'' = 6ax + 2b = 0 */
+          var xi = -b / (3 * a);
+          var yi = a * xi * xi * xi + b * xi * xi + c * xi + d;
+          $("cinf").textContent = c2s(xi, yi);
+
+          /* 关键点：与 y 轴交点 + 极值点 + 拐点 + x=1 */
+          var pts = [{ x: 0, y: d, label: c2s(0, d) }];
+          ext.forEach(function (p) {
+            pts.push({ x: p.x, y: p.y, label: c2s(p.x, p.y) });
+          });
+          pts.push({ x: xi, y: yi, label: c2s(xi, yi) });
+          var y1v = a + b + c + d;
+          pts.push({ x: 1, y: y1v, label: c2s(1, y1v) });
+          /* 去重 */
+          var uniq = [],
+            seen = {};
+          pts.forEach(function (p) {
+            var key = Math.round(p.x * 1e6) + "," + Math.round(p.y * 1e6);
+            if (!seen[key]) {
+              seen[key] = 1;
+              uniq.push(p);
+            }
+          });
+          Cu.kp = uniq.slice(0, 6);
+          $("cpts").textContent = Cu.kp
+            .map(function (p) {
+              return p.label;
+            })
+            .join(" ");
+
+          /* 自动视野 */
+          CV.cx = 0;
+          CV.cy = 0;
+          var scale = Math.max(1, 1 / Math.pow(Math.abs(a), 0.35));
+          CV.hw = Math.max(3, Math.min(20, 4 * scale));
+          CV.hh = Math.max(3, Math.min(20, 4 * scale));
+
+          cubicCalc();
+          drawCubic();
+        }
+        function cubicCalc() {
+          var v = parseFloat($("csv").value);
+          if (!isFinite(v)) {
+            $("cosv").textContent = "请输入有效数字";
+            return;
+          }
+          var y = Cu.a * v * v * v + Cu.b * v * v + Cu.c * v + Cu.d;
+          if (!isFinite(y)) {
+            $("cosv").textContent = "无定义";
+            cPoint = null;
+            return;
+          }
+          $("cosv").textContent = "y = " + n2s(y);
+          cPoint = { x: v, y: y };
+        }
+        function drawCubic() {
+          var cv = $("ccv");
+          if (!cv) return;
+          var ctx = cv.getContext("2d");
+          var W = cv.width,
+            H = cv.height;
+          var rect = viewRect(CV);
+          var g = drawGrid(ctx, W, H, rect);
+          var X = g.X,
+            Y = g.Y;
+
+          /* 拐点竖线（虚） */
+          var xi = -Cu.b / (3 * Cu.a);
+          if (xi >= rect.xmin - 1e-9 && xi <= rect.xmax + 1e-9) {
+            var ax = Math.round(X(xi)) + 0.5;
+            if (isFinite(ax)) {
+              ctx.save();
+              ctx.setLineDash([5, 5]);
+              ctx.lineWidth = 1.2;
+              ctx.strokeStyle = "#cfe0f2";
+              ctx.beginPath();
+              ctx.moveTo(ax, 0);
+              ctx.lineTo(ax, H);
+              ctx.stroke();
+              ctx.restore();
+            }
+          }
+
+          /* 曲线 */
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(0, 0, W, H);
+          ctx.clip();
+          ctx.beginPath();
+          ctx.strokeStyle = "#2f6fb0";
+          ctx.lineWidth = 2.6;
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          var started = false;
+          for (var px = 0; px <= W; px += 1.5) {
+            var xv = rect.xmin + (px / W) * (rect.xmax - rect.xmin);
+            var yv = Cu.a * xv * xv * xv + Cu.b * xv * xv + Cu.c * xv + Cu.d;
+            if (!isFinite(yv)) {
+              started = false;
+              continue;
+            }
+            if (yv > 1e9) yv = 1e9;
+            if (yv < -1e9) yv = -1e9;
+            var py = Y(yv);
+            if (!isFinite(py)) {
+              started = false;
+              continue;
+            }
+            if (!started) {
+              ctx.moveTo(px, py);
+              started = true;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.restore();
+
+          var taken = [];
+          Cu.kp.forEach(function (p) {
+            if (
+              p.x >= rect.xmin &&
+              p.x <= rect.xmax &&
+              p.y >= rect.ymin &&
+              p.y <= rect.ymax
+            ) {
+              drawKeyPoint(ctx, X, Y, p, taken, "#1f4e7a");
+            }
+          });
+
+          drawRedDot(ctx, W, H, X, Y, cPoint, taken, "#c4321f");
+        }
+        $("cbu").addEventListener("click", cubicUpdate);
+        $("cbsv").addEventListener("click", function () {
+          cubicCalc();
+          drawCubic();
+        });
+        ["ca", "cb", "cc", "cd"].forEach(function (id) {
+          $(id).addEventListener("keydown", function (e) {
+            if (e.key === "Enter") cubicUpdate();
+          });
+        });
+        $("csv").addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            cubicCalc();
+            drawCubic();
+          }
+        });
+        $("czin").addEventListener("click", function () {
+          zoomView(CV, 1 / 1.3);
+          drawCubic();
+        });
+        $("czout").addEventListener("click", function () {
+          zoomView(CV, 1.3);
+          drawCubic();
+        });
+        $("czrst").addEventListener("click", cubicUpdate);
+        attachRelSlider("cpx", CV, "x", drawCubic);
+        attachRelSlider("cpy", CV, "y", drawCubic);
+        attachDrag($("ccv"), function (p) {
+          var rect = viewRect(CV);
+          var x = rect.xmin + (p.px / 800) * (rect.xmax - rect.xmin);
+          x = Math.max(rect.xmin, Math.min(rect.xmax, x));
+          x = applyRound(x);
+          var y = Cu.a * x * x * x + Cu.b * x * x + Cu.c * x + Cu.d;
+          if (!isFinite(y)) return;
+          y = applyRound(y);
+          $("csv").value = n2s(x);
+          cPoint = { x: x, y: y };
+          $("cosv").textContent = "y = " + n2s(y);
+          drawCubic();
+        });
+
+        /* ============ 四舍五入开关 ============ */
+        document.querySelectorAll(".rt").forEach(function (t) {
+          t.checked = ROUND;
+          t.addEventListener("change", function () {
+            ROUND = this.checked;
+            document.querySelectorAll(".rt").forEach(function (o) {
+              o.checked = ROUND;
+            });
+            if (pPoint) {
+              $("psv").value = n2s(pPoint.x);
+              $("posv").textContent = "y = " + n2s(pPoint.y);
+            }
+            if (ePoint) {
+              $("esv").value = n2s(ePoint.x);
+              $("eosv").textContent = "y = " + n2s(ePoint.y);
+            }
+            if (lPoint) {
+              $("lsv").value = n2s(lPoint.x);
+              $("losv").textContent = "y = " + n2s(lPoint.y);
+            }
+            if (tPoint) {
+              $("tsv").value = n2s(tPoint.x);
+              $("tosv").textContent = "y = " + n2s(tPoint.y);
+            }
+            if (hPoint) {
+              $("hsv").value = n2s(hPoint.x);
+              $("hosv").textContent = "y = " + n2s(hPoint.y);
+            }
+            if (cPoint) {
+              $("csv").value = n2s(cPoint.x);
+              $("cosv").textContent = "y = " + n2s(cPoint.y);
+            }
+            drawPow();
+            drawExp();
+            drawLog();
+            drawTri();
+            drawHook();
+            drawCubic();
+          });
+        });
+
+        /* ============ 选项卡切换 ============ */
+        document.querySelectorAll(".tabs .tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            document.querySelectorAll(".tabs .tab").forEach(function (t) {
+              t.classList.remove("on");
+            });
+            tab.classList.add("on");
+            [
+              "panePow",
+              "paneExp",
+              "paneLog",
+              "paneTri",
+              "paneHook",
+              "paneCubic",
+            ].forEach(function (pid) {
+              var el = $(pid);
+              if (!el) return;
+              el.style.display = pid === tab.dataset.pane ? "" : "none";
+            });
+            var map = {
+              panePow: drawPow,
+              paneExp: drawExp,
+              paneLog: drawLog,
+              paneTri: drawTri,
+              paneHook: drawHook,
+              paneCubic: drawCubic,
+            };
+            if (map[tab.dataset.pane]) map[tab.dataset.pane]();
+          });
+        });
+
+        /* ============ 初始化 ============ */
+        powUpdate();
+        expUpdate();
+        logUpdate();
+        triUpdate();
+        hookUpdate();
+        cubicUpdate();
+      })();
+    </script>
+  </body>
+</html>

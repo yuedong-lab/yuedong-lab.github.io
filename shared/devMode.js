@@ -1,0 +1,538 @@
+/* 版本:beta_8.5.1 - 共享开发者模式脚本 */
+/* 包含：开发者模式水印、Y+D快捷键、F12禁用、右键禁用、console禁用、暗黑模式切换，新闻、成员、项目自动写入，防抖系统*/
+
+// 开发者模式状态
+var devMode = localStorage.getItem('devMode') === 'true';
+var pressedKeys = {};
+
+// 注入模态框样式
+(function injectModalStyles() {
+    var style = document.createElement('style');
+    style.textContent = `
+        @keyframes devModalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes devModalSlideIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+// 自定义网页内确认弹窗（替代浏览器confirm弹窗）
+function showConfirmModal(message) {
+    return new Promise(function (resolve) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;animation:devModalFadeIn 0.2s ease;';
+
+        var modal = document.createElement('div');
+        modal.style.cssText = 'background:var(--card-bg,#fff);border-radius:16px;padding:28px 24px;max-width:380px;width:90%;text-align:center;animation:devModalSlideIn 0.3s ease;';
+
+        var msg = document.createElement('p');
+        msg.style.cssText = 'color:var(--text-color,#333);font-size:16px;line-height:1.6;margin:0 0 24px 0;white-space:pre-line;';
+        msg.textContent = message;
+
+        var btnContainer = document.createElement('div');
+        btnContainer.style.cssText = 'display:flex;gap:12px;justify-content:center;';
+
+        var cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '取消';
+        cancelBtn.style.cssText = 'padding:10px 28px;border:1px solid var(--border-color,#ddd);border-radius:8px;background:transparent;color:var(--text-color,#333);font-size:15px;cursor:pointer;transition:all 0.2s;';
+        cancelBtn.onmouseover = function () { this.style.background = 'rgba(0,0,0,0.05)'; };
+        cancelBtn.onmouseout = function () { this.style.background = 'transparent'; };
+
+        var confirmBtn = document.createElement('button');
+        confirmBtn.textContent = '确认';
+        confirmBtn.style.cssText = 'padding:10px 28px;border:none;border-radius:8px;background:#4a90d9;color:white;font-size:15px;cursor:pointer;transition:all 0.2s;';
+        confirmBtn.onmouseover = function () { this.style.background = '#357abd'; };
+        confirmBtn.onmouseout = function () { this.style.background = '#4a90d9'; };
+
+        // 焦点索引：0=取消, 1=确认，默认聚焦确认按钮
+        var focusedIndex = 1;
+        var buttons = [cancelBtn, confirmBtn];
+
+        function updateFocus() {
+            for (var i = 0; i < buttons.length; i++) {
+                if (i === focusedIndex) {
+                    buttons[i].style.boxShadow = '0 0 0 3px rgba(74,144,217,0.4)';
+                } else {
+                    buttons[i].style.boxShadow = 'none';
+                }
+            }
+        }
+
+        function closeModal(result) {
+            overlay.remove();
+            resolve(result);
+        }
+
+        cancelBtn.onclick = function () { closeModal(false); };
+        confirmBtn.onclick = function () { closeModal(true); };
+        overlay.onclick = function (e) { if (e.target === overlay) closeModal(false); };
+
+        // 键盘导航（仅左右键切换，边界限制：到底不可再继续）
+        modal.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') {
+                if (focusedIndex > 0) {
+                    e.preventDefault();
+                    focusedIndex--;
+                    updateFocus();
+                }
+            } else if (e.key === 'ArrowRight') {
+                if (focusedIndex < buttons.length - 1) {
+                    e.preventDefault();
+                    focusedIndex++;
+                    updateFocus();
+                }
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                buttons[focusedIndex].click();
+            }
+        });
+
+        btnContainer.appendChild(cancelBtn);
+        btnContainer.appendChild(confirmBtn);
+        modal.appendChild(msg);
+        modal.appendChild(btnContainer);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // 设置焦点到模态框并更新聚焦样式
+        modal.setAttribute('tabindex', '-1');
+        modal.focus();
+        updateFocus();
+    });
+}
+
+// 管理开发者模式水印
+function toggleWatermark(show) {
+    var existing = document.getElementById('devModeWatermark');
+    if (show) {
+        if (existing) return;
+        var watermark = document.createElement('div');
+        watermark.id = 'devModeWatermark';
+        watermark.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;overflow:hidden;';
+        var cols = 6;
+        var rows = 8;
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var span = document.createElement('span');
+                if (c % 2 === r % 2) {
+                    span.textContent = 'Dev-mode';
+                } else {
+                    span.textContent = '开发者模式'
+                }
+                span.style.cssText = 'position:absolute;color:rgba(128,128,128,0.35);font-size:1.1em;font-weight:bold;white-space:nowrap;transform:rotate(-30deg);user-select:none;';
+                span.style.left = ((c * 18 + (r % 2) * 9)) + '%';
+                span.style.top = (r * 13 + 3) + '%';
+                watermark.appendChild(span);
+            }
+        }
+        document.body.appendChild(watermark);
+    } else {
+        if (existing) {
+            existing.remove();
+        }
+    }
+}
+
+// 检测Y+D组合键切换开发者模式
+document.addEventListener('keydown', async function (e) {
+    pressedKeys[e.key.toLowerCase()] = true;
+    if (pressedKeys['y'] && pressedKeys['d']) {
+        if (devMode) {
+            var result = await showConfirmModal('是否退出开发者模式？\n\n退出后将恢复以下限制：\n• F12、Ctrl+Shift+I/J/C、Ctrl+U 等快捷键将被阻止\n• 右键菜单将被禁用');
+            if (result) {
+                devMode = false;
+                localStorage.setItem('devMode', devMode);
+                toggleWatermark(false);
+                $("#devImg").css("display", "none");
+            }
+        } else {
+            var result = await showConfirmModal('是否进入开发者模式？\n\n开启后将解除以下限制：\n• F12、Ctrl+Shift+I/J/C、Ctrl+U 等快捷键不再被阻止\n• 右键菜单恢复正常');
+            if (result) {
+                devMode = true;
+                localStorage.setItem('devMode', devMode);
+                toggleWatermark(true);
+                $("#devImg").css("display", "block");
+            }
+        }
+        pressedKeys['y'] = false;
+        pressedKeys['d'] = false;
+    }
+});
+
+document.addEventListener('keyup', function (e) {
+    pressedKeys[e.key.toLowerCase()] = false;
+});
+
+// 页面加载时检查是否已开启开发者模式
+if (devMode) {
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleWatermark(true);
+        $("#devImg").css("display", "block");
+    });
+}
+
+// 禁用右键菜单
+document.addEventListener('contextmenu', function (e) {
+    if (devMode) return;
+    e.preventDefault();
+});
+
+// 检测F12和开发者工具快捷键并阻止
+document.addEventListener('keydown', function (e) {
+    if (devMode) return;
+    if (e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+        (e.ctrlKey && e.key === 'U') ||
+        (e.ctrlKey && e.shiftKey && e.key === 'S')) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// 暗黑模式切换（通用函数，页面需自行绑定themeToggle点击事件）
+function initThemeToggle() {
+    var themeToggle = document.getElementById('themeToggle');
+    var savedTheme = localStorage.getItem('darkMode') === 'true';
+
+    if (savedTheme) {
+        document.body.classList.add('dark-mode');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            var isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        });
+    }
+}
+
+// 页面加载时初始化主题切换
+document.addEventListener('DOMContentLoaded', function () {
+    initThemeToggle();
+});
+
+//新闻自动写入
+function writeNews(idStart, idEnd) {
+    $("#news_box").text("");
+    if (document.getElementById("hidden_news")) {
+        $("#hidden_news").remove();
+    }
+    var notDone = idEnd < newsData.length;
+    var lens = idEnd < newsData.length ? idEnd + 1 : newsData.length;
+    for (var i = idStart; i < lens; i++) {
+        var title = newsData[i].title;
+        var author = newsData[i].author;
+        var time = newsData[i].date;
+        var contents = newsData[i].content;
+        var content = "";
+
+        //新闻详情初始化
+        for (var j = 0; j < contents.length; j++) {
+            if (j != 0) {
+                content += "<br>";
+            }
+            content += contents[j];
+        }
+        if (i === 0) {
+            $("#news_box").append("<a href='news_detail.html?id=" + (newsData.length - i) + "' class='news_box_link'><div class='news_box'><h1>" + title + "</h1><div><p>" + content + "</p></div><label>" + author + " 编辑于 " + time + "</label></div></a>");
+        } else {
+            $("#news_box").append("<a href='news_detail.html?id=" + (newsData.length - i) + "' class='news_box_link'><div class='news_box'><h2>" + title + "</h2><div><p>" + content + "</p></div><label>" + author + " 编辑于 " + time + "</label></div></a>");
+        }
+    }
+    if (notDone) {
+        $("#news").append(`<br><center><p id='hidden_news' onclick='writeNews(0,${idEnd + 5})'>还没完！点这里看更多</p></center>`)
+    }
+}
+
+//成员自动写入
+function writeMember(device) {
+    for (var i = 0; i < members.length; i++) {
+        var name = members[i].name;
+        var job = members[i].job;
+        var picture = members[i].picture;
+        var id = members[i].id;
+        var introduction = members[i].introduction;
+        var introStr = "";
+        var jobStyle = "";
+
+        //初始化职位标样式
+        if (job.includes("室长")) {
+            jobStyle = "job_master";
+        } else {
+            if (job.includes("程序")) {
+                jobStyle = "job_program";
+            }
+            if (job.includes("美术")) {
+                jobStyle = "job_art";
+            }
+            if (job.includes("组长")) {
+                jobStyle += "_master";
+            }
+        }
+
+        //人物介绍初始化
+        for (var j = 0; j < introduction.length; j++) {
+            if (j != 0) {
+                introStr += "<br>";
+            }
+            introStr += introduction[j];
+        }
+
+        $("#big_person_box").append("<a href='./member_" + device + ".html?id=" + id + "' class='person_box'><img class='head_picture' src='" + picture + "' alt='" + name + "' onerror=\"this.alt='加载失败'\"/><div><label class='name'>" + name + "</label><p id='" + jobStyle + "'>" + job + "</p><p class='introduce'>" + introStr + "</p></div></a>");
+    }
+}
+
+function writeProjects() {
+    for (var i = 0; i < projectData.length; i++) {
+        var title = projectData[i].title;
+        var desc = projectData[i].desc;
+        var download = 0;
+        var downloadName = 0;
+        var online = 0;
+
+        if (projectData[i].download) {
+            download = projectData[i].download;
+            downloadName = projectData[i].downloadName;
+        }
+        if (projectData[i].online) {
+            online = projectData[i].online;
+        }
+
+        $("#project_container").append(`<a href="./project_detail.html?id=${i + 1}" class="project_card_link" style="text-decoration:none;color:inherit;display:block;"><div class="project_card"><h2 class="project_title">${title}</h2><p class="project_desc">${desc}</p><div class="project_actions">${online && typeof (online) === "string" ? `<a class="project_btn" href="${online}" target="_blank" onclick="event.stopPropagation();">打开网页</a>` : ""}${download ? `<a class="project_btn" href="${download}" download="${downloadName}" onclick="event.stopPropagation();">立即下载</a>` : ""}<a class="project_btn" href="./project_detail.html?id=${i + 1}" onclick="event.stopPropagation()">查看详情</a></div></div></a>`)
+    }
+}
+
+//自动灰度模式/节庆模式
+var gray = [
+    {
+        month: 12,
+        day: 13,
+        text: "沉痛悼念所有在南京大屠杀中丧生的同胞"
+    },
+    {
+        month: 9,
+        day: 18,
+        text: "勿忘国耻，铭记历史"
+    },
+    {
+        month: 5,
+        day: 12,
+        text: "沉痛悼念所有在汶川大地震中丧生的同胞"
+    }
+];
+
+var festivals = [
+    {
+        month: 10,
+        day: 1,
+        text: "悦动工作室祝各位国庆节快乐！"
+    },
+    {
+        month: 1,
+        day: 1,
+        text: "悦动工作室祝各位元旦快乐！"
+    }
+]
+
+var particleStarted = false;
+
+function timeCheck(date) {
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    var changed = false;
+
+    //重大纪念日检测
+    for (var i = 0; i < gray.length; i++) {
+        if (month === gray[i].month && day === gray[i].day) {
+            $("html").css("filter", "grayscale(100%)");
+            if (!document.getElementById("specials")) {
+                $("#findour").append("<p id='specials' class='sad'>" + gray[i].text + "</p>");
+                $("#specials").hide().fadeIn(1000);
+            }
+            return;
+        }
+    }
+    if (!changed) {
+        $("html").css("filter", "grayscale(0%)");
+        if (document.getElementById("specials")) {
+            $(".sad #specials").fadeOut(1000);
+            setTimeout(() => {
+                $(".sad #specials").remove();
+            }, 1000);
+        }
+    }
+
+    //节日监测
+    for (var i = 0; i < festivals.length; i++) {
+        if (month === festivals[i].month && day === festivals[i].day) {
+            document.body.classList.add("festival");
+            if (!document.getElementById("specials")) {
+                $("#findour").append("<p id='specials' class='festival'>" + festivals[i].text + "</p>");
+                $("#specials").hide().fadeIn(1000);
+            }
+            if (!particleStarted) {
+                loop();
+                particleStarted = true;
+            }
+            return;
+        }
+    }
+    if (!changed) {
+        document.body.classList.remove("festival");
+        if (document.getElementById("specials")) {
+            $(".festival #specials").fadeOut(1000);
+            setTimeout(() => {
+                $(".festival #specials").remove();
+            }, 1000);
+            patricleStarted = false;
+        }
+    }
+
+    //版权更新
+    if (!document.getElementById("copyright")) {
+        $("#findour").append(`<p id="copyright" style="font-size:13px;color:var(--text-color);margin:15px 0 5px;">版权所有 © 悦动工作室 2024-${new Date(document.lastModified).getFullYear()}</p>`)
+    }
+}
+
+
+function throttle(fn, interval = 500) {
+    let timer = null;
+    return function (...args) {
+        if (timer) { return; }
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+            timer = null;
+        }, interval);
+    };
+}
+
+const canvas = document.getElementById("fireworksCanvas");
+const ctx = canvas.getContext("2d");
+
+let w = (canvas.width = window.innerWidth);
+let h = (canvas.height = window.innerHeight);
+
+window.addEventListener("resize", throttle(() => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+}));
+
+
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.xs = [];
+        this.ys = [];
+        this.speed = Math.random() * 3.5 + 1.8;
+        this.angle = Math.random() * Math.PI * 2;
+        this.gravity = 0.045;
+        this.vx = Math.cos(this.angle) * this.speed;
+        this.vy = Math.sin(this.angle) * this.speed;
+        this.alpha = 1;
+        this.decay = 0.008;
+        this.color = color;
+        this.size = Math.random() * 1.6 + 1.3;
+    }
+
+    update(delta) {
+        this.vy += 4 * this.gravity / delta;
+        this.x += 4 * this.vx / delta;
+        this.y += 4 * this.vy / delta;
+        this.alpha -= 4 * this.decay / delta;
+        this.xs.push(this.x);
+        this.ys.push(this.y);
+        if (this.xs.length > 4) {
+            this.xs.shift();
+            this.ys.shift();
+        }
+    }
+
+    draw() {
+        ctx.globalAlpha = Math.max(this.alpha, 0);
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.xs[0], this.ys[0]);
+        for (var i = 1; i < 4; i++) {
+            ctx.lineTo(this.xs[i], this.ys[i])
+        }
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = this.color;
+        ctx.stroke();
+    }
+}
+
+let particles = [];
+// 权重：红色3份；金色、橙色、橙红、紫色、玫红各2份；蓝色1份
+const colorPool = [
+    "#FF2D2D",
+    "#FF2D2D",
+    "#FF2D2D",
+    "#FFD700",
+    "#FFD700",
+    "#FFA726",
+    "#FFA726",
+    "#FF7043",
+    "#FF7043",
+    "#9370DB",
+    "#9370DB",
+    "#FF1493",
+    "#FF1493",
+    "#1E90FF",
+];
+
+let burstRound = 0;
+
+function createMultiFirework() {
+    burstRound++;
+    let maxBurst = 3;
+    const burstCount = Math.floor(Math.random() * maxBurst) + 1;
+
+    for (let b = 0; b < burstCount; b++) {
+        const x = Math.random() * w * 0.7 + w * 0.15;
+        const y = Math.random() * h * 0.35 + h * 0.1;
+        const color = colorPool[Math.floor(Math.random() * colorPool.length)];
+        for (let i = 0; i < 110; i++) {
+            particles.push(new Particle(x, y, color));
+        }
+    }
+}
+
+function render(delta) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update(delta);
+        particles[i].draw();
+        if (particles[i].alpha <= 0) {
+            particles.splice(i, 1);
+        }
+    }
+}
+
+var lastF = 0;
+var nowF = 0;
+var delta = 2;
+
+function loop() {
+    ctx.clearRect(0, 0, w, h);
+    if (document.body.className.includes("festival")) {
+        render(delta);
+        if (particles.length === 0) {
+            ctx.clearRect(0, 0, w, h);
+            createMultiFirework();
+        }
+
+        nowF = requestAnimationFrame(loop);
+        delta = nowF - lastF;
+        lastF = nowF;
+    }
+}

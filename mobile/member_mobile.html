@@ -1,0 +1,425 @@
+    <!--版本: Pre_7.29.4 (手机端成员详情页)-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="悦动工作室官方网站 - 个人主页">
+    <meta name="keywords" content="悦动工作室,悦动,编程,软件开发,工作室,成员">
+    <meta name="author" content="悦动工作室">
+    <link rel="icon" href="../Picture/icon.webp" type="image/webp">
+    <title>个人主页 - 悦动工作室官方网站</title>
+    <style>
+        /*初始化*/
+        :root{
+           --bg-color: #ffffff;
+            --text-color: #000000;
+            --nav-bg: linear-gradient(to bottom, #1385ff, #49a1ff);
+            --card-bg: #ffffff;
+            --findour-bg: #e5e5e5db;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --nav-bg: linear-gradient(to bottom, #2d3748, #4a5568);
+            --card-bg: #2d3748;
+            --findour-bg: #1c1c1cdb;
+            --border-color: #4a5568;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 300ms ease, color 300ms ease;
+        }
+
+        #topNav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: var(--nav-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            height:26px;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: rgb(252, 203, 68);
+            user-select: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #backButton {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            height:25px;
+            transition: background-color 0.3s;
+        }
+
+        #backButton:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #themeToggle {
+            background: rgba(255,255,255,0);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #themeToggle:hover{
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .theme-icon { transition: transform 0.3s ease; }
+        body.dark-mode .theme-icon { transform: rotate(180deg); }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+        body.dark-mode .sun-icon { display: block !important; }
+        body.dark-mode .moon-icon { display: none !important; }
+
+        #mainContent {
+            padding-top: 66px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .member-profile {
+            margin: 16px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px 20px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .member-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        .member-avatar.master { border: 4px solid #e99f00; }
+        .member-avatar.program-master { border: 4px solid #00aaa2; }
+        .member-avatar.program { border: 4px solid #006eff; }
+
+        .member-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            text-shadow: 1px 1px 4px rgba(0, 0, 70, 0.15);
+        }
+
+        body.dark-mode .member-name {
+            text-shadow: 1px 1px 4px rgba(100, 100, 200, 0.25);
+        }
+
+        .member-job {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .member-job.master { background-color: #ffa60033; color: #cf8700; }
+        .member-job.program-master { background-color: #00aaa233; color: #00aaa2; }
+        .member-job.program { background-color: #006eff33; color: #006eff; }
+
+        .member-intro {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 12px;
+            text-align: left;
+            padding: 0 4px;
+        }
+
+        .member-sign {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.6;
+            font-style: italic;
+            margin-bottom: 20px;
+            text-align: left;
+            padding: 0 4px;
+            border-left: 3px solid #1385ff;
+            padding-left: 12px;
+        }
+
+        .contact-section {
+            margin: 16px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.4s ease 0.1s both;
+        }
+
+        .contact-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 0;
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.75;
+            line-height: 1.6;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .contact-item:not(:last-child) { border-bottom: 1px solid var(--border-color); }
+
+        .contact-item a { color: #1385ff; text-decoration: none; }
+        .contact-item a:active { opacity: 0.7; }
+
+        .contact-empty {
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.4;
+            font-size: 13px;
+            padding: 10px 0;
+        }
+
+        #versionInfo {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            color: rgba(0, 0, 0, 0.45);
+            font-size: 11px;
+            z-index: 100;
+            user-select: none;
+        }
+
+        body.dark-mode #versionInfo { color: rgba(255, 255, 255, 0.45); }
+
+        img {
+            -webkit-user-drag: none;
+            -moz-user-drag: none;
+            -ms-user-drag: none;
+            user-drag: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        @media (max-width: 360px) {
+            .member-avatar { width: 100px; height: 100px; }
+            .member-name { font-size: 22px; }
+            .member-profile { padding: 20px 16px; }
+            .member-intro { font-size: 14px; }
+        }
+
+    </style>
+</head>
+<body>
+    <nav id="topNav">
+        <div class="nav-header">
+            <span class="nav-title">悦动工作室</span>
+            <div class="nav-actions">
+                <button id="themeToggle" aria-label="切换主题">
+                    <svg class="theme-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path class="sun-icon" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.95 16.95l1.42 1.42M5.64 18.36l1.42-1.42M16.95 7.05l1.42-1.42M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" style="display:none"></path>
+                        <path class="moon-icon" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+                    </svg>
+                </button>
+                <a href="./index.html" id="backButton">&#8592; 返回</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mainContent">
+        <div class="member-profile" id="memberProfile">
+            <img src="" id="memberAvatar" class="member-avatar" draggable="false" alt="">
+            <div class="member-name" id="memberName"></div>
+            <div class="member-job" id="memberJob"></div>
+            <div class="member-intro" id="memberIntro"></div>
+            <div class="member-sign" id="memberSign" style="display:none;"></div>
+        </div>
+
+        <div class="contact-section">
+            <div class="contact-title">联系方式</div>
+            <div id="contactContent"></div>
+        </div>
+    </div>
+
+    <div id="versionInfo"></div>
+
+    <script src="../shared/devMode.js"></script>
+    <script src="../version.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script>
+        // 版本: Pre_7.29.4 - 手机端成员页面脚本
+        $("#versionInfo").text(currentVersion);
+        var members = {
+            1: {
+                name: '小郑',
+                title: '室长',
+                role: 'master',
+                avatar: '../Picture/member_1.webp',
+                intro: '介绍：悦动工作室室长',
+                sign: '',
+                contact: [
+                    'QQ号：2236933051',
+                    '邮箱：2236933051@qq.com'
+                ]
+            },
+            2: {
+                name: '反性能老魔',
+                title: '副室长',
+                role: 'master',
+                avatar: '../Picture/member_5.webp',
+                intro: '介绍：会Python，javascript和一点点css。据说他的电脑用的是3代i5……',
+                sign: '键盘总得敲到废，代码写到人疲累',
+                contact: [
+                    'QQ号：3171244185',
+                    '邮箱：3171244185@qq.com'
+                ]
+            },
+            3: {
+                name: '超级苦力怕1324',
+                title: '程序组长',
+                role: 'program-master',
+                avatar: '../Picture/member_2.webp',
+                intro: '介绍：会python和html,css,JavaScript，懂得安卓，windows软件和网站开发',
+                sign: '',
+                contact: [
+                    'QQ号：2672066839',
+                    '邮箱：2672066839@qq.com'
+                ]
+            },
+            4: {
+                name: '普通的编程萌新',
+                title: '程序组',
+                role: 'program',
+                avatar: '../Picture/member_4.webp',
+                intro: '介绍：一个普通到不能再普通的编程萌新会Python，还会一点JavaScript、和C语言',
+                sign: '',
+                contact: [
+                    'QQ号：2100400850',
+                    '邮箱：2100400850@qq.com'
+                ]
+            }
+        };
+
+        function getUrlParam(name) {
+            var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        function renderMember(id) {
+            var data = members[id];
+            if (!data) {
+                window.location.href = '../404.html';
+                return;
+            }
+
+            document.title = data.name + ' - 个人主页';
+
+            var avatar = document.getElementById('memberAvatar');
+            avatar.src = data.avatar;
+            avatar.alt = data.name;
+            avatar.className = 'member-avatar ' + data.role;
+
+            document.getElementById('memberName').textContent = data.name;
+
+            var job = document.getElementById('memberJob');
+            job.textContent = data.title;
+            job.className = 'member-job ' + data.role;
+
+            document.getElementById('memberIntro').textContent = data.intro;
+
+            var sign = document.getElementById('memberSign');
+            if (data.sign) {
+                sign.textContent = data.sign;
+                sign.style.display = 'block';
+            } else {
+                sign.style.display = 'none';
+            }
+
+            var contactContent = document.getElementById('contactContent');
+            contactContent.innerHTML = '';
+            if (data.contact && data.contact.length > 0) {
+                data.contact.forEach(function(item) {
+                    var div = document.createElement('div');
+                    div.className = 'contact-item';
+                    div.textContent = item;
+                    contactContent.appendChild(div);
+                });
+            } else {
+                var empty = document.createElement('div');
+                empty.className = 'contact-empty';
+                empty.textContent = '暂无联系方式';
+                contactContent.appendChild(empty);
+            }
+        }
+
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+            var memberId = getUrlParam('id');
+            var device = getUrlParam('device');
+            if (!memberId) {
+                window.location.href = '../404.html';
+                return;
+            }
+            renderMember(memberId);
+        });
+    </script>
+</body>
+</html>
