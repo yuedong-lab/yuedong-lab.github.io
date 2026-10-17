@@ -164,6 +164,8 @@
     </nav>
 
     <div id="mainContent">
+        <canvas id="fireworksCanvas"
+            style="position:fixed;background-color:transparent;top:0;left:0;z-index:-1;"></canvas>
         <div class="news-detail-container">
             <div class="news-detail-card" id="newsDetail">
                 <div class="news-detail-loading">正在加载新闻...</div>
@@ -175,10 +177,14 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="../shared/devMode.js"></script>
+    <script src="../shared/fetchTime.js"></script>
     <script src="../shared/data.js"></script>
     <script src="../version.js"></script>
     <script>
         // 版本: Pre_7.29.4 - 手机端新闻详情页脚本
+        syncTimeBase();
+        timeCheck(getDate());
+        setInterval(timeCheck, 10000, getDate());
         $("#versionInfo").text(currentVersion);
         function getUrlParam(name) {
             var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
