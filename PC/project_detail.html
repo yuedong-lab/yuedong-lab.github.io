@@ -202,6 +202,8 @@
         <a href="./index.html" id="backButton">&#8592; 返回主页</a>
     </nav>
 
+    <canvas id="fireworksCanvas"
+            style="position:fixed;background-color:transparent;top:0;left:0;z-index:-1;"></canvas>
     <div class="project-detail-container">
         <div id="projectDetail">
             <div class="project-detail-loading">正在加载项目...</div>
@@ -211,12 +213,17 @@
     <div id="versionInfo"></div>
 
     <script src="../shared/devMode.js"></script>
+    <script src="../shared/fetchTime.js"></script>
     <script src="../shared/data.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="../version.js"></script>
     <script>
         // 版本: Pre_7.29.4 - 项目详情页脚本（PC端）
+        syncTimeBase();
+        timeCheck(getDate());
+        setInterval(timeCheck, 10000, getDate());
         $("#versionInfo").text(currentVersion);
+        
         function getUrlParam(name) {
             var match = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
             return match ? decodeURIComponent(match[1]) : null;
