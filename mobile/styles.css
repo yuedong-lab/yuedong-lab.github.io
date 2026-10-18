@@ -118,6 +118,23 @@ body.dark-mode .theme-icon { transform: rotate(180deg); }
     display:none;
 }
 
+/* 设置按钮样式 */
+#settingBtn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space:nowarp;
+}
+
+#settingBtn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 /* 侧滑菜单 */
 .side-menu {
     position: fixed;
