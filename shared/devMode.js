@@ -28,7 +28,7 @@ function showConfirmModal(message) {
         overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;animation:devModalFadeIn 0.2s ease;';
 
         var modal = document.createElement('div');
-        modal.style.cssText = 'background:var(--card-bg,#fff);border-radius:16px;padding:28px 24px;max-width:380px;width:90%;text-align:center;animation:devModalSlideIn 0.3s ease;';
+        modal.style.cssText = 'background:var(--bg-color,#fff);border-radius:16px;padding:28px 24px;max-width:380px;width:90%;text-align:center;animation:devModalSlideIn 0.3s ease;';
 
         var msg = document.createElement('p');
         msg.style.cssText = 'color:var(--text-color,#333);font-size:16px;line-height:1.6;margin:0 0 24px 0;white-space:pre-line;';
