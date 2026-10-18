@@ -1,7 +1,7 @@
 /* 版本: beta_7.29.3 (手机版) */
 /* 手机端专用样式 - 针对移动设备优化 */
 :root {
-    --bg-color: #ffffff;
+    --bg-color: #e5e5e5;
     --text-color: #000000;
     --nav-bg: linear-gradient(135deg, #1385ff, #49a1ff);
     --card-bg: #ffffff77;
