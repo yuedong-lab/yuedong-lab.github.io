@@ -162,6 +162,7 @@
                 if (exit) {
                     if (!changed) {
                         window.location.href = "./index.html";
+                        return;
                     }
                     var result = await showConfirmModal("确认要放弃所有更改并退出吗？");
                     if (result) {
@@ -184,6 +185,7 @@
             } else {
                 if (!changed) {
                     window.location.href = "./index.html";
+                    return;
                 }
                 var result = await showConfirmModal("确认要保存所有更改并退出吗？");
                 if (result) {
