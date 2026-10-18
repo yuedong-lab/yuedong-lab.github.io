@@ -138,7 +138,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
         var changed = false;
-        function initial() {
+        function initialize() {
+            changed = false;
             var maxParticles = localStorage.getItem('maxParticles');
             if (maxParticles) {
                 $("#maxParticles").prop("value", maxParticles);
@@ -147,7 +148,7 @@
             }
         }
 
-        initial();
+        initialize();
 
         syncTimeBase();
         timeCheck(getDate());
@@ -164,11 +165,8 @@
                     var result = await showConfirmModal("确认要放弃所有更改并退出吗？");
                     if (result) {
                         //恢复所有设置至初始状态
-                        $("#maxParticles").prop("value", localStorage.getItem('maxParticles'));
-
-                        if (exit) {
-                            window.location.href = "./index.html";
-                        }
+                        initialize();
+                        window.location.href = "./index.html";
                     }
                 } else {
                     if (!changed) {
@@ -178,8 +176,7 @@
                     var result = await showConfirmModal("确认要放弃所有更改吗？");
                     if (result) {
                         //恢复所有设置至初始状态
-                        $("#maxParticles").prop("value", localStorage.getItem('maxParticles'));
-                        changed = false;
+                        initialize();
                     }
                 }
 
