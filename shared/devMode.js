@@ -22,7 +22,7 @@ var pressedKeys = {};
 })();
 
 // 自定义网页内确认弹窗（替代浏览器confirm弹窗）
-function showConfirmModal(message) {
+function showConfirmModal(message, cancel = true) {
     return new Promise(function (resolve) {
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;animation:devModalFadeIn 0.2s ease;';
@@ -37,11 +37,13 @@ function showConfirmModal(message) {
         var btnContainer = document.createElement('div');
         btnContainer.style.cssText = 'display:flex;gap:12px;justify-content:center;';
 
-        var cancelBtn = document.createElement('button');
-        cancelBtn.textContent = '取消';
-        cancelBtn.style.cssText = 'padding:10px 28px;border:1px solid var(--border-color,#ddd);border-radius:8px;background:transparent;color:var(--text-color,#333);font-size:15px;cursor:pointer;transition:all 0.2s;';
-        cancelBtn.onmouseover = function () { this.style.background = 'rgba(0,0,0,0.05)'; };
-        cancelBtn.onmouseout = function () { this.style.background = 'transparent'; };
+        if (cancel) {
+            var cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '取消';
+            cancelBtn.style.cssText = 'padding:10px 28px;border:1px solid var(--border-color,#ddd);border-radius:8px;background:transparent;color:var(--text-color,#333);font-size:15px;cursor:pointer;transition:all 0.2s;';
+            cancelBtn.onmouseover = function () { this.style.background = 'rgba(0,0,0,0.05)'; };
+            cancelBtn.onmouseout = function () { this.style.background = 'transparent'; };
+        }
 
         var confirmBtn = document.createElement('button');
         confirmBtn.textContent = '确认';
@@ -51,7 +53,11 @@ function showConfirmModal(message) {
 
         // 焦点索引：0=取消, 1=确认，默认聚焦确认按钮
         var focusedIndex = 1;
-        var buttons = [cancelBtn, confirmBtn];
+        if (cancel) {
+            var buttons = [cancelBtn, confirmBtn];
+        } else {
+            var buttons = [confirmBtn];
+        }
 
         function updateFocus() {
             for (var i = 0; i < buttons.length; i++) {
@@ -68,7 +74,9 @@ function showConfirmModal(message) {
             resolve(result);
         }
 
-        cancelBtn.onclick = function () { closeModal(false); };
+        if (cancel) {
+            cancelBtn.onclick = function () { closeModal(false); };
+        }
         confirmBtn.onclick = function () { closeModal(true); };
         overlay.onclick = function (e) { if (e.target === overlay) closeModal(false); };
 
@@ -92,7 +100,9 @@ function showConfirmModal(message) {
             }
         });
 
-        btnContainer.appendChild(cancelBtn);
+        if (cancel) {
+            btnContainer.appendChild(cancelBtn);
+        }
         btnContainer.appendChild(confirmBtn);
         modal.appendChild(msg);
         modal.appendChild(btnContainer);
@@ -495,7 +505,7 @@ let burstRound = 0;
 
 function createMultiFirework() {
     burstRound++;
-    let maxBurst = 3;
+    let maxBurst = localStorage.getItem('maxParticles');
     const burstCount = Math.floor(Math.random() * maxBurst) + 1;
 
     for (let b = 0; b < burstCount; b++) {
