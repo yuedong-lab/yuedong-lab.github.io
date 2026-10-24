@@ -40,17 +40,12 @@
         <button id="settingBtn" onclick="window.location.href='./settings.html'">
             <svg class="setting-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <!-- 顶部拖动块 -->
                 <line x1="0" y1="4" x2="5" y2="4" />
                 <circle cx="8" cy="4" r="3" />
                 <line x1="11" y1="4" x2="24" y2="4" />
-
-                <!-- 中部拖动块 -->
                 <line x1="0" y1="12" x2="14" y2="12" />
                 <circle cx="17" cy="12" r="3" />
                 <line x1="20" y1="12" x2="24" y2="12" />
-
-                <!-- 底部拖动块 -->
                 <line x1="0" y1="20" x2="7" y2="20" />
                 <circle cx="10" cy="20" r="3" />
                 <line x1="13" y1="20" x2="24" y2="20" />
@@ -159,10 +154,19 @@
         writeMember("pc");
 
         var screen = "none";
+
+        var jsonData = localStorage.getItem('data');
+        if(jsonData){
+            var data = JSON.parse(jsonData);
+            var pageSave = data.pageSave;
+        }else{
+            var pageSave = false;
+        }
+
         var savedPage = localStorage.getItem('currentPage');
         $("#home,#project,#support,#about,#news,#findour").hide();
         $("body").css("display", "block");
-        if (savedPage && savedPage !== 'home') {
+        if (savedPage && savedPage !== 'home' && pageSave) {
             if (savedPage === 'project') {
                 ani_page(screen, 'project');
             } else if (savedPage === 'support') {
