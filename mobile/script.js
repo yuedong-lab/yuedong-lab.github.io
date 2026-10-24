@@ -4,27 +4,27 @@
 // 页面切换
 function switchPage(pageName) {
     // 隐藏所有页面
-    document.querySelectorAll('.page').forEach(function(page) {
+    document.querySelectorAll('.page').forEach(function (page) {
         page.classList.remove('active');
     });
-    
+
     // 显示目标页面
     var targetPage = document.getElementById(pageName);
     if (targetPage) {
         targetPage.classList.add('active');
     }
-    
+
     // 更新菜单项状态
-    document.querySelectorAll('.menu-item').forEach(function(item) {
+    document.querySelectorAll('.menu-item').forEach(function (item) {
         item.classList.remove('active');
         if (item.getAttribute('data-page') === pageName) {
             item.classList.add('active');
         }
     });
-    
+
     // 保存当前页面到localStorage
     localStorage.setItem('mobileCurrentPage', pageName);
-    
+
     // 关闭侧滑菜单
     closeMenu();
 }
@@ -43,34 +43,42 @@ function closeMenu() {
 }
 
 // 菜单事件绑定
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var menuToggle = document.getElementById('menuToggle');
     var closeMenuBtn = document.getElementById('closeMenu');
     var menuOverlay = document.getElementById('menuOverlay');
-    
+
     if (menuToggle) {
         menuToggle.addEventListener('click', openMenu);
     }
-    
+
     if (closeMenuBtn) {
         closeMenuBtn.addEventListener('click', closeMenu);
     }
-    
+
     if (menuOverlay) {
         menuOverlay.addEventListener('click', closeMenu);
     }
-    
+
+    var jsonData = localStorage.getItem('data');
+    if (jsonData) {
+        var data = JSON.parse(jsonData);
+        var pageSave = data.pageSave;
+    } else {
+        var pageSave = false;
+    }
+
     // 恢复上次浏览的页面
     var savedPage = localStorage.getItem('mobileCurrentPage');
-    if (savedPage && savedPage !== 'home') {
+    if (savedPage && savedPage !== 'home' && pageSave) {
         switchPage(savedPage);
     }
-    
+
     // 菜单项点击切换页面
-    document.querySelectorAll('.menu-item').forEach(function(item) {
-        item.addEventListener('click', function() {
+    document.querySelectorAll('.menu-item').forEach(function (item) {
+        item.addEventListener('click', function () {
             var page = this.getAttribute('data-page');
-            if(page){
+            if (page) {
                 switchPage(page);
             }
         });
