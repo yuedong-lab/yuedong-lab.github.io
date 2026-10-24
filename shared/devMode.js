@@ -504,8 +504,15 @@ const colorPool = [
 let burstRound = 0;
 
 function createMultiFirework() {
+    var jsonData = localStorage.getItem('data');
+    if(jsonData){
+        var data = JSON.parse(jsonData);
+        var maxBurst = data.maxParticles;
+    } else {
+        var maxBurst = 3;
+    }
+
     burstRound++;
-    let maxBurst = localStorage.getItem('maxParticles');
     const burstCount = Math.floor(Math.random() * maxBurst) + 1;
 
     for (let b = 0; b < burstCount; b++) {
