@@ -31,6 +31,7 @@
         }
 
         #settings {
+            margin-top: 100px;
             display: block;
             margin-left: 100px;
             height: 100%;
@@ -39,7 +40,7 @@
         #settings h1 {
             font-weight: 250;
             text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-            margin-top: 100px;
+            margin-top: 50px;
             margin-bottom: 20px;
             font-size: 2.5em;
         }
@@ -84,6 +85,67 @@
             font-size: 16px;
             transition: all 0.3s ease;
         }
+
+        /*开关样式*/
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            /* 隐藏checkbox */
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666666aa;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #f0ffff;
+            transition: .4s;
+            border-radius: 26px;
+        }
+
+        .slider:hover::before {
+            width: 34px;
+        }
+
+        input:checked+.slider {
+            background-color: var(--theme-color);
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px var(--theme-color);
+        }
+
+        input:checked+.slider::before {
+            transform: translateX(18px);
+            left: 12px;
+        }
+
+        input:checked+.slider:hover::before {
+            transform: translateX(18px);
+            left: 4px;
+        }
     </style>
 </head>
 
@@ -121,6 +183,12 @@
             <h1>烟花设置</h1>
             <label for="maxParticles">最大烟花数量:</label>
             <input type="number" id="maxParticles" min="1" max="10" value="3" class="input">
+            <h1>页面设置</h1>
+            <label for="pageSaveToggle">开启时切换至上次访问的页面</label>
+            <label class="switch">
+                <input type="checkbox" id="pageSaveToggle" class="input">
+                <span class="slider"></span>
+            </label>
         </div>
         <div id="operation">
             <button class="operation-btn" onclick="exit(false);">保存更改并退出</button>
@@ -140,11 +208,16 @@
         var changed = false;
         function initialize() {
             changed = false;
-            var maxParticles = localStorage.getItem('maxParticles');
-            if (maxParticles) {
-                $("#maxParticles").prop("value", maxParticles);
-            } else {
-                $("#maxParticles").prop("value", 3);
+            var jsonData = localStorage.getItem('data');
+            if (jsonData) {
+                var data = JSON.parse(jsonData);
+                if (data) {
+                    $("#maxParticles").prop("value", data.maxParticles);
+                    $("#pageSaveToggle").prop("checked", data.pageSave);
+                } else {
+                    $("#maxParticles").prop("value", 3);
+                    $("#pageSaveToggle").prop("checked", false);
+                }
             }
         }
 
@@ -190,13 +263,19 @@
                 if (result) {
                     //保存设置
                     var maxParticles = $("#maxParticles").prop("value");
-                    localStorage.setItem('maxParticles', maxParticles);
+                    var pageSave = $("#pageSaveToggle").prop("checked");
+                    var data = JSON.stringify({
+                        maxParticles: maxParticles,
+                        pageSave: pageSave
+                    });
+                    localStorage.setItem('data', data);
 
                     window.location.href = "./index.html";
                 }
             }
         }
         document.getElementById('maxParticles').addEventListener('input', () => { changed = true });
+        document.getElementById('pageSaveToggle').addEventListener('change', () => { changed = true });
     </script>
 </body>
 
